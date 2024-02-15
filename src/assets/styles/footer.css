@@ -1,0 +1,55 @@
+footer a svg {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+
+footer a #gmail:hover {
+  color: #e985ec;
+}
+
+footer a #linkedin:hover {
+  color: #1115d4;
+  background-color: #ffffff;
+}
+
+footer a #facebook:hover {
+  color: #ffffff;
+  background-color: #1115d4;
+}
+
+footer a #twitter:hover {
+  color: #437af0;
+}
+
+footer a #instagram:hover {
+  color: #ffffff;
+  background-color: #1115d4;
+}
+footer a #whatsapp:hover {
+  background-color: #0cf820;
+  color: #ffffff;
+}
+
+footer ul {
+  margin-right: 20px;
+}
+
+footer ul .icon-list {
+  padding: 10px;
+}
+
+@media (max-width: 560px) {
+  footer a svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  footer ul {
+    margin-right: 15px;
+  }
+
+  footer ul .icon-list {
+    padding: 8px;
+  }
+}
