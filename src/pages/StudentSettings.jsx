@@ -3,19 +3,19 @@ import "../assets/styles/signin.css";
 import {
   faCheck,
   faTimes,
-  faInfoCircle
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FcLock } from "react-icons/fc";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useStudent from "../hooks/useStudent";
 import { useNavigate, Link } from "react-router-dom";
-import StudentSidebar from "../components/navigation/StudentSidebar";
+import StudentLeftAside from "../components/navigation/StudentLeftAside";
 
 const PASSWORD_REGEX =
   /^(?=.*[Link-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
-const ChangePassword = () => {
+const StudentSettings = () => {
   const axios = useAxiosPrivate();
   const navigate = useNavigate();
   const errRef = useRef();
@@ -59,11 +59,11 @@ const ChangePassword = () => {
         JSON.stringify({
           studentId,
           oldPassword,
-          newPassword
+          newPassword,
         }),
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true
+          withCredentials: true,
         }
       );
       setStudent(response?.data);
@@ -82,60 +82,65 @@ const ChangePassword = () => {
   };
 
   return (
-    <section className='body bg-dark row' id='password-bg'>
-      <StudentSidebar />
-      <main className='pt-0 col-md-9'>
-        <Link role='button' to='/student' className='back-btn btn btn-primary'>
+    <section className="body bg-dark row" id="password-bg">
+      <aside className="col-md-2">
+        <StudentLeftAside />
+      </aside>
+      <main className="pt-0 col-md-8">
+        <Link role="button" to="/student" className="back-btn btn btn-primary">
           Back
         </Link>
-        <div className='container pt-5'>
-          <div className='row justify-content-center'>
-            <div className='col-md-6 col-lg-4'>
-              <div className='login-wrap py-4'>
+        <div className="container pt-5">
+          <div className="row justify-content-center">
+            <div className="col-md-6 col-lg-4">
+              <div className="login-wrap py-4">
                 <div
-                  className='img d-flex align-items-center justify-content-center'
-                  id='form-image'></div>
-                <h3 className='text-center mb-0'>Password Change</h3>
+                  className="img d-flex align-items-center justify-content-center"
+                  id="form-image"
+                ></div>
+                <h3 className="text-center mb-0">Password Change</h3>
                 <p
                   ref={errRef}
-                  className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}>
+                  className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
+                >
                   {errMsg}
                 </p>
                 <form
-                  className='login-form rounded shadow-lg'
-                  onSubmit={handleSubmit}>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span className='fa fa-lock'>
+                  className="login-form rounded shadow-lg"
+                  onSubmit={handleSubmit}
+                >
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
+                      <span className="fa fa-lock">
                         <FcLock />
                       </span>
                     </div>
                     <input
-                      type='password'
-                      className='form-control'
-                      placeholder='Password'
+                      type="password"
+                      className="form-control"
+                      placeholder="Password"
                       onChange={(e) => setOldPassword(e.target.value)}
                       value={oldPassword}
                       required
                     />
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
                       <span>
                         <FcLock />
                       </span>
                     </div>
                     <input
-                      type='password'
-                      className='form-control'
-                      placeholder='New Password'
+                      type="password"
+                      className="form-control"
+                      placeholder="New Password"
                       onChange={(e) => setNewPassword(e.target.value)}
                       value={newPassword}
                       required
                       onFocus={() => setNewPasswordFocus(true)}
                       onBlur={() => setNewPasswordFocus(false)}
                     />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <div className="valid-icon d-flex align-items-center justify-content-center">
                       <FontAwesomeIcon
                         icon={faCheck}
                         className={validNewPassword ? "valid" : "hide"}
@@ -152,7 +157,8 @@ const ChangePassword = () => {
                         newPasswordFocus && !validNewPassword
                           ? "instructions"
                           : "offscreen"
-                      }>
+                      }
+                    >
                       <FontAwesomeIcon icon={faInfoCircle} />8 to 24 characters.
                       Must include uppercase & lowercase letters,a number & a
                       special character.Allowed special characters:{" "}
@@ -160,23 +166,23 @@ const ChangePassword = () => {
                       <span>#</span> <span>$</span> <span>%</span>
                     </p>
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
                       <span>
                         <FcLock />
                       </span>
                     </div>
                     <input
-                      type='password'
-                      className='form-control'
-                      placeholder='Confirm Password'
+                      type="password"
+                      className="form-control"
+                      placeholder="Confirm Password"
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       value={confirmPassword}
                       required
                       onFocus={() => setConfirmFocus(true)}
                       onBlur={() => setConfirmFocus(false)}
                     />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <div className="valid-icon d-flex align-items-center justify-content-center">
                       <FontAwesomeIcon
                         icon={faCheck}
                         className={
@@ -195,19 +201,21 @@ const ChangePassword = () => {
                         confirmFocus && !validConfirm
                           ? "instructions"
                           : "offscreen"
-                      }>
+                      }
+                    >
                       <FontAwesomeIcon icon={faInfoCircle} />
                       Must match the first password input field.
                     </p>
                   </div>
 
-                  <div className='form-group w-100 py-3'>
+                  <div className="form-group w-100 py-3">
                     <button
-                      className='btn form-control btn-primary rounded px-3'
-                      type='submit'
+                      className="btn form-control btn-primary rounded px-3"
+                      type="submit"
                       disabled={
                         !validNewPassword || !validConfirm ? true : false
-                      }>
+                      }
+                    >
                       Submit Form
                     </button>
                   </div>
@@ -217,8 +225,11 @@ const ChangePassword = () => {
           </div>
         </div>
       </main>
+      <aside className="col-md-2">
+        <StudentLeftAside />
+      </aside>
     </section>
   );
 };
 
-export default ChangePassword;
+export default StudentSettings;
