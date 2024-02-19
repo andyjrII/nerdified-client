@@ -4,7 +4,6 @@ import "../assets/styles/student.css";
 import StudentLeftAside from "../components/navigation/StudentLeftAside";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Moment from "react-moment";
-import { FaHandPointRight } from "react-icons/fa";
 import Logo from "../assets/images/logo.png";
 
 const Student = () => {
@@ -30,44 +29,17 @@ const Student = () => {
     getEnrolledCourses();
   }, []);
 
-  const displayEnrollments = enrollmentDetails.map((enrollmentDetail) => {
-    return (
-      <tr key={enrollmentDetail.id} className="bg-danger text-white">
-        <td className="bg-black">
-          <FaHandPointRight
-            role="button"
-            tabIndex="0"
-            onClick={() => getCourse(enrollmentDetail.courseId)}
-          />
-        </td>
-        <td>{enrollmentDetail.course.title}</td>
-        <td>{enrollmentDetail.course.level}</td>
-        <td>&#8358;{enrollmentDetail.paidAmount}</td>
-        <td>
-          <Moment format="MMMM D, YYYY">{enrollmentDetail.dateEnrolled}</Moment>
-        </td>
-        <td>{enrollmentDetail.reference}</td>
-        <td>
-          <Moment format="MMMM D, YYYY">
-            {enrollmentDetail.course.deadline}
-          </Moment>
-        </td>
-        <td>{enrollmentDetail.status}</td>
-      </tr>
-    );
-  });
-
   const displayMyCourses = enrollmentDetails.map((enrollmentDetail) => {
     return (
-      <div class="col-md-4 p-2" key={enrollmentDetail.id}>
-        <div class="card">
-          <div class="card-body">
+      <div className="col-md-4 p-2" key={enrollmentDetail.id}>
+        <div className="card">
+          <div className="card-body course-body">
             <div
               role="button"
-              class="bg-danger text-center text-white rounded p-2 mycourse-title"
+              className="text-center text-white rounded p-2 mycourse-title"
               onClick={() => getCourse(enrollmentDetail.courseId)}
             >
-              {enrollmentDetail.course.title}
+              <span className="bolded">{enrollmentDetail.course.title}</span>
               <br />
               Starts{" "}
               <Moment format="MMMM D, YYYY">
@@ -124,29 +96,14 @@ const Student = () => {
           </div>
         </div>
         {/* Enrolled Courses */}
-        <div className="row pb-5">{displayMyCourses}</div>
-        {/*
-        <div className="container pt-4">
-          <p className="h1 pb-3 text-center">
-            <span className="badge bg-dark">Course Enrollment History</span>
-          </p>
-          <table className="table">
-            <thead>
-              <tr className="bg-black text-white">
-                <th scope="col"></th>
-                <th scope="col">Course</th>
-                <th scope="col">Difficulty</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Date Paid</th>
-                <th scope="col">Reference</th>
-                <th scope="col">Start Date</th>
-                <th scope="col">Course Status</th>
-              </tr>
-            </thead>
-            <tbody>{displayEnrollments}</tbody>
-          </table>
+        <div className="row pb-5">
+          <h1 className="bolded">My Courses</h1>
+          {displayMyCourses}
         </div>
-      */}
+        <div className="row pb-5">
+          <h1 className="bolded">Other Courses</h1>
+          {}
+        </div>
       </main>
       <aside className="col-md-2">
         <StudentLeftAside />
