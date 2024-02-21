@@ -13,21 +13,49 @@ const Student = () => {
   const email = localStorage.getItem("STUDENT_EMAIL");
 
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
+  const [latestCourses, setLatestCourses] = useState([]);
 
   useEffect(() => {
-    const getEnrolledCourses = async () => {
-      try {
-        const response = await axiosPrivate.get(`students/enrolled/${email}`, {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        });
-        setEnrollmentDetails(response?.data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
     getEnrolledCourses();
+    getLatestCourses();
   }, []);
+
+  const getEnrolledCourses = async () => {
+    try {
+      const response = await axiosPrivate.get(`students/enrolled/${email}`, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+      setEnrollmentDetails(response?.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const getLatestCourses = async () => {
+    try {
+      const response = await axiosPrivate.get("courses/latest_courses/4", {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+      setLatestCourses(response?.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const getCourse = async (id) => {
+    try {
+      const response = await axiosPrivate.get(`courses/course/${id}`, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+      localStorage.setItem("NERDVILLE_COURSE", JSON.stringify(response?.data));
+      navigate("/courses/course");
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const displayMyCourses = enrollmentDetails.map((enrollmentDetail) => {
     return (
@@ -52,18 +80,21 @@ const Student = () => {
     );
   });
 
-  const getCourse = async (id) => {
-    try {
-      const response = await axiosPrivate.get(`courses/course/${id}`, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-      localStorage.setItem("NERDVILLE_COURSE", JSON.stringify(response?.data));
-      navigate("/courses/course");
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+  const displayLatestCourses = latestCourses.map((latestCourse) => {
+    return (
+      <div className="col-md-3 p-1" key={latestCourse.id}>
+        <div className="card latest_course rounded-2">
+          <div
+            className="card-body rounded-2"
+            role="button"
+            onClick={() => getCourse(latestCourse.id)}
+          >
+            <span className="bolded">{latestCourse.title}</span>
+          </div>
+        </div>
+      </div>
+    );
+  });
 
   return (
     <section className="row mb-0">
@@ -102,12 +133,10 @@ const Student = () => {
         </div>
         <div className="row pb-5">
           <h1 className="bolded">Other Courses</h1>
-          {}
+          {displayLatestCourses}
         </div>
       </main>
-      <aside className="col-md-2">
-        <StudentLeftAside />
-      </aside>
+      <aside className="col-md-2">{/* <StudentLeftAside /> */}</aside>
     </section>
   );
 };

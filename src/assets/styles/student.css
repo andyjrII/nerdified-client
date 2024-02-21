@@ -181,6 +181,28 @@ aside .side-inner .nav-menu ul li.active a:before {
   background-position: center;
 }
 
+.latest_course {
+  height: 90px;
+  align-items: center;
+  text-align: center;
+}
+
+.latest_course .card-body {
+  background-color: rgba(69, 32, 233, 0.4);
+  color: #ffffff;
+  width: 100%;
+  height: 100%;
+}
+
+.latest_course .card-body:hover {
+  background-color: rgb(69, 32, 233);
+}
+
+.latest_course .card-body span {
+  font-size: 16px;
+  vertical-align: super;
+}
+
 .bolded {
   font-weight: bold;
 }

@@ -1,18 +1,16 @@
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import StudentProfile from "../../assets/images/navpages/person_profile.jpg";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useStudent from "../../hooks/useStudent";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IoHomeSharp, IoSchool, IoMail, IoSettings } from "react-icons/io5";
-import { FaShoppingCart, FaBlog, FaLock, FaPhone } from "react-icons/fa";
-import useLogout from "../../hooks/useLogout";
+import { IoHomeSharp, IoSchool, IoMail } from "react-icons/io5";
+import { FaPhone } from "react-icons/fa";
+import StudentNavItems from "./StudentNavItems";
 
 const StudentLeftAside = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
-  const logout = useLogout();
 
   const email = localStorage.getItem("STUDENT_EMAIL");
 
@@ -81,11 +79,6 @@ const StudentLeftAside = () => {
     setSelectedImage(e.target.files[0]);
   };
 
-  const signOut = async () => {
-    await logout();
-    navigate("/");
-  };
-
   return (
     <div className="side-inner">
       <div className="profile">
@@ -134,58 +127,7 @@ const StudentLeftAside = () => {
         </div>
       </div>
 
-      <div className="nav-menu">
-        <ul>
-          <li>
-            <Link to="/">
-              <span className="span-icons">
-                <IoHomeSharp />
-              </span>
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link to="/courses">
-              <span className="span-icons">
-                <IoSchool />
-              </span>
-              Courses
-            </Link>
-          </li>
-          <li>
-            <Link to="/products">
-              <span className="span-icons">
-                <FaShoppingCart />
-              </span>
-              Products
-            </Link>
-          </li>
-          <li>
-            <Link to="/blog">
-              <span className="span-icons">
-                <FaBlog />
-              </span>
-              Blog
-            </Link>
-          </li>
-          <li>
-            <Link to="/student/settings">
-              <span className="span-icons">
-                <IoSettings />
-              </span>
-              Settings
-            </Link>
-          </li>
-          <li>
-            <Link to="#" role="button" onClick={signOut}>
-              <span className="span-icons">
-                <FaLock />
-              </span>
-              Sign out
-            </Link>
-          </li>
-        </ul>
-      </div>
+      <StudentNavItems />
     </div>
   );
 };
