@@ -5,9 +5,8 @@ import useStudent from "../../hooks/useStudent";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoHomeSharp, IoSchool, IoMail } from "react-icons/io5";
 import { FaPhone } from "react-icons/fa";
-import StudentNavItems from "./StudentNavItems";
 
-const StudentLeftAside = () => {
+const StudentRightAside = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,13 +16,11 @@ const StudentLeftAside = () => {
   const { student, setStudent } = useStudent();
   const studentId = student.id;
 
-  const [totalCount, setTotalCount] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePath, setImagePath] = useState("");
 
   useEffect(() => {
     fetchStudent();
-    totalCourses();
     fetchImage();
   }, [selectedImage]);
 
@@ -34,15 +31,6 @@ const StudentLeftAside = () => {
     } catch (error) {
       console.error("Error:", error);
       navigate("/signin", { state: { from: location }, replace: true });
-    }
-  };
-
-  const totalCourses = async () => {
-    try {
-      const response = await axiosPrivate.get(`students/total/${email}`);
-      setTotalCount(response?.data);
-    } catch (error) {
-      console.error("Error:", error);
     }
   };
 
@@ -82,7 +70,7 @@ const StudentLeftAside = () => {
   return (
     <div className="side-inner">
       <div className="profile">
-        <label className="image-label">
+        <label className="image-label" title="Upload Image">
           <input
             type="file"
             className="form-control"
@@ -119,17 +107,8 @@ const StudentLeftAside = () => {
           <IoSchool /> {student.academicLevel}
         </span>
       </div>
-
-      <div className="counter d-flex justify-content-center">
-        <div className="col">
-          <span className="number-label">Total Courses</span>
-          <strong className="number">{totalCount}</strong>
-        </div>
-      </div>
-
-      <StudentNavItems />
     </div>
   );
 };
 
-export default StudentLeftAside;
+export default StudentRightAside;

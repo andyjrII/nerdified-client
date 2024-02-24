@@ -10,7 +10,8 @@ import { FcLock } from "react-icons/fc";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useStudent from "../hooks/useStudent";
 import { useNavigate, Link } from "react-router-dom";
-import StudentLeftAside from "../components/navigation/StudentLeftAside";
+import StudentRightAside from "../components/navigation/StudentRightAside";
+import StudentNavItems from "../components/navigation/StudentNavItems";
 
 const PASSWORD_REGEX =
   /^(?=.*[Link-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -84,7 +85,7 @@ const StudentSettings = () => {
   return (
     <section className="body bg-dark row" id="password-bg">
       <aside className="col-md-2">
-        <StudentLeftAside />
+        <StudentNavItems />
       </aside>
       <main className="pt-0 col-md-8">
         <Link role="button" to="/student" className="back-btn btn btn-primary">
@@ -226,7 +227,7 @@ const StudentSettings = () => {
         </div>
       </main>
       <aside className="col-md-2">
-        <StudentLeftAside />
+        <StudentRightAside />
       </aside>
     </section>
   );

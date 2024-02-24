@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../assets/styles/student.css";
-import StudentLeftAside from "../components/navigation/StudentLeftAside";
+import StudentRightAside from "../components/navigation/StudentRightAside";
+import StudentNavItems from "../components/navigation/StudentNavItems";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import Logo from "../assets/images/logo.png";
@@ -14,10 +15,12 @@ const Student = () => {
 
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
   const [latestCourses, setLatestCourses] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     getEnrolledCourses();
     getLatestCourses();
+    totalCourses();
   }, []);
 
   const getEnrolledCourses = async () => {
@@ -34,7 +37,7 @@ const Student = () => {
 
   const getLatestCourses = async () => {
     try {
-      const response = await axiosPrivate.get("courses/latest_courses/4", {
+      const response = await axiosPrivate.get("courses/latest/6", {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -57,11 +60,20 @@ const Student = () => {
     }
   };
 
+  const totalCourses = async () => {
+    try {
+      const response = await axiosPrivate.get(`students/total/${email}`);
+      setTotalCount(response?.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const displayMyCourses = enrollmentDetails.map((enrollmentDetail) => {
     return (
-      <div className="col-md-4 p-2" key={enrollmentDetail.id}>
-        <div className="card">
-          <div className="card-body course-body">
+      <div className="col-md-3 p-2" key={enrollmentDetail.id}>
+        <div className="card rounded-3">
+          <div className="card-body course-body rounded-3">
             <div
               role="button"
               className="text-center text-white rounded p-2 mycourse-title"
@@ -82,7 +94,7 @@ const Student = () => {
 
   const displayLatestCourses = latestCourses.map((latestCourse) => {
     return (
-      <div className="col-md-3 p-1" key={latestCourse.id}>
+      <div className="col-md-2 p-1" key={latestCourse.id}>
         <div className="card latest_course rounded-2">
           <div
             className="card-body rounded-2"
@@ -98,10 +110,10 @@ const Student = () => {
 
   return (
     <section className="row mb-0">
-      <aside className="col-md-2">
-        <StudentLeftAside />
+      <aside className="col-md-1 bg-light">
+        <StudentNavItems />
       </aside>
-      <main className="col-md-8">
+      <main className="col-md-9">
         <div className="row">
           <div className="col p-5">
             <div className="card bg-danger">
@@ -128,15 +140,25 @@ const Student = () => {
         </div>
         {/* Enrolled Courses */}
         <div className="row pb-5">
-          <h1 className="bolded">My Courses</h1>
+          <h1 className="bolded overline-wavy">
+            My Courses <span className="total-courses">({totalCount})</span>
+          </h1>
           {displayMyCourses}
         </div>
         <div className="row pb-5">
-          <h1 className="bolded">Other Courses</h1>
+          <h1 className="bolded overline-wavy">
+            Other Courses
+            <Link
+              to="/courses"
+              className="btn btn-large bg-dark text-light view-courses"
+            >
+              View All
+            </Link>
+          </h1>
           {displayLatestCourses}
         </div>
       </main>
-      <aside className="col-md-2">{/* <StudentLeftAside /> */}</aside>
+      <aside className="col-md-2 bg-light">{<StudentRightAside />}</aside>
     </section>
   );
 };
