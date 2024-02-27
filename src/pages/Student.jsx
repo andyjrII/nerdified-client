@@ -139,14 +139,15 @@ const Student = () => {
           </div>
         </div>
         {/* Enrolled Courses */}
-        <div className="row pb-5">
-          <h1 className="bolded overline-wavy">
+        <div className="row p-3 mx-2 shadow">
+          <h1 className="bolded pb-2">
             My Courses <span className="total-courses">({totalCount})</span>
           </h1>
           {displayMyCourses}
         </div>
-        <div className="row pb-5">
-          <h1 className="bolded overline-wavy">
+        {/* Other Courses */}
+        <div className="row p-3 mx-2 my-5 shadow">
+          <h1 className="bolded pb-2">
             Other Courses
             <Link
               to="/courses"

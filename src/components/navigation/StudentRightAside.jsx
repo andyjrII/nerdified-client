@@ -5,6 +5,7 @@ import useStudent from "../../hooks/useStudent";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoHomeSharp, IoSchool, IoMail } from "react-icons/io5";
 import { FaPhone } from "react-icons/fa";
+import Logo from "../../assets/images/logo.png";
 
 const StudentRightAside = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -70,7 +71,7 @@ const StudentRightAside = () => {
   return (
     <div className="side-inner">
       <div className="profile">
-        <label className="image-label" title="Upload Image">
+        <label className="image-label mt-5" title="Upload Image">
           <input
             type="file"
             className="form-control"
@@ -94,19 +95,21 @@ const StudentRightAside = () => {
           </button>
         )}
         <h3 className="name">{student.name}</h3>
-        <span className="country">
+        <h2 className="text-danger mt-3">Information</h2>
+        <span className="address my-2">
           <IoHomeSharp /> {student.address}
         </span>
-        <span className="country">
+        <span className="email my-2">
           <IoMail /> {student.email}
         </span>
-        <span className="country">
+        <span className="phone my-2">
           <FaPhone /> {student.phoneNumber}
         </span>
-        <span className="country">
+        <span className="academic my-2">
           <IoSchool /> {student.academicLevel}
         </span>
       </div>
+      <img src={Logo} alt="Get Nerdified" className="side-logo" />
     </div>
   );
 };

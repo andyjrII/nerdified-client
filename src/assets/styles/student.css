@@ -25,42 +25,57 @@ h2 {
   font-size: 20px;
 }
 
+.col-md-1.bg-light,
+.col-md-2.bg-light {
+  position: fixed;
+}
+
+.col-md-1.bg-light {
+  height: 100%;
+}
+
+.col-md-2.bg-light {
+  right: 0px;
+}
+
+main.col-md-9 {
+  position: absolute;
+  left: 6.4rem;
+}
+
 aside .profile {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
   margin-top: 0px;
   padding-top: 0px;
-  border-bottom: 1px solid #020b14;
+  border-bottom: 2px solid #020b14;
 }
 aside .profile img {
   width: 150px;
-  height: 150px;
+  height: 160px;
   margin: 0 auto;
-  border-radius: 50%;
+  border-radius: 10px;
 }
 aside .profile .name {
-  font-size: 18px;
+  font-size: 20px;
+  text-wrap: wrap;
   margin-bottom: 0;
-  color: #020b14;
+  color: #020d14;
   text-transform: uppercase;
 }
-aside .profile .country {
+aside .profile .address,
+aside .profile .email,
+aside .profile .phone,
+aside .profile .academic {
   font-size: 14px;
+  text-wrap: wrap;
   color: #020b14;
   display: block;
 }
-aside .counter {
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #020b14;
-  text-align: center;
-}
-aside .counter div .number-label {
-  color: #cfcfcf;
-}
+
 aside .nav-menu ul,
 aside .nav-menu ul li {
   padding: 0;
@@ -82,9 +97,7 @@ aside .nav-menu ul li a:hover {
 }
 
 .bottom-nav {
-  position: absolute;
-  bottom: 0;
-  left: 30px;
+  margin-top: 100%;
 }
 
 #password-btn {
@@ -130,7 +143,7 @@ aside .nav-menu ul li a:hover {
 
 .total-courses {
   font-size: 30px;
-  color: #ff6347;
+  color: #e92020;
   float: right;
 }
 
@@ -149,7 +162,7 @@ aside .nav-menu ul li a:hover {
 }
 
 .course-body {
-  background-image: url("../images/student/course-image.jpeg");
+  background-image: url("../images/student/course-image.png");
   background-size: cover;
   background-position: center;
   height: 200px;
@@ -178,6 +191,7 @@ aside .nav-menu ul li a:hover {
   font-weight: bold;
 }
 
-.overline-wavy {
-  text-decoration: overline solid #ff6347;
+.side-logo {
+  width: 100%;
+  height: 200px;
 }
