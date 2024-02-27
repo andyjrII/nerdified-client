@@ -29,7 +29,7 @@ const Navigation = () => {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-black nerd-navbar-light">
+    <nav className="navbar navbar-expand-lg navbar-dark nerd-navbar-light navy">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           <img src={Logo} width="70" height="70" alt="<Nerdified />" />

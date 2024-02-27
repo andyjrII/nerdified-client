@@ -42,24 +42,25 @@ const Hero = () => {
             loading="lazy"
           />
           <div className="container">
-            <div className="carousel-caption text-start">
+            <div className="carousel-caption">
               <h1>
-                <span className="carousel-text badge bg-black p-3">
-                  &lt;Nerdified/&gt;
+                <span className="carousel-text badge navy p-3">
+                  Get &lt;Nerdified /&gt;
                 </span>
               </h1>
               <p>
-                <span className="carousel-text badge bg-black text-wrap text-start p-3">
-                  Welcome to Nerdified - the home of Nerds!
+                <span className="carousel-text badge navy text-wrap p-3">
+                  Welcome to the plac where Nerds are made!
                 </span>
               </p>
               <p>
                 <Link
-                  className="btn btn-lg bg-danger text-white me-1 carousel-button"
-                  to={accessToken && email ? "/student" : "/signin"}
+                  className="btn btn-lg text-white me-1 carousel-button"
+                  id="tomato"
+                  to={accessToken && email ? "/student" : "/signup"}
                   role="button"
                 >
-                  {accessToken && email ? "Profile" : "Sign in"}
+                  {accessToken && email ? "Profile" : "Register Now"}
                 </Link>
               </p>
             </div>
@@ -76,21 +77,22 @@ const Hero = () => {
             loading="lazy"
           />
           <div className="container">
-            <div className="carousel-caption">
+            <div className="carousel-caption text-end">
               <h1>
-                <span className="carousel-text badge bg-black p-3">
+                <span className="carousel-text badge navy p-3">
                   Coding Academy
                 </span>
               </h1>
               <p>
-                <span className="carousel-text badge bg-black text-wrap p-3">
+                <span className="carousel-text badge navy text-wrap p-3 text-end">
                   With our online programming classes, you can learn to code at
                   your own pace & from the comfort of your home
                 </span>
               </p>
               <p>
                 <Link
-                  className="btn btn-lg bg-danger text-white carousel-button"
+                  className="btn btn-lg text-white carousel-button"
+                  id="tomato"
                   to="/courses"
                 >
                   Enroll now
@@ -109,14 +111,14 @@ const Hero = () => {
             loading="lazy"
           />
           <div className="container">
-            <div className="carousel-caption text-end">
+            <div className="carousel-caption text-start">
               <h1>
-                <span className="carousel-text badge bg-black p-3">
+                <span className="carousel-text badge navy p-3">
                   App Gallery
                 </span>
               </h1>
               <p>
-                <span className="carousel-text badge bg-black text-wrap text-end p-3">
+                <span className="carousel-text badge navy text-wrap text-start p-3">
                   Our application app gallery contains software for various
                   platforms - Mobile, Web & Desktop or make request for your
                   custom apps
@@ -124,7 +126,8 @@ const Hero = () => {
               </p>
               <p>
                 <Link
-                  className="btn btn-lg bg-danger text-white carousel-button"
+                  className="btn btn-lg text-white carousel-button"
+                  id="tomato"
                   to="/products"
                 >
                   Check it out

@@ -2,13 +2,6 @@
   --bs-border-radius: 0.375rem;
 }
 
-.section-bg {
-  background-image: url("../images/bg/home-bg.jpg");
-  background-attachment: fixed;
-  background-position: center;
-  background-size: cover;
-}
-
 .bd-placeholder-img {
   font-size: 1.125rem;
   text-anchor: middle;
@@ -366,4 +359,14 @@
 
 .client_name {
   font-size: 20px;
+}
+
+/* Colors */
+
+.navy {
+  background-color: #000080;
+}
+
+#tomato {
+  background-color: #ff6347;
 }

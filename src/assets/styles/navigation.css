@@ -218,7 +218,7 @@ li svg {
 }
 
 .nerd-navbar-light .navbar-nav > .nav-item > .nav-link:hover {
-  color: #ff0000;
+  color: #ff6347;
 }
 
 .nerd-navbar-light .navbar-nav > .nav-item > .nav-link:hover:before {
@@ -233,7 +233,7 @@ li svg {
   display: block;
   width: 0;
   height: 2px;
-  background: #ff0000;
+  background: #ff6347;
   transition: 0.3s;
 }
 
@@ -276,7 +276,7 @@ li svg {
 
 .nerd-navbar-light .navbar-nav > .nav-item .dropdown-menu .dropdown-item:hover,
 .nerd-navbar-light .navbar-nav > .nav-item .dropdown-menu .dropdown-item:focus {
-  background: #ff0000;
+  background: #ff6347;
   color: #fff;
 }
 
@@ -308,4 +308,12 @@ li svg {
 
 .nerd-navbar-light .navbar-toggler:focus {
   outline: none !important;
+}
+
+.navy {
+  background-color: #000080;
+}
+
+.tomato {
+  background-color: #ff6347;
 }
