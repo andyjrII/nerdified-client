@@ -1,16 +1,11 @@
 footer a svg {
-  width: 35px;
-  height: 35px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 }
 
 footer a #gmail:hover {
   color: #e985ec;
-}
-
-footer a #linkedin:hover {
-  color: #1115d4;
-  background-color: #ffffff;
 }
 
 footer a #facebook:hover {
@@ -31,25 +26,9 @@ footer a #whatsapp:hover {
   color: #ffffff;
 }
 
-footer ul {
-  margin-right: 20px;
-}
-
-footer ul .icon-list {
-  padding: 10px;
-}
-
 @media (max-width: 560px) {
   footer a svg {
     width: 25px;
     height: 25px;
-  }
-
-  footer ul {
-    margin-right: 15px;
-  }
-
-  footer ul .icon-list {
-    padding: 8px;
   }
 }

@@ -1,7 +1,5 @@
 # Student.jsx - Remodify students dashboard for smaller screens
 
-# Home.jsx - Change Signin to Register Now - users should be taken to the signup page first, before signin page.
-
 # Home.jsx - List reasons Nerdified is the best place for users to learn
 
 # Home.jsx - Show examples of what students will be building

@@ -50,7 +50,7 @@ const Hero = () => {
               </h1>
               <p>
                 <span className="carousel-text badge navy text-wrap p-3">
-                  Welcome to the plac where Nerds are made!
+                  Welcome to the place where Nerds are made!
                 </span>
               </p>
               <p>

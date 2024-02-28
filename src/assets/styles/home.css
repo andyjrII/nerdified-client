@@ -310,6 +310,10 @@
   padding: 20px;
 }
 
+.carousel-indicators {
+  background-color: #000080;
+  border-radius: 5px;
+}
 @media (max-width: 1200px) {
   #testimonialCarousel .carousel-item .row {
     width: 80%;

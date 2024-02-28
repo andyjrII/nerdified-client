@@ -106,9 +106,7 @@ const Home = () => {
         <section className="page-section section-bg clearfix shadow m-5">
           <div className="testimonial_section text-center">
             <p className="h1">
-              <span className="badge text-white my-4" id="tomato">
-                Testimonials
-              </span>
+              <span className="badge text-white my-2 navy">Testimonials</span>
             </p>
             <Testimonial />
           </div>
