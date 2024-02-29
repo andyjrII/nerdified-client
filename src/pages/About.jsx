@@ -1,7 +1,7 @@
 import Footer from "../components/footer/Footer";
 import Navigation from "../components/navigation/Navigation";
-import PurposeImage from "../assets/images/navpages/about-purpose.jpg";
-import ServiceImage from "../assets/images/navpages/about-service.jpg";
+import PurposeImage from "../assets/images/navpages/about-purpose.jpeg";
+import ServiceImage from "../assets/images/navpages/about-service.jpeg";
 import "../assets/styles/navpages.css";
 
 const About = () => {
