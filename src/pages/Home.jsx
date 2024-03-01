@@ -12,10 +12,10 @@ const Home = () => {
   return (
     <section>
       <Navigation />
-      <main>
+      <main className="home-bg">
         <Hero />
 
-        <section className="page-section section-bg clearfix shadow m-5">
+        <section className="page-section section-bg clearfix shadow m-5 rounded">
           <div className="container">
             <div className="intro">
               <motion.img
@@ -59,7 +59,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="page-section section-bg clearfix shadow m-5">
+        <section className="page-section section-bg clearfix shadow m-5 rounded">
           <div className="container">
             <div className="intro">
               <motion.img
