@@ -55,7 +55,7 @@ const Hero = () => {
               </p>
               <p>
                 <Link
-                  className="btn btn-lg text-white me-1 carousel-button"
+                  className="btn btn-lg me-1 carousel-button"
                   to={accessToken && email ? "/student" : "/signup"}
                   role="button"
                 >
@@ -89,10 +89,7 @@ const Hero = () => {
                 </span>
               </p>
               <p>
-                <Link
-                  className="btn btn-lg text-white carousel-button"
-                  to="/courses"
-                >
+                <Link className="btn btn-lg carousel-button" to="/courses">
                   Enroll now
                 </Link>
               </p>
@@ -123,10 +120,7 @@ const Hero = () => {
                 </span>
               </p>
               <p>
-                <Link
-                  className="btn btn-lg text-white carousel-button"
-                  to="/products"
-                >
+                <Link className="btn btn-lg carousel-button" to="/products">
                   Check it out
                 </Link>
               </p>

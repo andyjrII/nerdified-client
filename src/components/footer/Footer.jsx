@@ -102,12 +102,6 @@ const Footer = () => {
               <span> Fullstack Web Development</span>
             </Link>
           </p>
-          <p>
-            <Link className="text-white">
-              <GrCode />
-              <span> Data Analysis</span>
-            </Link>
-          </p>
         </div>
         <div className="col-md-3">
           <h6 className="mb-3">ABOUT US</h6>

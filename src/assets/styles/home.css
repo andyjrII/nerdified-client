@@ -52,6 +52,12 @@
 
 p .carousel-button {
   background-color: #ff6347;
+  color: #f5f5f5;
+}
+
+p .carousel-button:hover {
+  background-color: #ff0000;
+  color: #ffffff;
 }
 
 @media (max-width: 659px) {
@@ -290,7 +296,7 @@ p .carousel-button {
 }
 
 .bg-faded {
-  background-color: #f6dff7;
+  background-color: #f5f5f5;
 }
 
 .section-heading {
