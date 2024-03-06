@@ -33,7 +33,7 @@ const Navigation = () => {
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           <img src={Logo} width="70" height="70" alt="<Nerdified />" />
-          &lt;Nerdified/&gt;
+          GET NERDIFIED
         </Link>
         <button
           className="navbar-toggler"

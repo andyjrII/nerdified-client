@@ -66,7 +66,7 @@ const Footer = () => {
               target="_blank"
             >
               <GrMail id="gmail" />
-              <span> E-Mail</span>
+              <span> ajsly87@gmail.com</span>
             </Link>
           </p>
           <p>
@@ -83,23 +83,29 @@ const Footer = () => {
           </p>
         </div>
         <div className="col-md-3">
-          <h6 className="mb-3">CHOOSE YOUR CAREER PATH</h6>
+          <h6 className="mb-3">COURSES OFFERED</h6>
           <p>
             <Link className="text-white">
               <GrCode />
-              <span> Web Developer</span>
+              <span> Frontend Web Development</span>
             </Link>
           </p>
           <p>
             <Link className="text-white">
               <GrCode />
-              <span> Mobile App Developer</span>
+              <span> Backend Web Development</span>
             </Link>
           </p>
           <p>
             <Link className="text-white">
               <GrCode />
-              <span> Data Analyst</span>
+              <span> Fullstack Web Development</span>
+            </Link>
+          </p>
+          <p>
+            <Link className="text-white">
+              <GrCode />
+              <span> Data Analysis</span>
             </Link>
           </p>
         </div>

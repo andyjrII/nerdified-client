@@ -25,12 +25,12 @@ const Courses = () => {
           {
             params: {
               search: searchQuery,
-              level
-            }
+              level,
+            },
           },
           {
             headers: { "Content-Type": "application/json" },
-            withCredentials: true
+            withCredentials: true,
           }
         );
         setTotalCourses(response.data.totalCourses);
@@ -46,40 +46,41 @@ const Courses = () => {
 
   const displayCourses = courses.map((course) => {
     return (
-      <motion.div layout className='mb-4' key={course.id}>
-        <div className='card mb-0 rounded-3 shadow-sm'>
-          <div className='card-header py-3 bg-dark'>
-            <h4 className='my-0 fw-normal text-white course-title'>
+      <motion.div layout className="mb-4" key={course.id}>
+        <div className="card mb-0 rounded-3 shadow-sm">
+          <div className="card-header py-3 bg-dark">
+            <h4 className="my-0 fw-normal text-white course-title">
               {course.title}
             </h4>
           </div>
-          <div className='card-body'>
-            <h1 className='card-title pricing-card-title'>
+          <div className="card-body">
+            <h1 className="card-title pricing-card-title">
               &#8358;{course.price}
             </h1>
-            <ul className='list-unstyled mt-1 mb-3'>
+            <ul className="list-unstyled mt-1 mb-3">
               <li>
                 Level:{" "}
-                <small className='text-muted fw-light'>{course.level}</small>
+                <small className="text-muted fw-light">{course.level}</small>
               </li>
               <li>
                 Start Date:{" "}
-                <small className='text-muted fw-light'>
-                  <Moment format='MMMM D, YYYY'>{course.deadline}</Moment>
+                <small className="text-muted fw-light">
+                  <Moment format="MMMM D, YYYY">{course.deadline}</Moment>
                 </small>
               </li>
               <li>
-                <small className='text-dark fw-light course-description'>
+                <small className="text-dark fw-light course-description">
                   {course.description}
                 </small>
               </li>
             </ul>
             <Link
-              to='/courses/course'
-              role='button'
-              className='w-50 btn btn-lg'
-              id='check-btn'
-              onClick={() => saveCourse(course)}>
+              to="/courses/course"
+              role="button"
+              className="w-50 btn btn-lg"
+              id="check-btn"
+              onClick={() => saveCourse(course)}
+            >
               View
             </Link>
           </div>
@@ -105,44 +106,48 @@ const Courses = () => {
   return (
     <>
       <Navigation />
-      <header className='py-3 bg-light border-bottom mb-4 header-bg'>
-        <div className='container'>
-          <div className='text-center my-3'>
-            <p className='h1'>
-              <span className='badge bg-danger'>Courses</span>
+      <header className="py-3 bg-light border-bottom mb-4 header-bg">
+        <div className="container">
+          <div className="text-center my-3">
+            <p className="h1">
+              <span className="badge bg-danger">Courses</span>
             </p>
           </div>
         </div>
       </header>
-      <div className='container'>
+      <div className="container">
         {/* Search filter for Courses */}
-        <div className='p-3 pb-md-4 mx-auto row'>
-          <div className='col-sm-8 mb-4'>
+        <div className="p-3 pb-md-4 mx-auto row">
+          <div className="col-sm-8 mb-4">
             <input
-              type='text'
-              className='form-control bg-dark text-white'
-              placeholder='Search for Course...'
-              aria-label='Search'
+              type="text"
+              className="form-control bg-dark text-white"
+              placeholder="Search for Course..."
+              aria-label="Search"
               onChange={handleSearchChange}
               value={searchQuery}
             />
           </div>
-          <div className='col-sm-4'>
+          <div className="col-sm-4">
             <select
-              className='form-select bg-dark texy-white'
-              id='level'
+              className="form-select bg-dark texy-white"
+              id="level"
               value={level}
-              onChange={(e) => setLevel(e.target.value)}>
-              <option value=''>Choose Level</option>
-              <option value='BEGINNER'>Beginner</option>
-              <option value='INTERMEDIATE'>Intermediate</option>
-              <option value='ADVANCE'>Advance</option>
+              onChange={(e) => setLevel(e.target.value)}
+            >
+              <option value="">Choose Level</option>
+              <option value="BEGINNER">Beginner</option>
+              <option value="INTERMEDIATE">Intermediate</option>
+              <option value="ADVANCE">Advance</option>
             </select>
           </div>
         </div>
 
         {/* Courses */}
-        <motion.div layout className='row row-cols-1 row-cols-md-4 text-center'>
+        <motion.div
+          layout
+          className="row row-cols-1 row-cols-md-4 text-center justify-content-center"
+        >
           {displayCourses}
         </motion.div>
 

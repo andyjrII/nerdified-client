@@ -45,18 +45,17 @@ const Hero = () => {
             <div className="carousel-caption">
               <h1>
                 <span className="carousel-text badge navy p-3">
-                  Get &lt;Nerdified /&gt;
+                  Welcome to Nerdified
                 </span>
               </h1>
               <p>
                 <span className="carousel-text badge navy text-wrap p-3">
-                  Welcome to the place where Nerds are made!
+                  A place where Nerds are made!
                 </span>
               </p>
               <p>
                 <Link
                   className="btn btn-lg text-white me-1 carousel-button"
-                  id="tomato"
                   to={accessToken && email ? "/student" : "/signup"}
                   role="button"
                 >
@@ -92,7 +91,6 @@ const Hero = () => {
               <p>
                 <Link
                   className="btn btn-lg text-white carousel-button"
-                  id="tomato"
                   to="/courses"
                 >
                   Enroll now
@@ -127,7 +125,6 @@ const Hero = () => {
               <p>
                 <Link
                   className="btn btn-lg text-white carousel-button"
-                  id="tomato"
                   to="/products"
                 >
                   Check it out

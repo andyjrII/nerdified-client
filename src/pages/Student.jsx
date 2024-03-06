@@ -116,7 +116,7 @@ const Student = () => {
       <main className="col-md-9">
         <div className="row">
           <div className="col p-5">
-            <div className="card bg-danger">
+            <div className="card">
               <div className="card-body row">
                 <div className="col-md-10">
                   <p className="card-text text-white">Welcome Back!</p>

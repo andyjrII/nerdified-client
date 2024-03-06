@@ -110,7 +110,7 @@ aside .nav-menu ul li a:hover {
 }
 
 #password-btn:hover {
-  color: #e79292;
+  color: #ff6347;
 }
 
 #image-input {
@@ -141,9 +141,13 @@ aside .nav-menu ul li a:hover {
   }
 }
 
+.p-5 .card {
+  background-color: #ff6347;
+}
+
 .total-courses {
   font-size: 30px;
-  color: #e92020;
+  color: #ff6347;
   float: right;
 }
 
@@ -154,11 +158,11 @@ aside .nav-menu ul li a:hover {
 
 .mycourse-title {
   margin-top: 100px;
-  background-color: rgba(233, 32, 32, 0.4);
+  background-color: rgba(233, 32, 32, 0.5);
 }
 
 .mycourse-title:hover {
-  background-color: #e92020;
+  background-color: #ff6347;
 }
 
 .course-body {
@@ -174,13 +178,13 @@ aside .nav-menu ul li a:hover {
 }
 
 .latest_course .card-body {
-  background-color: rgba(233, 32, 32, 0.4);
+  background-color: rgb(255, 99, 71, 0.4);
   color: #ffffff;
   width: 100%;
 }
 
 .latest_course .card-body:hover {
-  background-color: #e92020;
+  background-color: #ff6347;
 }
 
 .latest_course .card-body span {

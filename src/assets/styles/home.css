@@ -2,6 +2,16 @@
   --bs-border-radius: 0.375rem;
 }
 
+/* Colors */
+
+.navy {
+  background-color: #000080;
+}
+
+.tomato {
+  background-color: #ff6347;
+}
+
 .bd-placeholder-img {
   font-size: 1.125rem;
   text-anchor: middle;
@@ -33,10 +43,15 @@
 #heroCarousel .carousel-item .carousel-caption p .carousel-text {
   font-size: 25px;
 }
+
 #heroCarousel .carousel-item .carousel-caption .carousel-button {
   width: 120px;
   font-size: 16px;
   padding: 10px;
+}
+
+p .carousel-button {
+  background-color: #ff6347;
 }
 
 @media (max-width: 659px) {
@@ -75,6 +90,19 @@
   }
 }
 
+/* Why Section */
+
+.why-icon {
+  width: 60px;
+  height: 60px;
+  color: #f5f5f5;
+}
+
+.why-text {
+  font-size: 1.3em;
+  color: #f5f5f5;
+}
+
 /* Section */
 
 .page-section .container {
@@ -83,6 +111,12 @@
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
   margin-left: auto;
+}
+
+.home-bg {
+  background-image: url("../images/bg/home-bg.jpg");
+  background-position: center;
+  background-size: contain;
 }
 
 @media (min-width: 576px) {
@@ -273,6 +307,10 @@
   font-weight: 100;
 }
 
+.intro-button .btn {
+  background-color: #ff6347;
+}
+
 @media (max-width: 460px) {
   .section-heading .section-heading-lower {
     font-size: 1rem;
@@ -310,10 +348,6 @@
   padding: 20px;
 }
 
-.carousel-indicators {
-  background-color: #000080;
-  border-radius: 5px;
-}
 @media (max-width: 1200px) {
   #testimonialCarousel .carousel-item .row {
     width: 80%;
@@ -363,14 +397,4 @@
 
 .client_name {
   font-size: 20px;
-}
-
-/* Colors */
-
-.navy {
-  background-color: #000080;
-}
-
-#tomato {
-  background-color: #ff6347;
 }
