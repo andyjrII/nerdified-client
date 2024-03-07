@@ -39,11 +39,11 @@ const CourseDetails = () => {
           {
             headers: { "Content-Type": "multipart/form-data" },
             withCredentials: true,
-            responseType: "arraybuffer" // Specify that the response should be treated as binary data
+            responseType: "arraybuffer", // Specify that the response should be treated as binary data
           }
         );
         const pdfBlob = new Blob([response.data], {
-          type: "application/pdf"
+          type: "application/pdf",
         });
         const pdfUrl = URL.createObjectURL(pdfBlob);
         setPdfData(pdfUrl);
@@ -68,14 +68,14 @@ const CourseDetails = () => {
           prev: 0,
           play: {
             show: 1,
-            size: "large"
+            size: "large",
           },
           next: 0,
           rotateLeft: 0,
           rotateRight: 0,
           flipHorizontal: 0,
-          flipVertical: 0
-        }
+          flipVertical: 0,
+        },
       });
       return () => {
         viewer.destroy();
@@ -87,7 +87,7 @@ const CourseDetails = () => {
     email,
     amount: parseFloat(amount * 100),
     metadata: {
-      "Course Title": courseTitle
+      "Course Title": courseTitle,
     },
     publicKey,
     text: "Pay Now",
@@ -104,7 +104,7 @@ const CourseDetails = () => {
       alert(message);
       navigate("/courses", { replace: true });
     },
-    onClose: () => alert("Wait! You need this course, don't go!!!!")
+    onClose: () => alert("Wait! You need this course, don't go!!!!"),
   };
 
   const savePaymentInfo = async () => {
@@ -114,7 +114,7 @@ const CourseDetails = () => {
         JSON.stringify({ email, courseId, amount, reference }),
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true
+          withCredentials: true,
         }
       );
     } catch (error) {
@@ -127,71 +127,89 @@ const CourseDetails = () => {
       {course ? (
         <>
           <Navigation />
-          <header className='py-3 bg-light border-bottom mb-4 header-bg'>
-            <div className='container'>
-              <div className='text-center my-3'>
-                <p className='h1'>
-                  <span className='badge bg-danger'>
-                    {courseTitle} Payment Details
-                  </span>
+          <header className="py-3 bg-light border-bottom mb-4 header-bg">
+            <div className="container">
+              <div className="text-center my-3">
+                <p className="h1">
+                  <span className="badge bg-danger">{courseTitle}</span>
                 </p>
               </div>
             </div>
           </header>
 
           {/* Course Payment */}
-          <div className='container'>
-            <div className='modal-dialog' role='document'>
-              <div className='modal-content rounded-4 shadow'>
-                <div className='modal-body p-3'>
-                  <div className='bg-dark rounded py-2'>
-                    <h5 className='fw-bold text-center text-white'>
-                      {course.title}
-                    </h5>
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-4 mt-5">
+                <div className="modal-content rounded-4 shadow">
+                  <div className="modal-body p-3">
+                    <div className="bg-dark rounded py-2">
+                      <h5 className="fw-bold text-center text-white">
+                        Payment Details
+                      </h5>
+                    </div>
+                    <ul className="d-grid gap-4 list-unstyled p-3">
+                      <li className="d-flex gap-4">
+                        <SiLevelsdotfyi className="bi text-success flex-shrink-0" />
+                        <div>
+                          <h5 className="mb-0 section-heading">Level</h5>
+                          <span className="text-success">{course.level}</span>
+                        </div>
+                      </li>
+                      <li className="d-flex gap-4">
+                        <FaClock className="bi text-danger flex-shrink-0" />
+                        <div>
+                          <h5 className="mb-0 section-heading">Start Date</h5>
+                          <span className="text-danger">
+                            <Moment format="MMMM D, YYYY">
+                              {course.deadline}
+                            </Moment>
+                          </span>
+                        </div>
+                      </li>
+                      <li className="d-flex gap-4">
+                        <FaDollarSign className="bi text-warning flex-shrink-0" />
+                        <div>
+                          <h5 className="mb-0 section-heading">Price</h5>
+                          <span className="text-warning">
+                            &#8358;{course.price}.00
+                          </span>
+                        </div>
+                      </li>
+                      <li className="d-flex text-center fs-5">
+                        {course.description}
+                      </li>
+                    </ul>
+                    <div className="text-center pt-0">
+                      {accessToken && email ? (
+                        <PaystackButton
+                          type="button"
+                          className="btn btn-lg text-white pay-button fw-bold"
+                          {...paymentsProps}
+                        />
+                      ) : (
+                        <Link
+                          to="/signin"
+                          className="btn btn-lg text-white pay-button fw-bold"
+                        >
+                          Login to Pay!
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                  <ul className='d-grid gap-4 list-unstyled py-3 px-3'>
-                    <li className='d-flex gap-4'>
-                      <SiLevelsdotfyi className='bi text-success flex-shrink-0' />
-                      <div>
-                        <h5 className='mb-0 section-heading'>Level</h5>
-                        <span className='text-success'>{course.level}</span>
-                      </div>
-                    </li>
-                    <li className='d-flex gap-4'>
-                      <FaClock className='bi text-danger flex-shrink-0' />
-                      <div>
-                        <h5 className='mb-0 section-heading'>Start Date</h5>
-                        <span className='text-danger'>
-                          <Moment format='MMMM D, YYYY'>
-                            {course.deadline}
-                          </Moment>
-                        </span>
-                      </div>
-                    </li>
-                    <li className='d-flex gap-4'>
-                      <FaDollarSign className='bi text-warning flex-shrink-0' />
-                      <div>
-                        <h5 className='mb-0 section-heading'>Price</h5>
-                        <span className='text-warning'>
-                          &#8358;{course.price}.00
-                        </span>
-                      </div>
-                    </li>
-                    <li className='d-flex text-center'>{course.description}</li>
-                  </ul>
-                  <div className='text-center pt-0'>
-                    {accessToken && email ? (
-                      <PaystackButton
-                        type='button'
-                        className='btn btn-lg bg-danger text-white pay-button fw-bold'
-                        {...paymentsProps}
+                </div>
+              </div>
+              {/* PDF Viewer */}
+              <div className="col-md-8">
+                <div className="my-4">
+                  <div ref={pdfViewerRef} className="viewer-container">
+                    {pdfData && (
+                      <embed
+                        src={pdfData}
+                        type="application/pdf"
+                        width="100%"
+                        height="600"
                       />
-                    ) : (
-                      <Link
-                        to='/signin'
-                        className='btn btn-lg bg-danger text-white pay-button fw-bold'>
-                        Login to Pay!
-                      </Link>
                     )}
                   </div>
                 </div>
@@ -202,22 +220,6 @@ const CourseDetails = () => {
       ) : (
         <Missing />
       )}
-
-      {/* PDF Viewer */}
-      <div className='container'>
-        <div className='mt-4 mb-4'>
-          <div ref={pdfViewerRef} className='viewer-container'>
-            {pdfData && (
-              <embed
-                src={pdfData}
-                type='application/pdf'
-                width='100%'
-                height='600'
-              />
-            )}
-          </div>
-        </div>
-      </div>
       <Footer />
     </>
   );

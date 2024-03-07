@@ -121,7 +121,7 @@ const Courses = () => {
           <div className="col-sm-8 mb-4">
             <input
               type="text"
-              className="form-control bg-dark text-white"
+              className="form-control rounded"
               placeholder="Search for Course..."
               aria-label="Search"
               onChange={handleSearchChange}
@@ -130,7 +130,7 @@ const Courses = () => {
           </div>
           <div className="col-sm-4">
             <select
-              className="form-select bg-dark texy-white"
+              className="form-select rounded"
               id="level"
               value={level}
               onChange={(e) => setLevel(e.target.value)}

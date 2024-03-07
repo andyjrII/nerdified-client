@@ -132,22 +132,6 @@ const Blog = () => {
           {/* Blog entries */}
           <div className="col-lg-8">
             <div className="row">{displayPosts}</div>
-
-            {/* Pagination */}
-            <nav aria-label="Pagination pt-5">
-              <hr className="my-0" />
-              <ReactPaginate
-                previousLabel={"Previous"}
-                nextLabel={"Next"}
-                pageCount={pageCount}
-                onPageChange={changePage}
-                containerClassName={"paginationBttns"}
-                previousLinkClassName={"previousBttn"}
-                nextLinkClassName={"nextBttn"}
-                disabledClassName={"paginationDisabled"}
-                activeClassName={"paginationActive"}
-              />
-            </nav>
           </div>
 
           {/* Side widgets */}
@@ -204,6 +188,24 @@ const Blog = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Pagination */}
+        <div className="row">
+          <nav aria-label="Pagination pt-5">
+            <hr className="my-0" />
+            <ReactPaginate
+              previousLabel={"Previous"}
+              nextLabel={"Next"}
+              pageCount={pageCount}
+              onPageChange={changePage}
+              containerClassName={"paginationBttns"}
+              previousLinkClassName={"previousBttn"}
+              nextLinkClassName={"nextBttn"}
+              disabledClassName={"paginationDisabled"}
+              activeClassName={"paginationActive"}
+            />
+          </nav>
         </div>
       </div>
       <Footer />
