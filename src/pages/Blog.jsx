@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import axios from "../api/axios";
 import Moment from "react-moment";
 import ReactPaginate from "react-paginate";
-import blogPicture from "../assets/images/navpages/blog-default.jpg";
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -83,7 +82,7 @@ const Blog = () => {
           <Link to={`https://${post.postUrl}`}>
             <img
               className="card-img-top post-image"
-              src={imagePaths[index] || blogPicture}
+              src={imagePaths[index]}
               alt="..."
             />
           </Link>
