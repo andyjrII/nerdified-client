@@ -17,25 +17,19 @@ const Home = () => {
         <Hero />
 
         <section className="page-section section-bg clearfix text-center navy m-5 rounded">
-          <p className="h1 mb-3">
+          <p className="h1 mb-2">
             <span className="badge text-white my-2 tomato">
               Why you should Get Nerdified!
             </span>
           </p>
 
-          <div className="row mb-3 justify-content-center">
+          <div className="row mb-2 justify-content-center">
             <div className="col-md-5 text-center shadow-lg rounded px-5 py-3 m-4">
               <div className="row justify-content-center">
                 <FaCertificate className="why-icon" />
               </div>
               <div className="row">
                 <h2 className="text-white">We have Expert Instructors</h2>
-                <p className="why-text">
-                  Our coding academy is led by seasoned industry professionals
-                  who bring a wealth of experience to the virtual classroom.
-                  Their commitment to quality education ensures that our
-                  students receive top-notch instruction
-                </p>
               </div>
             </div>
 
@@ -45,29 +39,17 @@ const Home = () => {
               </div>
               <div className="row">
                 <h2 className="text-white">Interactive Live Online Classes</h2>
-                <p className="why-text">
-                  Immerse yourself in our live classes, where direct interaction
-                  with instructors is not just encouraged – it's integral to the
-                  learning experience. Real-time problem-solving is a key
-                  feature. & distance is not a barrier
-                </p>
               </div>
             </div>
           </div>
 
-          <div className="row mb-3 justify-content-center">
+          <div className="row mb-2 justify-content-center">
             <div className="col-md-5 text-center shadow-lg rounded px-5 py-3 mx-4">
               <div className="row justify-content-center">
                 <FaList className="why-icon" />
               </div>
               <div className="row">
                 <h2 className="text-white">Structured Curriculum</h2>
-                <p className="why-text">
-                  Our carefully crafted curriculum takes you on a logical
-                  journey through the world of coding. From foundational
-                  concepts to specialized topics, every module is designed to
-                  build your skills incrementally
-                </p>
               </div>
             </div>
 
@@ -77,11 +59,6 @@ const Home = () => {
               </div>
               <div className="row">
                 <h2 className="text-white">Practical Hands-On Projects</h2>
-                <p className="why-text">
-                  Theory meets practice in our academy. Expect to work on
-                  hands-on projects that mirror real-world scenarios, applying
-                  the knowledge gained in class to solve tangible problems
-                </p>
               </div>
             </div>
           </div>

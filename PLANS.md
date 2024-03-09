@@ -14,4 +14,4 @@
 
 # Home.jsx - Hero not displaying well in mobile view
 
-# Product.jsx & Blog.jsx - Freezes, pages need to be sped up (Possibly try out CDN).
+# Blog.jsx - Freezes, pages need to be sped up (Possibly try out CDN).
