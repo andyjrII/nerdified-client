@@ -16,49 +16,32 @@ const Home = () => {
       <main>
         <Hero />
 
-        <section className="page-section section-bg clearfix text-center navy m-5 rounded">
-          <p className="h1 mb-2">
+        <section className="page-section bg-transparent rounded">
+          <p className="h1 mb-2 text-center">
             <span className="badge text-white my-2 tomato">
               Why you should Get Nerdified!
             </span>
           </p>
 
-          <div className="row mb-2 justify-content-center">
-            <div className="col-md-5 text-center shadow-lg rounded px-5 py-3 m-4">
-              <div className="row justify-content-center">
-                <FaCertificate className="why-icon" />
-              </div>
-              <div className="row">
-                <h2 className="text-white">We have Expert Instructors</h2>
-              </div>
-            </div>
-
-            <div className="col-md-5 text-center shadow-lg rounded px-5 py-3 m-4">
-              <div className="row justify-content-center">
-                <FaGlobe className="why-icon" />
-              </div>
-              <div className="row">
-                <h2 className="text-white">Interactive Live Online Classes</h2>
-              </div>
-            </div>
-          </div>
-
-          <div className="row mb-2 justify-content-center">
-            <div className="col-md-5 text-center shadow-lg rounded px-5 py-3 mx-4">
-              <div className="row justify-content-center">
-                <FaList className="why-icon" />
-              </div>
-              <div className="row">
-                <h2 className="text-white">Structured Curriculum</h2>
-              </div>
-            </div>
-
-            <div className="col-md-5 text-center shadow-lg rounded px-5 py-3 mx-4">
-              <div className="row justify-content-center">
-                <FaLaptop className="why-icon" />
-              </div>
-              <div className="row">
-                <h2 className="text-white">Practical Hands-On Projects</h2>
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-md-5 navy p-5 rounded-3">
+                <h2 className="text-white mb-4">
+                  <FaCertificate className="why-icon" />
+                  We have Expert Instructors
+                </h2>
+                <h2 className="text-white mb-4">
+                  <FaGlobe className="why-icon" />
+                  Interactive Live Online Classes
+                </h2>
+                <h2 className="text-white mb-4">
+                  <FaList className="why-icon" />
+                  Structured Curriculum
+                </h2>
+                <h2 className="text-white">
+                  <FaLaptop className="why-icon" />
+                  Practical Hands-On Projects
+                </h2>
               </div>
             </div>
           </div>
@@ -144,7 +127,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="page-section section-bg clearfix shadow m-5 rounded navy">
+        <section className="page-section clearfix shadow m-5 rounded navy">
           <div className="testimonial_section text-center">
             <p className="h1">
               <span className="badge text-white my-2 tomato">Testimonials</span>
