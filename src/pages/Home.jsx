@@ -44,7 +44,7 @@ const Home = () => {
                 <FaGlobe className="why-icon" />
               </div>
               <div className="row">
-                <h2 className="text-white">Interactive Online Live Classes</h2>
+                <h2 className="text-white">Interactive Live Online Classes</h2>
                 <p className="why-text">
                   Immerse yourself in our live classes, where direct interaction
                   with instructors is not just encouraged – it's integral to the

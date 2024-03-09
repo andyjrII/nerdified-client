@@ -7,16 +7,12 @@ import Home from "./pages/Home";
 import Unauthorized from "./pages/Unauthorized";
 import Missing from "./pages/Missing";
 import Courses from "./pages/Courses";
-import Products from "./pages/Products";
 import Student from "./pages/Student";
 import CourseDetails from "./pages/CourseDetails";
 import Admin from "./pages/admin/Admin";
 import UpdateCourse from "./pages/admin/UpdateCourse";
 import AllStudents from "./pages/admin/AllStudents";
 import CoursePayment from "./pages/admin/CoursePayment";
-import AllProducts from "./pages/admin/AllProducts";
-import NewProduct from "./pages/admin/NewProduct";
-import UpdateProduct from "./pages/admin/UpdateProduct";
 import NewCourse from "./pages/admin/NewCourse";
 import AllCourses from "./pages/admin/AllCourses";
 import Blog from "./pages/Blog";
@@ -42,7 +38,6 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="courses" element={<Courses />} />
         <Route path="courses/course" element={<CourseDetails />} />
-        <Route path="products" element={<Products />} />
         <Route path="blog" element={<Blog />} />
         <Route path="about" element={<About />} />
 
@@ -67,9 +62,6 @@ function App() {
             <Route path="admin_courses" element={<AllCourses />} />
             <Route path="admin_update_course" element={<UpdateCourse />} />
             <Route path="admin_students" element={<AllStudents />} />
-            <Route path="admin_products" element={<AllProducts />} />
-            <Route path="admin_new_product" element={<NewProduct />} />
-            <Route path="admin_update_product" element={<UpdateProduct />} />
             <Route path="admin_course_payment" element={<CoursePayment />} />
             <Route path="admin_blog_posts" element={<BlogPosts />} />
             <Route path="admin_new_post" element={<NewPost />} />

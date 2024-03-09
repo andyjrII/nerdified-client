@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { IoHomeSharp, IoSettings } from "react-icons/io5";
-import { FaShoppingCart, FaBlog, FaSignOutAlt } from "react-icons/fa";
+import { IoHomeSharp, IoSettings, IoSchool } from "react-icons/io5";
+import { FaBlog, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import useLogout from "../../hooks/useLogout";
 
@@ -26,9 +26,9 @@ const StudentNavItems = () => {
       </ul>
       <ul className="middle-nav">
         <li>
-          <Link to="/products" title="Products">
+          <Link to="/courses" title="Courses">
             <span className="span-icons">
-              <FaShoppingCart />
+              <IoSchool />
             </span>
           </Link>
         </li>

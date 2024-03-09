@@ -72,32 +72,26 @@ const Footer = () => {
           <p>
             <Link className="text-white">
               <GrPhone />
-              <span> +23409056539717</span>
-            </Link>
-          </p>
-          <p>
-            <Link className="text-white">
-              <GrPhone />
-              <span> +2349063368647</span>
+              <span> +23409056539717, +2349063368647</span>
             </Link>
           </p>
         </div>
         <div className="col-md-3">
           <h6 className="mb-3">COURSES OFFERED</h6>
           <p>
-            <Link className="text-white">
+            <Link to="/courses" className="text-white">
               <GrCode />
               <span> Frontend Web Development</span>
             </Link>
           </p>
           <p>
-            <Link className="text-white">
+            <Link to="/courses" className="text-white">
               <GrCode />
               <span> Backend Web Development</span>
             </Link>
           </p>
           <p>
-            <Link className="text-white">
+            <Link to="/courses" className="text-white">
               <GrCode />
               <span> Fullstack Web Development</span>
             </Link>

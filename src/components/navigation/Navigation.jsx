@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { IoHomeSharp, IoSchool } from "react-icons/io5";
-import { FaShoppingCart, FaQuestion, FaBlog, FaUserAlt } from "react-icons/fa";
+import { FaQuestion, FaBlog, FaUserAlt } from "react-icons/fa";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useStudent from "../../hooks/useStudent";
 import "../../assets/styles/navigation.css";
@@ -57,11 +57,6 @@ const Navigation = () => {
             <li className="nav-item me-2">
               <Link className="nav-link text-center" to="/courses">
                 <IoSchool /> Courses
-              </Link>
-            </li>
-            <li className="nav-item me-2">
-              <Link className="nav-link text-center" to="/products">
-                <FaShoppingCart /> Products
               </Link>
             </li>
             <li className="nav-item me-2">
