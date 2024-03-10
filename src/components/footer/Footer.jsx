@@ -49,11 +49,11 @@ const Footer = () => {
           <p>
             <Link
               className="text-white"
-              to="https://wa.me/2349063368647"
+              to="https://chat.whatsapp.com/HyKLt42tu8WFv4z2CRU9ky"
               target="_blank"
             >
               <FaWhatsapp id="whatsapp" />
-              <span> Whatsapp</span>
+              <span> Whatsapp Community</span>
             </Link>
           </p>
         </div>
@@ -72,7 +72,23 @@ const Footer = () => {
           <p>
             <Link className="text-white">
               <GrPhone />
-              <span> +23409056539717, +2349063368647</span>
+              <span> +2349063368647</span>
+            </Link>
+          </p>
+          <p>
+            <Link className="text-white">
+              <GrPhone />
+              <span> +2349063368647</span>
+            </Link>
+          </p>
+          <p>
+            <Link
+              className="text-white"
+              to="https://wa.me/2349063368647"
+              target="_blank"
+            >
+              <FaWhatsapp id="whatsapp" />
+              <span> +2349063368647</span>
             </Link>
           </p>
         </div>
@@ -94,6 +110,12 @@ const Footer = () => {
             <Link to="/courses" className="text-white">
               <GrCode />
               <span> Fullstack Web Development</span>
+            </Link>
+          </p>
+          <p>
+            <Link to="/courses" className="text-white">
+              <GrCode />
+              <span> Data Analytics</span>
             </Link>
           </p>
         </div>

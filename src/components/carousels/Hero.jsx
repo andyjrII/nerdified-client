@@ -94,7 +94,7 @@ const Hero = () => {
           <div className="container">
             <div className="carousel-caption text-end">
               <h1>
-                <span className="carousel-text badge navy p-3">
+                <span className="carousel-text badge text-wrap navy p-3">
                   Interactive Live Online Classes
                 </span>
               </h1>
@@ -206,7 +206,7 @@ const Hero = () => {
               </p>
               <p>
                 <Link className="btn btn-lg carousel-button" to="/courses">
-                  Start Now
+                  Get Started
                 </Link>
               </p>
             </div>

@@ -16,7 +16,7 @@ const Home = () => {
       <main>
         <Hero />
 
-        <section className="page-section bg-transparent rounded">
+        <section className="page-section">
           <p className="h1 mb-2 text-center">
             <span className="badge text-white my-2 tomato">
               Why you should Get Nerdified!
@@ -47,7 +47,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="page-section clearfix bg-transparent">
+        <section className="page-section clearfix">
           <div className="container">
             <div className="intro">
               <motion.img
@@ -87,7 +87,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="page-section clearfix bg-transparent">
+        <section className="page-section clearfix">
           <div className="container">
             <div className="intro">
               <motion.img
@@ -127,7 +127,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="page-section clearfix shadow m-5 rounded navy">
+        <section className="page-section clearfix">
           <div className="testimonial_section text-center">
             <p className="h1">
               <span className="badge text-white my-2 tomato">Testimonials</span>
