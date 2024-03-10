@@ -69,7 +69,7 @@ const StudentRightAside = () => {
   };
 
   return (
-    <div className="side-inner">
+    <div className="side-inner text-center">
       <div className="profile">
         <label className="image-label mt-5" title="Upload Image">
           <input

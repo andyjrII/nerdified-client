@@ -149,10 +149,7 @@ const Student = () => {
         <div className="row p-3 mx-2 my-5 shadow">
           <h1 className="bolded pb-2">
             Other Courses
-            <Link
-              to="/courses"
-              className="btn btn-large bg-dark text-light view-courses"
-            >
+            <Link to="/courses" className="btn btn-lg view-courses">
               View All
             </Link>
           </h1>

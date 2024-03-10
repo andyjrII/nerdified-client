@@ -15,17 +15,15 @@ const StudentNavItems = () => {
 
   return (
     <div className="nav-menu">
-      <ul>
-        <li className="mt-3">
+      <ul className="mt-3">
+        <li>
           <Link to="/" title="Home">
             <span className="span-icons">
               <IoHomeSharp />
             </span>
           </Link>
         </li>
-      </ul>
-      <ul className="middle-nav">
-        <li>
+        <li className="mt-5">
           <Link to="/courses" title="Courses">
             <span className="span-icons">
               <IoSchool />
@@ -46,9 +44,7 @@ const StudentNavItems = () => {
             </span>
           </Link>
         </li>
-      </ul>
-      <ul className="bottom-nav">
-        <li>
+        <li className="mt-5">
           <Link role="button" onClick={signOut} title="Sign Out">
             <span className="span-icons">
               <FaSignOutAlt />
