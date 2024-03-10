@@ -18,27 +18,27 @@ const Home = () => {
 
         <section className="page-section">
           <p className="h1 mb-2 text-center">
-            <span className="badge text-white my-2 tomato">
+            <span className="badge text-white my-2 tomato text-wrap">
               Why you should Get Nerdified!
             </span>
           </p>
 
           <div className="container">
             <div className="row justify-content-center">
-              <div className="col-md-5 navy p-5 rounded-3">
-                <h2 className="text-white mb-4">
+              <div className="col-md-5 why-container rounded-3">
+                <h2 className="why-h2 mb-4">
                   <FaCertificate className="why-icon" />
                   We have Expert Instructors
                 </h2>
-                <h2 className="text-white mb-4">
+                <h2 className="why-h2 mb-4">
                   <FaGlobe className="why-icon" />
                   Interactive Live Online Classes
                 </h2>
-                <h2 className="text-white mb-4">
+                <h2 className="why-h2 mb-4">
                   <FaList className="why-icon" />
                   Structured Curriculum
                 </h2>
-                <h2 className="text-white">
+                <h2 className="why-h2">
                   <FaLaptop className="why-icon" />
                   Practical Hands-On Projects
                 </h2>
