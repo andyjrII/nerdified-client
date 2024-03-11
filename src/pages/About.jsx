@@ -17,7 +17,7 @@ const About = () => {
           </div>
         </div>
       </header>
-      <section className="page-section" id="about">
+      <section className="mt-5" id="about">
         <div className="container">
           <ul className="timeline">
             <li>

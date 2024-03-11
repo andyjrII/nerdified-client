@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import "../assets/styles/student.css";
 import "../assets/styles/signin.css";
 import {
   faCheck,
@@ -83,14 +84,11 @@ const StudentSettings = () => {
   };
 
   return (
-    <section className="body bg-dark row" id="password-bg">
-      <aside className="col-md-2">
+    <section className="row mb-0">
+      <aside className="col-md-1 bg-light">
         <StudentNavItems />
       </aside>
-      <main className="pt-0 col-md-8">
-        <Link role="button" to="/student" className="back-btn btn btn-primary">
-          Back
-        </Link>
+      <main className="col-md-9">
         <div className="container pt-5">
           <div className="row justify-content-center">
             <div className="col-md-6 col-lg-4">

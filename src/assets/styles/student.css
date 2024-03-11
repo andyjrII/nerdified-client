@@ -147,9 +147,9 @@ aside .nav-menu ul li a:hover {
 
 .latest_course .card-body {
   background-image: conic-gradient(
-    #020b14 45deg,
-    #ff6347 90deg,
-    #000080 210deg
+    #ff6347 45deg,
+    #5089dd 90deg,
+    #000232 210deg
   );
   color: #f5f5f5;
   width: 100%;
