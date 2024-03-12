@@ -15,7 +15,7 @@ const StudentSettings = () => {
         </p>
         <div className="container">
           <div className="row justify-content-center">
-            <div className="col-lg-4">
+            <div className="col-lg-4 mb-5">
               <PasswordChange />
             </div>
             <div className="col-lg-4">

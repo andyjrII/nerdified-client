@@ -2,22 +2,18 @@ import { useState, useEffect } from "react";
 import "../../assets/styles/signin.css";
 import { FcImageFile } from "react-icons/fc";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import useStudent from "../../hooks/useStudent";
 
 const ImageChange = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const email = localStorage.getItem("STUDENT_EMAIL");
 
-  const { student } = useStudent();
-  const studentId = student.id;
-
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePath, setImagePath] = useState("");
 
   useEffect(() => {
     fetchImage();
-  }, [selectedImage, imagePath]);
+  }, [selectedImage]);
 
   const fetchImage = async () => {
     try {
@@ -32,11 +28,16 @@ const ImageChange = () => {
     }
   };
 
-  const handleImageSubmit = async () => {
+  const handleImageChange = (e) => {
+    setSelectedImage(e.target.files[0]);
+  };
+
+  const handleImageSubmit = async (e) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append("image", selectedImage);
     try {
-      await axiosPrivate.patch(`students/upload/${studentId}`, formData, {
+      await axiosPrivate.patch(`students/upload/${email}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
@@ -67,7 +68,13 @@ const ImageChange = () => {
               <FcImageFile />
             </span>
           </div>
-          <input type="file" className="form-control" accept="image/*" />
+          <input
+            type="file"
+            className="form-control"
+            accept="image/*"
+            onChange={handleImageChange}
+            required
+          />
         </div>
         <div className="form-group w-100 py-3">
           <button className="form-control btn btn-primary rounded px-3">
