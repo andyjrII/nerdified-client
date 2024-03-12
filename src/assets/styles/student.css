@@ -83,27 +83,6 @@ aside .nav-menu ul li a:hover {
   color: #6f7172;
 }
 
-#password-btn {
-  background-color: #020b14;
-  color: #ffffff;
-  font-size: 15px;
-  padding: 10px;
-  border-radius: 5px 0 0;
-  font-weight: 900;
-}
-
-#password-btn:hover {
-  color: #ff6347;
-}
-
-#image-input {
-  display: none;
-}
-
-.image-label img:hover {
-  border: 5px solid #020b14;
-}
-
 .p-5 .card {
   background-color: #ff6347;
 }
@@ -170,6 +149,12 @@ aside .nav-menu ul li a:hover {
 .side-logo {
   width: 100%;
   height: 200px;
+}
+
+/* Student settings */
+
+.student-image {
+  border-radius: 50% !important;
 }
 
 /* Media Query */

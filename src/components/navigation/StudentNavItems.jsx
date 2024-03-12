@@ -17,14 +17,14 @@ const StudentNavItems = () => {
     <div className="nav-menu">
       <ul className="mt-3">
         <li>
-          <Link to="/" title="Home">
+          <Link to="/" title="Nerdville Home">
             <span className="span-icons">
               <IoHomeSharp />
             </span>
           </Link>
         </li>
         <li className="mt-5">
-          <Link to="/student" title="Profile">
+          <Link to="/student" title="Student Dashboard">
             <span className="span-icons">
               <FaUserAlt />
             </span>
