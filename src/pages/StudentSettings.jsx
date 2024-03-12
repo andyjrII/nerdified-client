@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FcLock } from "react-icons/fc";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useStudent from "../hooks/useStudent";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import StudentRightAside from "../components/navigation/StudentRightAside";
 import StudentNavItems from "../components/navigation/StudentNavItems";
 
@@ -18,9 +18,11 @@ const PASSWORD_REGEX =
   /^(?=.*[Link-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const StudentSettings = () => {
-  const axios = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const errRef = useRef();
+
+  const email = localStorage.getItem("STUDENT_EMAIL");
 
   const { student, setStudent } = useStudent();
   const studentId = student.id;
@@ -36,6 +38,9 @@ const StudentSettings = () => {
   const [confirmFocus, setConfirmFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePath, setImagePath] = useState("");
 
   useEffect(() => {
     const result = PASSWORD_REGEX.test(newPassword);
@@ -56,7 +61,7 @@ const StudentSettings = () => {
       return;
     }
     try {
-      const response = await axios.patch(
+      const response = await axiosPrivate.patch(
         "auth/password",
         JSON.stringify({
           studentId,
@@ -81,6 +86,39 @@ const StudentSettings = () => {
       }
       errRef.current.focus();
     }
+  };
+
+  const fetchImage = async () => {
+    try {
+      const response = await axiosPrivate.get(`students/image/${email}`, {
+        responseType: "arraybuffer", // Set the response type to 'arraybuffer'
+      });
+      const imageBlob = new Blob([response.data], { type: "image/jpeg" }); // Create a Blob from the binary data
+      const imageUrl = URL.createObjectURL(imageBlob); // Create a temporary URL for the image
+      setImagePath(imageUrl);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const imageSubmit = async () => {
+    const formData = new FormData();
+    formData.append("image", selectedImage);
+    try {
+      await axiosPrivate.patch(`students/upload/${studentId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+      alert(`Image successfully updated!`);
+      fetchImage();
+      setSelectedImage(null);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleImageChange = async (e) => {
+    setSelectedImage(e.target.files[0]);
   };
 
   return (
@@ -222,6 +260,31 @@ const StudentSettings = () => {
               </div>
             </div>
           </div>
+        </div>
+        <div className="col-md-6 col-lg-4">
+          <form>
+            <label className="image-label mt-5" title="Upload Image">
+              <input
+                type="file"
+                className="form-control"
+                id="image-input"
+                onChange={handleImageChange}
+                accept="image/*"
+              />
+              <img
+                src={imagePath}
+                alt="Student"
+                className="img-fluid"
+                id="student-image"
+              />
+            </label>
+            <button
+              className="btn btn-lg tomato text-white"
+              onClick={() => imageSubmit()}
+            >
+              Submit
+            </button>
+          </form>
         </div>
       </main>
       <aside className="col-md-2">

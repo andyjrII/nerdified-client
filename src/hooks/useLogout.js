@@ -13,18 +13,22 @@ const useLogout = () => {
         "auth/signout",
         {
           params: {
-            email
-          }
+            email,
+          },
         },
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true
+          withCredentials: true,
         }
       );
     } catch (err) {
       console.error(err);
     }
-    localStorage.clear();
+    localStorage.removeItem("REFRESH_TOKEN");
+    localStorage.removeItem("ACCESS_TOKEN");
+    localStorage.removeItem("STUDENT_EMAIL");
+    localStorage.removeItem("NERDVILLE_COURSE");
+    localStorage.removeItem("PAYMENT_REFERENCE");
     setAuth({});
     navigate("/", { replace: true });
   };

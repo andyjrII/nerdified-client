@@ -36,20 +36,19 @@ const AdminSignin = () => {
         JSON.stringify({ email, password }),
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true
+          withCredentials: true,
         }
       );
       const accessToken = response?.data[0]?.access_token;
       const refreshToken = response?.data[0]?.refresh_token;
       const role = response?.data[1];
-      localStorage.setItem("REFRESH_TOKEN", refreshToken);
-      localStorage.setItem("ACCESS_TOKEN", accessToken);
+      localStorage.setItem("ADMIN_REFRESH_TOKEN", refreshToken);
+      localStorage.setItem("ADMIN_ACCESS_TOKEN", accessToken);
       localStorage.setItem("ADMIN_EMAIL", email);
       localStorage.setItem("ROLE", role);
 
       setAuth({ email, accessToken, refreshToken, role });
       navigate(from, { replace: true });
-      tokenTimer();
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
@@ -64,64 +63,64 @@ const AdminSignin = () => {
     }
   };
 
-  const tokenTimer = setInterval(() => {
-    localStorage.clear();
-  }, 7 * 24 * 60 * 60 * 1000);
-
   return (
-    <main className='signin-section'>
-      <div className='container'>
-        <div className='row justify-content-center'>
-          <div className='col-md-6 col-lg-4 pt-5 mt-5'>
-            <div className='login-wrap py-4'>
+    <main className="signin-section">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-6 col-lg-4 pt-5 mt-5">
+            <div className="login-wrap py-4">
               <div
-                className='img d-flex align-items-center justify-content-center'
-                id='form-image'></div>
-              <h3 className='text-center mb-0'>Admin Signin</h3>
+                className="img d-flex align-items-center justify-content-center"
+                id="form-image"
+              ></div>
+              <h3 className="text-center mb-0">Admin Signin</h3>
               <p
                 ref={errRef}
-                className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}>
+                className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
+              >
                 {errMsg}
               </p>
               <form
-                className='login-form rounded shadow-lg'
-                onSubmit={handleSubmit}>
-                <div className='form-group'>
-                  <div className='icon d-flex align-items-center justify-content-center'>
+                className="login-form rounded shadow-lg"
+                onSubmit={handleSubmit}
+              >
+                <div className="form-group">
+                  <div className="icon d-flex align-items-center justify-content-center">
                     <span>
                       <FcAddressBook />
                     </span>
                   </div>
                   <input
-                    type='email'
-                    className='form-control'
-                    placeholder='Email'
+                    type="email"
+                    className="form-control"
+                    placeholder="Email"
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
                     ref={emailRef}
-                    autoComplete='off'
+                    autoComplete="off"
                     required
                   />
                 </div>
-                <div className='form-group'>
-                  <div className='icon d-flex align-items-center justify-content-center'>
+                <div className="form-group">
+                  <div className="icon d-flex align-items-center justify-content-center">
                     <span>
                       <FcLock />
                     </span>
                   </div>
                   <input
-                    type='password'
-                    className='form-control'
-                    placeholder='Password'
+                    type="password"
+                    className="form-control"
+                    placeholder="Password"
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
                     required
                   />
                 </div>
-                <div className='form-group mt-4'>
+                <div className="form-group mt-4">
                   <button
-                    type='submit'
-                    className='btn form-control btn-primary rounded submit px-3'>
+                    type="submit"
+                    className="btn form-control btn-primary rounded submit px-3"
+                  >
                     Sign in
                   </button>
                 </div>
