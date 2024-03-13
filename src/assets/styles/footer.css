@@ -4,6 +4,11 @@ footer a svg {
   cursor: pointer;
 }
 
+.code,
+.phone {
+  color: #ffffff;
+}
+
 footer a #gmail:hover {
   color: #e985ec;
 }

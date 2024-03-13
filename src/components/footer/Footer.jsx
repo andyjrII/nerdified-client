@@ -71,13 +71,13 @@ const Footer = () => {
           </p>
           <p>
             <Link className="text-white">
-              <GrPhone />
+              <GrPhone className="phone" />
               <span> +2349063368647</span>
             </Link>
           </p>
           <p>
             <Link className="text-white">
-              <GrPhone />
+              <GrPhone className="phone" />
               <span> +2349063368647</span>
             </Link>
           </p>
@@ -96,25 +96,25 @@ const Footer = () => {
           <h6 className="mb-3">COURSES OFFERED</h6>
           <p>
             <Link to="/courses" className="text-white">
-              <GrCode />
+              <GrCode className="code" />
               <span> Frontend Web Development</span>
             </Link>
           </p>
           <p>
             <Link to="/courses" className="text-white">
-              <GrCode />
+              <GrCode className="code" />
               <span> Backend Web Development</span>
             </Link>
           </p>
           <p>
             <Link to="/courses" className="text-white">
-              <GrCode />
+              <GrCode className="code" />
               <span> Fullstack Web Development</span>
             </Link>
           </p>
           <p>
             <Link to="/courses" className="text-white">
-              <GrCode />
+              <GrCode className="code" />
               <span> Data Analytics</span>
             </Link>
           </p>
