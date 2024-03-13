@@ -86,7 +86,7 @@ const AdminSidebar = () => {
           aria-labelledby="headingOne"
           data-bs-parent="#accordionSidebar"
         >
-          <div className="bg-white py-2 collapse-inner rounded">
+          <div className="py-2 collapse-inner rounded">
             <Link className="collapse-item" to="/admin_courses">
               <FaBinoculars className="inner-icon" />
               View
@@ -121,7 +121,7 @@ const AdminSidebar = () => {
           aria-labelledby="headingThree"
           data-bs-parent="#accordionSidebar"
         >
-          <div className="bg-white py-2 collapse-inner rounded">
+          <div className="py-2 collapse-inner rounded">
             <Link className="collapse-item" to="/admin_blog_posts">
               <FaBinoculars className="inner-icon" />
               View
@@ -177,8 +177,7 @@ const AdminSidebar = () => {
               aria-labelledby="headingThree"
               data-bs-parent="#accordionSidebar"
             >
-              <div className="bg-white py-2 collapse-inner rounded">
-                <span className="inner-text ml-2">admins: </span>
+              <div className="py-2 collapse-inner rounded">
                 <Link className="collapse-item" to="/admin_all">
                   <FaBinoculars className="inner-icon" />
                   View

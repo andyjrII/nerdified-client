@@ -640,26 +640,26 @@ a:focus {
   list-style: none;
   display: flex;
   justify-content: center;
-  color: white;
+  color: #f5f5f5;
 }
 
 #wrapper .paginationBttns a {
   padding: 10px;
   margin: 8px;
   border-radius: 5px;
-  border: 1px solid #f11717;
-  color: #f11717;
+  border: 1px solid #ff6347;
+  color: #ff6347;
   cursor: pointer;
 }
 
 #wrapper .paginationBttns a:hover {
-  color: white;
-  background-color: #f11717;
+  color: #f5f5f5;
+  background-color: #ff6347;
 }
 
 #wrapper .paginationActive a {
-  color: white;
-  background-color: #f11717;
+  color: #f5f5f5;
+  background-color: #ff6347;
 }
 
 #wrapper #content-wrapper {
@@ -736,11 +736,11 @@ a:focus {
 
 .sidebar .nav-item {
   position: relative;
-  color: #ffffff;
+  color: #f5f5f5;
 }
 
 .sidebar .nav-item:hover {
-  color: #eb4403;
+  color: #ff6347;
 }
 
 .sidebar .nav-item:last-child {
@@ -757,21 +757,20 @@ a:focus {
   font-size: 0.8rem;
 }
 
-.sidebar .nav-item .collapse {
-  position: absolute;
-  left: calc(6.5rem + 1.5rem / 2);
-  z-index: 1;
-  top: 2px;
-}
-
 .sidebar .nav-item .collapse .collapse-inner {
   border-radius: 0.35rem;
   box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+  background-color: #000232 !important;
+}
+
+.collapsed svg {
+  height: 16px;
+  width: 16px;
 }
 
 .inner-icon {
-  height: 15px;
-  color: #3a3b45;
+  height: 14px;
+  width: 14px;
 }
 
 .inner-text {
@@ -783,7 +782,7 @@ a:focus {
   padding: 0.5rem 1rem;
   margin: 0 0.5rem;
   display: block;
-  color: #3a3b45;
+  color: #f5f5f5;
   text-decoration: none;
   border-radius: 0.35rem;
   white-space: nowrap;
@@ -791,13 +790,12 @@ a:focus {
 }
 
 .collapse-item:hover {
-  background-color: #eaecf4;
-  color: #e34a3b;
+  background-color: #f5f5f5;
+  color: #000232;
 }
 
 .collapse-item:active {
-  background-color: #eaecf4;
-  color: #e34a3b;
+  color: #ff6347;
 }
 
 .sidebar .sidebar-brand {
@@ -858,7 +856,6 @@ a:focus {
   .sidebar .nav-item .collapse .collapse-inner {
     position: relative;
   }
-
   .sidebar .nav-item .collapse .collapse-header {
     display: block;
     margin: 0;
@@ -869,7 +866,6 @@ a:focus {
     font-size: 0.65rem;
     color: #b7b9cc;
   }
-
   .sidebar .sidebar-brand {
     text-align: left;
     padding: 0.75rem 1.5rem;
@@ -880,13 +876,10 @@ a:focus {
     height: 15px;
     top: 18px;
   }
-  .inner-icon {
-    height: 15px;
-  }
   .sidebar-brand-text {
     display: inline !important;
     font-size: 0.9rem;
-    color: #ffffff;
+    color: #f5f5f5;
   }
   .sidebar .nav-item:last-child {
     margin-bottom: 0 !important;
