@@ -11,6 +11,10 @@
 
 /* Courses Page */
 
+.course-card {
+  background-color: #000232 !important;
+}
+
 .mb-4 .form-control,
 .col-sm-4 .form-select {
   background-color: #5089dd !important;
@@ -47,6 +51,10 @@ div .section-heading {
 
 div span {
   font-size: 14px;
+}
+
+.payment-head {
+  background-color: #000232 !important;
 }
 
 .pay-button {
@@ -117,7 +125,7 @@ div span {
 }
 
 .input-group .input-group-text {
-  background-color: #000080;
+  background-color: #000232;
   color: #f5f5f5;
 }
 

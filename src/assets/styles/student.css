@@ -41,29 +41,29 @@ aside .profile {
   padding-bottom: 0px;
   margin-top: 0px;
   padding-top: 0px;
-  border-bottom: 2px solid #020b14;
 }
+
 aside .profile img {
   width: 150px;
   height: 160px;
   margin: 0 auto;
-  border-radius: 10px;
+  border-radius: 20% !important;
+  border: 3px solid #ff0000;
 }
+
 aside .profile .name {
-  font-size: 20px;
   text-wrap: wrap;
-  margin-bottom: 0;
-  color: #020d14;
   text-transform: uppercase;
 }
 aside .profile .address,
 aside .profile .email,
 aside .profile .phone,
 aside .profile .academic {
-  font-size: 14px;
+  font-size: 15px;
   text-wrap: wrap;
-  color: #020b14;
+  color: #000232;
   display: block;
+  font-weight: bolder;
 }
 
 aside .nav-menu ul,
@@ -84,7 +84,7 @@ aside .nav-menu ul li a:hover {
 }
 
 .p-5 .card {
-  background-color: #ff6347;
+  background-color: #000232;
 }
 
 .total-courses {
@@ -146,15 +146,14 @@ aside .nav-menu ul li a:hover {
   font-weight: bold;
 }
 
-.side-logo {
-  width: 100%;
-  height: 200px;
+.side-icon {
+  width: 25px;
+  height: 25px;
 }
 
-/* Student settings */
-
-.student-image {
-  border-radius: 50% !important;
+#image-change {
+  width: 100%;
+  height: 250px;
 }
 
 /* Media Query */

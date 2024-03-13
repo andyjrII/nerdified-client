@@ -9,13 +9,10 @@ const StudentSettings = () => {
       <aside className="col-md-1 bg-light">
         <StudentNavItems />
       </aside>
-      <main className="col-md-11">
-        <p className="h1 text-center py-4">
-          <span className="badge bg-danger">Change Settings</span>
-        </p>
-        <div className="container">
+      <main className="col-md-10">
+        <div className="container py-5">
           <div className="row justify-content-center">
-            <div className="col-lg-4 mb-5">
+            <div className="col-lg-4 mb-5 mr-3">
               <PasswordChange />
             </div>
             <div className="col-lg-4">

@@ -48,7 +48,7 @@ const Courses = () => {
     return (
       <motion.div layout className="mb-4" key={course.id}>
         <div className="card mb-0 rounded-3 shadow-sm">
-          <div className="card-header py-3 bg-dark">
+          <div className="card-header py-3 course-card">
             <h4 className="my-0 fw-normal text-white course-title">
               {course.title}
             </h4>

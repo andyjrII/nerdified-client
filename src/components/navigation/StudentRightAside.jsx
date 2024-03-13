@@ -53,29 +53,20 @@ const StudentRightAside = () => {
     <div className="side-inner text-center">
       <div className="profile mt-5">
         <Link to="/student/settings">
-          <img
-            src={imagePath ? imagePath : StudentProfile}
-            alt="Student"
-            className="student-image"
-          />
+          <img src={imagePath ? imagePath : StudentProfile} alt="Student" />
         </Link>
-
-        <h3 className="name">{student.name}</h3>
-        <h2 className="text-danger mt-3">Information</h2>
-        <span className="address my-2">
-          <IoHomeSharp /> {student.address}
-        </span>
-        <span className="email my-2">
-          <IoMail /> {student.email}
-        </span>
-        <span className="phone my-2">
-          <FaPhone /> {student.phoneNumber}
-        </span>
-        <span className="academic my-2">
-          <IoSchool /> {student.academicLevel}
-        </span>
+        <p className="h3 name">
+          <span className="badge bg-danger">{student.name}</span>
+        </p>
+        <IoHomeSharp className="side-icon mt-3" />
+        <span className="address my-2">{student.address}</span>
+        <IoMail className="side-icon" />
+        <span className="email my-2">{student.email}</span>
+        <FaPhone className="side-icon" />
+        <span className="phone my-2">{student.phoneNumber}</span>
+        <IoSchool className="side-icon" />
+        <span className="academic my-2">{student.academicLevel}</span>
       </div>
-      <img src={Logo} alt="Get Nerdified" className="side-logo" />
     </div>
   );
 };

@@ -23,7 +23,7 @@ const StudentNavItems = () => {
             </span>
           </Link>
         </li>
-        <li className="mt-5">
+        <li className="mt-4">
           <Link to="/student" title="Student Dashboard">
             <span className="span-icons">
               <FaUserAlt />
@@ -51,7 +51,7 @@ const StudentNavItems = () => {
             </span>
           </Link>
         </li>
-        <li className="mt-5">
+        <li className="mt-4">
           <Link role="button" onClick={signOut} title="Sign Out">
             <span className="span-icons">
               <FaSignOutAlt />
