@@ -23,7 +23,7 @@ const Admin = () => {
       const response = await axiosPrivate.get("admin/totals");
       setTotalStudents(response.data[0]);
       setTotalCourses(response.data[1]);
-      setTotalPosts(response.data[3]);
+      setTotalPosts(response.data[2]);
     } catch (error) {
       console.error("Error:", error);
     }

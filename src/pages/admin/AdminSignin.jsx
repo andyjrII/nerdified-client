@@ -67,7 +67,7 @@ const AdminSignin = () => {
     <main className="signin-section">
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-md-6 col-lg-4 pt-5 mt-5">
+          <div className="col-md-6 col-lg-4 my-5 py-5">
             <div className="login-wrap py-4">
               <div
                 className="img d-flex align-items-center justify-content-center"

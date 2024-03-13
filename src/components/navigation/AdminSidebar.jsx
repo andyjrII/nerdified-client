@@ -51,7 +51,7 @@ const AdminSidebar = () => {
 
   return (
     <ul
-      className="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion"
+      className="navbar-nav bg-gradient-dark sidebar accordion"
       id="accordionSidebar"
     >
       <Link
@@ -87,7 +87,6 @@ const AdminSidebar = () => {
           data-bs-parent="#accordionSidebar"
         >
           <div className="bg-white py-2 collapse-inner rounded">
-            <span className="inner-text ml-2">courses: </span>
             <Link className="collapse-item" to="/admin_courses">
               <FaBinoculars className="inner-icon" />
               View
@@ -123,7 +122,6 @@ const AdminSidebar = () => {
           data-bs-parent="#accordionSidebar"
         >
           <div className="bg-white py-2 collapse-inner rounded">
-            <span className="inner-text ml-2">blog posts: </span>
             <Link className="collapse-item" to="/admin_blog_posts">
               <FaBinoculars className="inner-icon" />
               View
