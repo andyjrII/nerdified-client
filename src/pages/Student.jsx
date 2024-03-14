@@ -94,7 +94,7 @@ const Student = () => {
 
   const displayLatestCourses = latestCourses.map((latestCourse) => {
     return (
-      <div className="col-md-2 p-1" key={latestCourse.id}>
+      <div className="col-md-2 px-1" key={latestCourse.id}>
         <div className="card latest_course rounded-2">
           <div
             className="card-body rounded-2"

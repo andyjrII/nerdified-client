@@ -30,10 +30,12 @@ const Home = () => {
                   <FaCertificate className="why-icon" />
                   We have Expert Instructors
                 </h2>
-                <h2 className="why-h2 mb-4">
+                <h2 className="why-h2">
                   <FaGlobe className="why-icon" />
                   Interactive Live Online Classes
                 </h2>
+              </div>
+              <div className="col-md-5 why-container rounded-3">
                 <h2 className="why-h2 mb-4">
                   <FaList className="why-icon" />
                   Structured Curriculum

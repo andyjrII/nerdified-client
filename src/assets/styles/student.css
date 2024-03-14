@@ -120,7 +120,7 @@ aside .nav-menu ul li a:hover {
 }
 
 .latest_course {
-  align-items: center;
+  height: 90px;
   text-align: center;
 }
 
