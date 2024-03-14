@@ -106,20 +106,26 @@ const Home = () => {
                 className="intro-text left-0 text-center bg-faded p-5 rounded"
               >
                 <h2 className="section-heading mb-4">
-                  <span className="section-heading-upper">App Gallery</span>
+                  <span className="section-heading-upper">
+                    Amazing Websites
+                  </span>
                   <span className="section-heading-lower">
-                    Visit our app Gallery for amazing apps
+                    Build amazing websites at an affordable price
                   </span>
                 </h2>
                 <p className="mb-3">
-                  We also develop apps for various platforms to meet your needs.
-                  Visit our app gallery for samples of apps developed by our
-                  team. Our products are designed to help you be more productive
-                  and efficient in your work.
+                  We pride ourselves in building websites that meet clients'
+                  needs. We believe that the best websites are the ones that are
+                  tailored to each individual client. We'll work closely with
+                  you to understand your business goals & create a site that's
+                  both beautiful & functional.
                 </p>
                 <div className="intro-button mx-auto">
-                  <Link className="btn btn-xl text-white" to="/products">
-                    Visit Gallery!
+                  <Link
+                    className="btn btn-xl text-white"
+                    to="https://www.github.com/andyjrii"
+                  >
+                    Visit GitHub!
                   </Link>
                 </div>
               </motion.div>

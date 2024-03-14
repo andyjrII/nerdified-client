@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { IoHomeSharp, IoSchool } from "react-icons/io5";
-import { FaQuestion, FaBlog, FaUserAlt } from "react-icons/fa";
+import { FaQuestion, FaBlog, FaUserGraduate } from "react-icons/fa";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useStudent from "../../hooks/useStudent";
 import "../../assets/styles/navigation.css";
@@ -80,7 +80,7 @@ const Navigation = () => {
                   role="button"
                   to="/student"
                 >
-                  <FaUserAlt /> {student.name}
+                  <FaUserGraduate /> {student.name}
                 </Link>
               </li>
             )}

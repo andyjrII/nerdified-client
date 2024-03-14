@@ -7,7 +7,6 @@ import {
   FaDollarSign,
   FaLaughWink,
   FaBinoculars,
-  FaEdit,
   FaPenAlt,
   FaAngleRight,
   FaUserGraduate,

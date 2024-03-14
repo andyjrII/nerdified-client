@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import AdminSidebar from "../../components/navigation/AdminSidebar";
 import useAdminAxiosPrivate from "../../hooks/useAdminAxiosPrivate";
 import "../../assets/styles/admin.css";
-import { FaBlog, FaUserAlt } from "react-icons/fa";
+import { FaBlog, FaUserGraduate } from "react-icons/fa";
 import { IoSchool } from "react-icons/io5";
 import PaymentsPieChart from "../../components/charts/PaymentsPiechart";
 import PaymentsLineChart from "../../components/charts/PaymentsLineChart";
@@ -56,7 +56,7 @@ const Admin = () => {
                       </div>
                       <div className="col-auto">
                         <i className="fa-2x text-gray-300">
-                          <FaUserAlt />
+                          <FaUserGraduate />
                         </i>
                       </div>
                     </div>
