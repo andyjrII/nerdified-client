@@ -126,10 +126,6 @@ const AdminSidebar = () => {
               <FaPenAlt className="inner-icon" />
               Create
             </Link>
-            <Link className="collapse-item" to="/admin_update_post">
-              <FaEdit className="inner-icon" />
-              Edit
-            </Link>
           </div>
         </div>
       </li>

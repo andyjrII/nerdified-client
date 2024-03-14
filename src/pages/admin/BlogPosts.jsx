@@ -1,6 +1,7 @@
 import AdminSidebar from "../../components/navigation/AdminSidebar";
 import { useState, useEffect } from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import "../../assets/styles/admin.css";
 import axios from "../../api/axios";
 import useAdminAxiosPrivate from "../../hooks/useAdminAxiosPrivate";
@@ -9,6 +10,7 @@ import Moment from "react-moment";
 
 const BlogPosts = () => {
   const axiosPrivate = useAdminAxiosPrivate();
+  const navigate = useNavigate();
 
   const [posts, setPosts] = useState([]);
   const [totalPosts, setTotalPosts] = useState();
@@ -29,12 +31,12 @@ const BlogPosts = () => {
             params: {
               search: searchQuery,
               startDate,
-              endDate
-            }
+              endDate,
+            },
           },
           {
             headers: { "Content-Type": "application/json" },
-            withCredentials: true
+            withCredentials: true,
           }
         );
         setPosts(response.data.posts);
@@ -50,17 +52,26 @@ const BlogPosts = () => {
 
   const displayPosts = posts.map((post) => {
     return (
-      <tr key={post.id} className='bg-danger text-white'>
-        <th className='bg-black'>{post.id}</th>
+      <tr key={post.id} className="bg-danger text-white">
+        <th className="bg-black">{post.id}</th>
         <td>{post.title}</td>
         <td>{post.postUrl}</td>
         <td>
-          <Moment format='DD/MM/YYYY'>{post.datePosted}</Moment>
+          <Moment format="DD/MM/YYYY">{post.datePosted}</Moment>
         </td>
-        <td className='bg-black'>
+        <td className="bg-black">
+          <FaEdit
+            role="button"
+            tabIndex="0"
+            title="Edit Blog Post"
+            onClick={() => handleEdit(post.id)}
+          />
+        </td>
+        <td className="bg-black">
           <FaTrashAlt
-            role='button'
-            tabIndex='0'
+            role="button"
+            tabIndex="0"
+            title="Delete Blog Post"
             onClick={() => handleDelete(post.id)}
           />
         </td>
@@ -78,6 +89,11 @@ const BlogPosts = () => {
     setSearchQuery(query);
   };
 
+  const handleEdit = async (id) => {
+    localStorage.setItem("EDIT_POST_ID", id);
+    navigate("/admin_update_post");
+  };
+
   const handleDelete = async (id) => {
     try {
       const response = await axiosPrivate.delete(`blog/${id}`);
@@ -88,37 +104,38 @@ const BlogPosts = () => {
   };
 
   return (
-    <div id='wrapper'>
+    <div id="wrapper">
       <AdminSidebar />
-      <main className='col-md-9 ms-sm-auto col-lg-10 px-md-4'>
-        <div className='pt-3 pb-2 mb-3 border-bottom'>
-          <h1 className='text-center'>Blog Posts</h1>
+      <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div className="pt-3 pb-2 mb-3 border-bottom">
+          <h1 className="text-center">Blog Posts</h1>
         </div>
 
         {/* Search filter for Posts */}
-        <div className='p-3 pb-md-4 mx-auto row'>
-          <div className='col-sm-4'>
+        <div className="p-3 pb-md-4 mx-auto row">
+          <div className="col-sm-4">
             <input
-              type='text'
-              className='form-control bg-dark text-white'
-              placeholder='Search for Post...'
-              aria-label='Search'
+              type="text"
+              className="form-control bg-dark text-white"
+              placeholder="Search for Post..."
+              aria-label="Search"
               onChange={handleSearchChange}
               value={searchQuery}
             />
           </div>
 
-          <div className='col-sm-4'>
-            <div className='input-group mb-3'>
+          <div className="col-sm-4">
+            <div className="input-group mb-3">
               <span
-                className='input-group-text bg-dark text-white'
-                id='start-date'>
+                className="input-group-text bg-dark text-white"
+                id="start-date"
+              >
                 Start Date
               </span>
               <input
-                type='date'
-                className='form-control bg-dark text-white'
-                id='start-date'
+                type="date"
+                className="form-control bg-dark text-white"
+                id="start-date"
                 onChange={(e) => setStartDate(e.target.value)}
                 value={startDate}
                 max={new Date().toISOString().split("T")[0]}
@@ -126,19 +143,20 @@ const BlogPosts = () => {
             </div>
           </div>
 
-          <div className='col-sm-4'>
-            <div className='input-group mb-3'>
+          <div className="col-sm-4">
+            <div className="input-group mb-3">
               <input
-                type='date'
-                className='form-control bg-dark text-white'
-                id='end-date'
+                type="date"
+                className="form-control bg-dark text-white"
+                id="end-date"
                 onChange={(e) => setEndDate(e.target.value)}
                 value={endDate}
                 min={startDate}
               />
               <span
-                className='input-group-text bg-dark text-white'
-                id='end-date'>
+                className="input-group-text bg-dark text-white"
+                id="end-date"
+              >
                 End Date
               </span>
             </div>
@@ -146,21 +164,22 @@ const BlogPosts = () => {
         </div>
 
         {/* List of all Posts */}
-        <table className='table'>
+        <table className="table">
           <thead>
-            <tr className='bg-black text-white'>
-              <th scope='col'>Id</th>
-              <th scope='col'>Title</th>
-              <th scope='col'>Post Url</th>
-              <th scope='col'>Publication Date</th>
-              <th scope='col'></th>
+            <tr className="bg-black text-white">
+              <th scope="col">Id</th>
+              <th scope="col">Title</th>
+              <th scope="col">Post Url</th>
+              <th scope="col">Publication Date</th>
+              <th scope="col"></th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>{displayPosts}</tbody>
         </table>
 
         {/* Pagination */}
-        <div className='pt-5'>
+        <div className="pt-5">
           <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
