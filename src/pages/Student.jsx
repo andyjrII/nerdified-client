@@ -109,11 +109,11 @@ const Student = () => {
   });
 
   return (
-    <section className="row mb-0">
-      <aside className="col-md-1 bg-light">
+    <section className="row mb-0" id="student-section">
+      <aside className="col-md-1 student-left">
         <StudentNavItems />
       </aside>
-      <main className="col-md-9">
+      <main className="col-md-9" id="student-main">
         <div className="row">
           <div className="col p-5">
             <div className="card">
