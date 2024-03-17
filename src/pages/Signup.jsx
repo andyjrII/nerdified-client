@@ -3,7 +3,7 @@ import "../assets/styles/signin.css";
 import {
   faCheck,
   faTimes,
-  faInfoCircle
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,7 +12,7 @@ import {
   FcBusinessman,
   FcHome,
   FcPhone,
-  FcDiploma1
+  FcDiploma1,
 } from "react-icons/fc";
 import axios from "../api/axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -118,11 +118,11 @@ const Signup = () => {
           email,
           password,
           address,
-          academicLevel: qualification
+          academicLevel: qualification,
         }),
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true
+          withCredentials: true,
         }
       );
       const accessToken = response?.data?.access_token;
@@ -134,7 +134,6 @@ const Signup = () => {
 
       setAuth({ email, password, accessToken, refreshToken });
       navigate("/student", { replace: true });
-      tokenTimer();
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
@@ -147,48 +146,47 @@ const Signup = () => {
     }
   };
 
-  const tokenTimer = setInterval(() => {
-    localStorage.clear();
-  }, 7 * 24 * 60 * 60 * 1000);
-
   return (
     <>
       <Navigation />
-      <section className='signin-section'>
-        <div className='container'>
-          <div className='row justify-content-center'>
-            <div className='col-md-6 col-lg-4'>
-              <div className='login-wrap py-4'>
+      <section className="signin-section">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-md-6 col-lg-4">
+              <div className="login-wrap py-4">
                 <div
-                  className='img d-flex align-items-center justify-content-center'
-                  id='form-image'></div>
-                <h3 className='text-center mb-0'>Student Registration</h3>
+                  className="img d-flex align-items-center justify-content-center"
+                  id="form-image"
+                ></div>
+                <h3 className="text-center mb-0">Student Registration</h3>
                 <p
                   ref={errRef}
-                  className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}>
+                  className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
+                >
                   {errMsg}
                 </p>
                 <form
-                  className='login-form rounded shadow-lg'
-                  onSubmit={handleSubmit}>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
+                  className="login-form rounded shadow-lg"
+                  onSubmit={handleSubmit}
+                >
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
                       <span>
                         <FcBusinessman />
                       </span>
                     </div>
                     <input
-                      type='text'
-                      className='form-control'
-                      placeholder='Names'
+                      type="text"
+                      className="form-control"
+                      placeholder="Names"
                       onChange={(e) => setName(e.target.value)}
                       value={name}
-                      autoComplete='off'
+                      autoComplete="off"
                       required
                       onFocus={() => setNameFocus(true)}
                       onBlur={() => setNameFocus(false)}
                     />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <div className="valid-icon d-flex align-items-center justify-content-center">
                       <span className={validName ? "valid" : "hide"}>
                         <FontAwesomeIcon icon={faCheck} />
                       </span>
@@ -201,34 +199,36 @@ const Signup = () => {
                         nameFocus && name && !validName
                           ? "instructions"
                           : "offscreen"
-                      }>
+                      }
+                    >
                       <FontAwesomeIcon icon={faInfoCircle} />
                       Last Name followed by Other Names e.g. Andy James
                     </p>
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
                       <span>
                         <FcAddressBook />
                       </span>
                     </div>
                     <input
-                      type='email'
-                      className='form-control'
-                      placeholder='Email'
+                      type="email"
+                      className="form-control"
+                      placeholder="Email"
                       onChange={(e) => setEmail(e.target.value)}
                       value={email}
-                      autoComplete='off'
+                      autoComplete="off"
                       required
                       onFocus={() => setEmailFocus(true)}
                       onBlur={() => setEmailFocus(false)}
                     />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <div className="valid-icon d-flex align-items-center justify-content-center">
                       <span className={validEmail ? "valid" : "hide"}>
                         <FontAwesomeIcon icon={faCheck} />
                       </span>
                       <span
-                        className={validEmail || !email ? "hide" : "invalid"}>
+                        className={validEmail || !email ? "hide" : "invalid"}
+                      >
                         <FontAwesomeIcon icon={faTimes} />
                       </span>
                     </div>
@@ -237,28 +237,29 @@ const Signup = () => {
                         emailFocus && email && !validEmail
                           ? "instructions"
                           : "offscreen"
-                      }>
+                      }
+                    >
                       <FontAwesomeIcon icon={faInfoCircle} />
                       Enter a valid Email address e.g. andyjames@gmail.com
                     </p>
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
                       <span>
                         <FcLock />
                       </span>
                     </div>
                     <input
-                      type='password'
-                      className='form-control'
-                      placeholder='Password'
+                      type="password"
+                      className="form-control"
+                      placeholder="Password"
                       onChange={(e) => setPassword(e.target.value)}
                       value={password}
                       required
                       onFocus={() => setPasswordFocus(true)}
                       onBlur={() => setPasswordFocus(false)}
                     />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <div className="valid-icon d-flex align-items-center justify-content-center">
                       <FontAwesomeIcon
                         icon={faCheck}
                         className={validPassword ? "valid" : "hide"}
@@ -275,7 +276,8 @@ const Signup = () => {
                         passwordFocus && !validPassword
                           ? "instructions"
                           : "offscreen"
-                      }>
+                      }
+                    >
                       <FontAwesomeIcon icon={faInfoCircle} />
                       8 to 24 characters.
                       <br />
@@ -286,23 +288,23 @@ const Signup = () => {
                       <span>#</span> <span>$</span> <span>%</span>
                     </p>
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
                       <span>
                         <FcLock />
                       </span>
                     </div>
                     <input
-                      type='password'
-                      className='form-control'
-                      placeholder='Confirm Password'
+                      type="password"
+                      className="form-control"
+                      placeholder="Confirm Password"
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       value={confirmPassword}
                       required
                       onFocus={() => setConfirmFocus(true)}
                       onBlur={() => setConfirmFocus(false)}
                     />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <div className="valid-icon d-flex align-items-center justify-content-center">
                       <FontAwesomeIcon
                         icon={faCheck}
                         className={
@@ -321,37 +323,39 @@ const Signup = () => {
                         confirmFocus && !validConfirm
                           ? "instructions"
                           : "offscreen"
-                      }>
+                      }
+                    >
                       <FontAwesomeIcon icon={faInfoCircle} />
                       Must match the first password input field.
                     </p>
                   </div>
 
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
                       <span>
                         <FcHome />
                       </span>
                     </div>
                     <input
-                      type='text'
-                      className='form-control'
-                      placeholder='Address'
+                      type="text"
+                      className="form-control"
+                      placeholder="Address"
                       onChange={(e) => setAddress(e.target.value)}
                       value={address}
-                      autoComplete='off'
+                      autoComplete="off"
                       required
                       onFocus={() => setAddressFocus(true)}
                       onBlur={() => setAddressFocus(false)}
                     />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <div className="valid-icon d-flex align-items-center justify-content-center">
                       <span className={validAddress ? "valid" : "hide"}>
                         <FontAwesomeIcon icon={faCheck} />
                       </span>
                       <span
                         className={
                           validAddress || !address ? "hide" : "invalid"
-                        }>
+                        }
+                      >
                         <FontAwesomeIcon icon={faTimes} />
                       </span>
                     </div>
@@ -360,34 +364,36 @@ const Signup = () => {
                         addressFocus && address && !validAddress
                           ? "instructions"
                           : "offscreen"
-                      }>
+                      }
+                    >
                       <FontAwesomeIcon icon={faInfoCircle} />
                       Enter a valid Addres - City, State & Country.
                     </p>
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
+                  <div className="form-group">
+                    <div className="icon d-flex align-items-center justify-content-center">
                       <span>
                         <FcPhone />
                       </span>
                     </div>
                     <input
-                      className='form-control'
-                      placeholder='Phone Number'
+                      className="form-control"
+                      placeholder="Phone Number"
                       value={phone}
-                      autoComplete='off'
+                      autoComplete="off"
                       required
-                      type='tel'
+                      type="tel"
                       onChange={(e) => setPhone(e.target.value)}
                       onFocus={() => setPhoneFocus(true)}
                       onBlur={() => setPhoneFocus(false)}
                     />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <div className="valid-icon d-flex align-items-center justify-content-center">
                       <span className={validPhone ? "valid" : "hide"}>
                         <FontAwesomeIcon icon={faCheck} />
                       </span>
                       <span
-                        className={validPhone || !phone ? "hide" : "invalid"}>
+                        className={validPhone || !phone ? "hide" : "invalid"}
+                      >
                         <FontAwesomeIcon icon={faTimes} />
                       </span>
                     </div>
@@ -396,35 +402,37 @@ const Signup = () => {
                         phoneFocus && phone && !validPhone
                           ? "instructions"
                           : "offscreen"
-                      }>
+                      }
+                    >
                       <FontAwesomeIcon icon={faInfoCircle} />
                       Enter a valid Phone Number.
                     </p>
                   </div>
-                  <div className='form-group pt-3'>
+                  <div className="form-group pt-3">
                     <select
-                      className='form-select'
-                      id='qualification'
+                      className="form-select"
+                      id="qualification"
                       value={qualification}
                       onChange={handleSelect}
-                      required>
-                      <option value=''>Qualifications</option>
-                      <option value='OLEVEL'>O'Level</option>
-                      <option value='ND'>National Diploma</option>
-                      <option value='HND'>Higher National Diploma</option>
-                      <option value='BSC'>Bachelor's Degree</option>
-                      <option value='GRADUATE'>Graduate</option>
+                      required
+                    >
+                      <option value="">Qualifications</option>
+                      <option value="OLEVEL">O'Level</option>
+                      <option value="ND">National Diploma</option>
+                      <option value="HND">Higher National Diploma</option>
+                      <option value="BSC">Bachelor's Degree</option>
+                      <option value="GRADUATE">Graduate</option>
                     </select>
-                    <div className='select-icon d-flex align-items-center'>
+                    <div className="select-icon d-flex align-items-center">
                       <span>
                         <FcDiploma1 />
                       </span>
                     </div>
                   </div>
-                  <div className='form-group w-100 py-3'>
+                  <div className="form-group w-100 py-3">
                     <button
-                      className='btn form-control btn-primary rounded px-3'
-                      type='submit'
+                      className="btn form-control btn-primary rounded px-3"
+                      type="submit"
                       disabled={
                         !validName ||
                         !validPhone ||
@@ -434,14 +442,15 @@ const Signup = () => {
                         !validAddress
                           ? true
                           : false
-                      }>
+                      }
+                    >
                       Submit Form
                     </button>
                   </div>
                 </form>
-                <div className='w-100 text-center mt-2 text'>
-                  <p className='mb-0'>Already have an account?</p>
-                  <Link to='/signin'>Sign In</Link>
+                <div className="w-100 text-center mt-2 text">
+                  <p className="mb-0">Already have an account?</p>
+                  <Link to="/signin">Sign In</Link>
                 </div>
               </div>
             </div>

@@ -27,6 +27,7 @@ import StudentSettings from "./pages/StudentSettings";
 import AdminPersistLogin from "./components/AdminPersistLogin";
 import CreateAdmin from "./pages/admin/CreateAdmin";
 import AllAdmins from "./pages/admin/AllAdmins";
+import AdminSignup from "./pages/admin/AdminSignup";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
 
         {/* Admin Public Routes */}
         <Route path="admin_signin" element={<AdminSignin />} />
+        <Route path="admin_signup" element={<AdminSignup />} />
 
         {/* Admin Protected Routes */}
         <Route element={<AdminPersistLogin />}>

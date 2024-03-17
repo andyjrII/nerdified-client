@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import "../../assets/styles/signin.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
 import { FcLock, FcAddressBook } from "react-icons/fc";
@@ -125,6 +125,10 @@ const AdminSignin = () => {
                   </button>
                 </div>
               </form>
+              <div className="w-100 text-center mt-4 text">
+                <p className="mb-0">Create Super Admin</p>
+                <Link to="/admin_signup">Create</Link>
+              </div>
             </div>
           </div>
         </div>
