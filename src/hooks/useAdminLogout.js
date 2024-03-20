@@ -13,21 +13,18 @@ const useAdminLogout = () => {
         "auth/signout",
         {
           params: {
-            email,
-          },
+            email
+          }
         },
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: true,
+          withCredentials: true
         }
       );
     } catch (err) {
       console.error(err);
     }
-    localStorage.removeItem("ADMIN_REFRESH_TOKEN");
-    localStorage.removeItem("ADMIN_ACCESS_TOKEN");
-    localStorage.removeItem("ADMIN_EMAIL");
-    localStorage.removeItem("ROLE");
+    localStorage.clear();
     setAuth({});
     navigate("/", { replace: true });
   };
