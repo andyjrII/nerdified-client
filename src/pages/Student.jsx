@@ -21,7 +21,7 @@ const Student = () => {
     getEnrolledCourses();
     getLatestCourses();
     totalCourses();
-  }, []);
+  }, [totalCount]);
 
   const getEnrolledCourses = async () => {
     try {
@@ -146,7 +146,7 @@ const Student = () => {
           {displayMyCourses}
         </div>
         {/* Other Courses */}
-        <div className="row p-3 mx-2 my-5 shadow">
+        <div className="row py-5 px-2 mx-2 my-5 shadow" id="other-courses">
           <h1 className="bolded pb-2">
             Other Courses
             <Link to="/courses" className="btn btn-lg view-courses">
