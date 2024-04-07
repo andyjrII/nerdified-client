@@ -1,17 +1,8 @@
-"Test": {
-    "students": {
-    "id": 1,
-    "name": "Odubiyi Mutiat Tolani",
-    "email": "odubiyimutiat695@gmail.com",
-    "password": "SlyF0x@87",
-    "phone": "09063368647"
-    },
-    "Admin": {
-    "id": 1,
-    "name": "Andy James",
-    "email": "ajsly87@gmail.com",
-    "password": "SlyF0x@87",
-    "password-Hash": "$2b$10$aOGzbaTlzAgOv2CQGI2/LeIHtFteLUA4XUYyCiCsn7FMnu7r2MY3u",
-    "role": "SUPER"
-    },
-    }
+STUDENTS
+email: ajsly87@gmail.com,
+password: SlyF0x@87
+
+SUPER ADMIN
+email: enehizenajames@gmail.com,
+password: SlyF0x@87
+role: SUPER
