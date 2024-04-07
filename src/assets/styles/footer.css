@@ -6,7 +6,7 @@ footer a svg {
 
 .code,
 .phone {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 footer a #gmail:hover {

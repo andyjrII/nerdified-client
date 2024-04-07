@@ -65,7 +65,7 @@ const Hero = () => {
               </h1>
               <p>
                 <span className="carousel-text badge navy text-wrap p-3">
-                  Welcome to &lt;Nerdified/&gt; Coding Academy, a place where
+                  Welcome to NERDIFIED Coding Academy, a place where
                   Nerds are made!
                 </span>
               </p>

@@ -138,9 +138,9 @@ const CourseDetails = () => {
           </header>
 
           {/* Course Payment */}
-          <div className="container-fluid">
+          <div className="container-fluid my-5">
             <div className="row">
-              <div className="col-md-4 mt-5">
+              <div className="col-md-4">
                 <div className="modal-content rounded-4 shadow">
                   <div className="modal-body p-3">
                     <div className="payment-head rounded py-2">
@@ -200,7 +200,7 @@ const CourseDetails = () => {
                 </div>
               </div>
               {/* PDF Viewer */}
-              <div className="col-md-8">
+              <div className="col-md-8 payment-head rounded">
                 <div className="my-4">
                   <div ref={pdfViewerRef} className="viewer-container">
                     {pdfData && (
