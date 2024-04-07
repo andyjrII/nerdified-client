@@ -29,7 +29,26 @@ const CourseDetails = () => {
 
   const pdfViewerRef = useRef();
 
+  const [courseEnrolled, setCourseEnrolled] = useState(null);
   const [pdfData, setPdfData] = useState();
+
+  useEffect(() => {
+    const isCourseEnrolled = async () => {
+      try {
+        const response = await axiosPrivate.get(
+          `students/course_enrolled/${courseId}`,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+            withCredentials: true,
+          }
+        );
+        setCourseEnrolled(response.data)
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    isCourseEnrolled();
+  }, [courseId]);
 
   useEffect(() => {
     const getCourseOutline = async () => {
@@ -181,21 +200,32 @@ const CourseDetails = () => {
                       </li>
                     </ul>
                     <div className="text-center pt-0">
-                      {accessToken && email ? (
-                        <PaystackButton
-                          type="button"
-                          className="btn btn-lg text-white pay-button fw-bold"
-                          {...paymentsProps}
-                        />
-                      ) : (
-                        <Link
-                          to="/signin"
-                          className="btn btn-lg text-white pay-button fw-bold"
-                        >
-                          Login to Pay!
-                        </Link>
-                      )}
-                    </div>
+  {accessToken && email ? (
+    courseEnrolled ? (
+      <button
+        type="button"
+        className="btn btn-lg text-white pay-button fw-bold"
+        disabled
+      >
+        Enrolled Already
+      </button>
+    ) : (
+      <PaystackButton
+        type="button"
+        className="btn btn-lg text-white pay-button fw-bold"
+        {...paymentsProps}
+      />
+    )
+  ) : (
+    <Link
+      to="/signin"
+      className="btn btn-lg text-white pay-button fw-bold"
+    >
+      Login to Pay!
+    </Link>
+  )}
+</div>
+
                   </div>
                 </div>
               </div>

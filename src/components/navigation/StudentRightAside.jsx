@@ -6,7 +6,6 @@ import useStudent from "../../hooks/useStudent";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoHomeSharp, IoSchool, IoMail } from "react-icons/io5";
 import { FaPhone } from "react-icons/fa";
-import Logo from "../../assets/images/logo.png";
 
 const StudentRightAside = () => {
   const axiosPrivate = useAxiosPrivate();

@@ -95,25 +95,25 @@ const Footer = () => {
         <div className="col-md-3">
           <h6 className="mb-3">COURSES OFFERED</h6>
           <p>
-            <Link to="/courses" className="text-white">
+            <Link className="text-white">
               <GrCode className="code" />
               <span> Frontend Web Development</span>
             </Link>
           </p>
           <p>
-            <Link to="/courses" className="text-white">
+            <Link className="text-white">
               <GrCode className="code" />
               <span> Backend Web Development</span>
             </Link>
           </p>
           <p>
-            <Link to="/courses" className="text-white">
+            <Link className="text-white">
               <GrCode className="code" />
               <span> Fullstack Web Development</span>
             </Link>
           </p>
           <p>
-            <Link to="/courses" className="text-white">
+            <Link className="text-white">
               <GrCode className="code" />
               <span> Data Analytics</span>
             </Link>

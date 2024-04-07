@@ -56,17 +56,17 @@ aside .profile img {
   border: 3px solid #ff0000;
 }
 
-aside .profile .name {
+.profile .name {
   text-wrap: wrap;
   text-transform: uppercase;
 }
-aside .profile .address,
-aside .profile .email,
-aside .profile .phone,
-aside .profile .academic {
+ .profile .address,
+ .profile .email,
+ .profile .phone,
+ .profile .academic {
   font-size: 15px;
   text-wrap: wrap;
-  color: #000232;
+  color: #000232 !important;
   display: block;
   font-weight: bolder;
 }
