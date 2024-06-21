@@ -42,7 +42,7 @@ const CourseDetails = () => {
             withCredentials: true,
           }
         );
-        setCourseEnrolled(response.data)
+        setCourseEnrolled(response.data);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -200,32 +200,31 @@ const CourseDetails = () => {
                       </li>
                     </ul>
                     <div className="text-center pt-0">
-  {accessToken && email ? (
-    courseEnrolled ? (
-      <button
-        type="button"
-        className="btn btn-lg text-white pay-button fw-bold"
-        disabled
-      >
-        Enrolled Already
-      </button>
-    ) : (
-      <PaystackButton
-        type="button"
-        className="btn btn-lg text-white pay-button fw-bold"
-        {...paymentsProps}
-      />
-    )
-  ) : (
-    <Link
-      to="/signin"
-      className="btn btn-lg text-white pay-button fw-bold"
-    >
-      Login to Pay!
-    </Link>
-  )}
-</div>
-
+                      {accessToken && email ? (
+                        courseEnrolled ? (
+                          <button
+                            type="button"
+                            className="btn btn-lg text-white pay-button fw-bold"
+                            disabled
+                          >
+                            Enrolled Already
+                          </button>
+                        ) : (
+                          <PaystackButton
+                            type="button"
+                            className="btn btn-lg text-white pay-button fw-bold"
+                            {...paymentsProps}
+                          />
+                        )
+                      ) : (
+                        <Link
+                          to="/signin"
+                          className="btn btn-lg text-white pay-button fw-bold"
+                        >
+                          Login to Pay!
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
