@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../assets/styles/student.css';
 import StudentRightAside from '../components/navigation/StudentRightAside';
 import StudentNavItems from '../components/navigation/StudentNavItems';
@@ -14,12 +14,10 @@ const Student = () => {
   const email = localStorage.getItem('STUDENT_EMAIL');
 
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
-  const [latestCourses, setLatestCourses] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     getEnrolledCourses();
-    getLatestCourses();
     totalCourses();
   }, [totalCount]);
 
@@ -30,18 +28,6 @@ const Student = () => {
         withCredentials: true,
       });
       setEnrollmentDetails(response?.data);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const getLatestCourses = async () => {
-    try {
-      const response = await axiosPrivate.get('courses/latest/6', {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
-      setLatestCourses(response?.data);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -92,22 +78,6 @@ const Student = () => {
     );
   });
 
-  const displayLatestCourses = latestCourses.map((latestCourse) => {
-    return (
-      <div className='col-md-4 px-1' key={latestCourse.id}>
-        <div className='card latest_course rounded-2'>
-          <div
-            className='card-body rounded-2'
-            role='button'
-            onClick={() => getCourse(latestCourse.id)}
-          >
-            <span className='bolded'>{latestCourse.title}</span>
-          </div>
-        </div>
-      </div>
-    );
-  });
-
   return (
     <section className='row mb-0' id='student-section'>
       <aside className='col-md-1 student-left'>
@@ -144,16 +114,6 @@ const Student = () => {
             My Courses <span className='total-courses'>({totalCount})</span>
           </h1>
           {displayMyCourses}
-        </div>
-        {/* Other Courses */}
-        <div className='row py-5 px-2 mx-2 my-5 shadow' id='other-courses'>
-          <h1 className='bolded pb-2'>
-            Other Courses
-            <Link to='/courses' className='btn btn-lg view-courses'>
-              View All
-            </Link>
-          </h1>
-          {displayLatestCourses}
         </div>
       </main>
       <aside className='col-md-2 bg-light'>{<StudentRightAside />}</aside>

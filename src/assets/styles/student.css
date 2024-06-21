@@ -128,23 +128,6 @@ aside .nav-menu ul li a:hover {
   );
 }
 
-.latest_course {
-  text-align: center;
-}
-
-.latest_course .card-body {
-  background-color: #5089dd;
-  color: #f5f5f5;
-}
-
-.latest_course .card-body:hover {
-  color: #c0c0c0;
-}
-
-.latest_course .card-body span {
-  font-size: 16px;
-}
-
 .bolded {
   font-weight: bold;
 }
