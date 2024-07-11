@@ -4,31 +4,12 @@ footer a svg {
   cursor: pointer;
 }
 
-.code,
 .phone {
-  color: #ffffff !important;
+  color: #f5f5f5 !important;
 }
 
-footer a #gmail:hover {
-  color: #e985ec;
-}
-
-footer a #facebook:hover {
-  color: #ffffff;
-  background-color: #1115d4;
-}
-
-footer a #twitter:hover {
-  color: #437af0;
-}
-
-footer a #instagram:hover {
-  color: #ffffff;
-  background-color: #1115d4;
-}
-footer a #whatsapp:hover {
-  background-color: #0cf820;
-  color: #ffffff;
+footer a #social-icon:hover {
+  color: #ff6347;
 }
 
 @media (max-width: 560px) {
