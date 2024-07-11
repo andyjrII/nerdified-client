@@ -5,12 +5,6 @@ li svg {
   cursor: pointer;
 }
 
-#logo-name {
-  font-size: 25px;
-  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
-  font-weight: 800;
-}
-
 .navbar {
   position: relative;
   display: -webkit-box;
@@ -95,7 +89,7 @@ li svg {
   width: 1.5em;
   height: 1.5em;
   vertical-align: middle;
-  content: "";
+  content: '';
   background: no-repeat center center;
   background-size: 100% 100%;
 }
@@ -155,7 +149,7 @@ li svg {
 }
 
 .navbar-dark .navbar-brand span {
-  font-family: "Abril Fatface", Arial, sans-serif;
+  font-family: 'Abril Fatface', Arial, sans-serif;
   font-weight: 900;
   font-size: 20px;
 }
@@ -172,7 +166,9 @@ li svg {
 }
 
 .navbar-dark .navbar-brand img {
-  border-radius: 50%;
+  border-radius: 5px;
+  width: 120px;
+  height: 70px;
 }
 
 .navbar-dark .navbar-toggler {
@@ -229,7 +225,7 @@ li svg {
   position: absolute;
   bottom: 0;
   left: 0;
-  content: "";
+  content: '';
   display: block;
   width: 0;
   height: 2px;

@@ -37,3 +37,9 @@ footer a #whatsapp:hover {
     height: 25px;
   }
 }
+
+#footer-logo {
+  border-radius: 5px;
+  width: 120px;
+  height: 70px;
+}
