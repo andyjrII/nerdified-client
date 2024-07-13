@@ -393,6 +393,18 @@ p .carousel-button:hover {
   color: #ff6347;
 }
 
+@media (max-width: 700px) {
+  .blogs-row {
+    display: block;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .blog-card {
+    width: 100%;
+  }
+}
+
 /* Testimonial Section 
 
 .testimonial_section .h1 {
