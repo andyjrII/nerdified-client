@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { IoHomeSharp, IoSchool } from 'react-icons/io5';
 import { FaBlog, FaUserGraduate } from 'react-icons/fa';
-import { GrArticle } from 'react-icons/gr';
+import { GrArticle, GrLock } from 'react-icons/gr';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
 import '../../assets/styles/navigation.css';
@@ -71,19 +71,28 @@ const Navigation = () => {
             </li>
             <div className='topbar-divider d-none d-sm-block'></div>
 
-            {/*  Nav Item - User Information */}
-            {access && refresh && email && (
-              <li className='nav-item text-center'>
-                <Link
-                  className='nav-link'
-                  id='userDropdown'
-                  role='button'
-                  to='/student'
-                >
-                  <FaUserGraduate /> {student.name}
-                </Link>
-              </li>
-            )}
+            {/*  Nav Item - Login/User Information */}
+
+            <li className='nav-item text-center'>
+              <Link
+                className='nav-link'
+                id='userDropdown'
+                role='button'
+                to={access && refresh && email ? '/student' : '/signin'}
+              >
+                {access && refresh && email ? (
+                  <>
+                    <FaUserGraduate />
+                    {student.name}
+                  </>
+                ) : (
+                  <>
+                    <GrLock />
+                    Sign in
+                  </>
+                )}
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

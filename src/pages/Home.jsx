@@ -56,19 +56,19 @@ const Home = () => {
                   transition={{ type: 'tween', duration: 2 }}
                   className='intro-text left-0 text-center bg-faded p-5 rounded'
                 >
-                  <h2 className='section-heading mb-4'>
+                  <h2 className='section-heading mb-2'>
                     <span className='section-heading-upper'>
-                      CODING ACADEMY
+                      Practical Learning
                     </span>
                     <span className='section-heading-lower'>
-                      LEARN TO CODE ONLINE & BUILD AMAZING SOFTWARE
+                      LEARN TO CODE & BUILD AMAZING SOFTWARE
                     </span>
                   </h2>
-                  <p className='mb-3'>
-                    We offer a variety of online programming classes for all
-                    skill levels, from beginner to advanced. Our classes are
-                    taught by experienced & qualified instructors who will help
-                    you learn the skills you need to build amazing software.
+                  <p className='mb-2'>
+                    We are thrilled to have you consider joining our community
+                    of learners. Our classes are designed to provide you with a
+                    comprehensive & practical learning experience, tailored to
+                    meet the needs of both on-site & distant learners.
                   </p>
                   <div className='intro-button mx-auto'>
                     <Link className='btn btn-xl text-white' to='courses'>
@@ -98,20 +98,18 @@ const Home = () => {
                   transition={{ type: 'tween', duration: 2 }}
                   className='intro-text left-0 text-center bg-faded p-5 rounded'
                 >
-                  <h2 className='section-heading mb-4'>
+                  <h2 className='section-heading mb-2'>
                     <span className='section-heading-upper'>
-                      Amazing Websites
+                      High-Demand Technologies
                     </span>
                     <span className='section-heading-lower'>
-                      Build amazing websites at an affordable price
+                      Expand Your Skills with Our Expert-Led Classes
                     </span>
                   </h2>
-                  <p className='mb-3'>
-                    We pride ourselves in building websites that meet clients'
-                    needs. We believe that the best websites are the ones that
-                    are tailored to each individual client. We'll work closely
-                    with you to understand your business goals & create a site
-                    that's both beautiful & functional.
+                  <p className='mb-2'>
+                    Enhance your programming skills with our specialized classes
+                    in high-demand technologies. Our classes cover the entire
+                    web development spectrum, from design to deployment.
                   </p>
                   <div className='intro-button mx-auto'>
                     <Link
