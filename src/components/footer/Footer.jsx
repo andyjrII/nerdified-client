@@ -1,6 +1,13 @@
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaYoutube, FaWhatsapp, FaCopyright } from 'react-icons/fa';
-import { GrMail, GrPhone } from 'react-icons/gr';
+import {
+  GrMail,
+  GrPhone,
+  GrBook,
+  GrHome,
+  GrBlog,
+  GrArticle,
+} from 'react-icons/gr';
 import '../../assets/styles/footer.css';
 import Logo from '../../assets/images/logo.png';
 
@@ -8,7 +15,21 @@ const Footer = () => {
   return (
     <footer className='navy text-white p-4'>
       <div className='row'>
-        <div className='col-md-4'>
+        <div className='col-md-3'>
+          <div className='row mb-2'>
+            <Link to='/'>
+              <img src={Logo} alt='<Nerdified />' id='footer-logo' />
+            </Link>
+          </div>
+          <div className='row'>
+            <p className='text-white'>
+              <span>
+                <FaCopyright className='bi' /> 2024 Nerdified
+              </span>
+            </p>
+          </div>
+        </div>
+        <div className='col-md-3'>
           <h6 className='mb-3'>JOIN US ON SOCIAL MEDIA</h6>
           <p>
             <Link
@@ -16,7 +37,7 @@ const Footer = () => {
               to='https://www.facebook.com/get-nerdifiedIT'
               target='_blank'
             >
-              <FaFacebook id='social-icon' />
+              <FaFacebook className='social-icon' />
               <span> Facebook</span>
             </Link>
           </p>
@@ -26,7 +47,7 @@ const Footer = () => {
               to='https://www.youtube.com/channel/UC6X7jQL8km-8ILVVlOq_xjg'
               target='_blank'
             >
-              <FaYoutube id='social-icon' />
+              <FaYoutube className='social-icon' />
               <span> YouTube</span>
             </Link>
           </p>
@@ -36,12 +57,12 @@ const Footer = () => {
               to='https://chat.whatsapp.com/HyKLt42tu8WFv4z2CRU9ky'
               target='_blank'
             >
-              <FaWhatsapp id='social-icon' />
+              <FaWhatsapp className='social-icon' />
               <span> Whatsapp Community</span>
             </Link>
           </p>
         </div>
-        <div className='col-md-4'>
+        <div className='col-md-3'>
           <h6 className='mb-3'>CONTACT US</h6>
           <p>
             <Link
@@ -49,7 +70,7 @@ const Footer = () => {
               to='mailto:nerdified.get@gmail.com'
               target='_blank'
             >
-              <GrMail id='social-icon' />
+              <GrMail className='social-icon' />
               <span> nerdified.get@gmail.com</span>
             </Link>
           </p>
@@ -59,30 +80,42 @@ const Footer = () => {
               to='https://wa.me/2349063368647'
               target='_blank'
             >
-              <FaWhatsapp id='social-icon' />
+              <FaWhatsapp className='social-icon' />
               <span> +2349063368647</span>
             </Link>
           </p>
           <p>
             <Link className='text-white'>
-              <GrPhone className='phone' />
+              <GrPhone id='phone-icon' />
               <span> +2349063368647</span>
             </Link>
           </p>
         </div>
-        <div className='col-md-4'>
-          <div className='row text-center mb-2'>
-            <Link to='/'>
-              <img src={Logo} alt='<Nerdified />' id='footer-logo' />
+        <div className='col-md-3'>
+          <p>
+            <Link className='text-white' to='/'>
+              <GrHome />
+              <span> Home</span>
             </Link>
-          </div>
-          <div className='row text-center'>
-            <p className='text-white'>
-              <span>
-                <FaCopyright className='bi' /> 2024 lt;Nerdified /gt;
-              </span>
-            </p>
-          </div>
+          </p>
+          <p>
+            <Link className='text-white' to='/classes'>
+              <GrBook className='nav-icon' />
+              <span> Classes</span>
+            </Link>
+          </p>
+          <p>
+            <Link className='text-white' to='/blog'>
+              <GrBlog />
+              <span> Blog</span>
+            </Link>
+          </p>
+          <p>
+            <Link className='text-white' to='/about'>
+              <GrArticle />
+              <span> About Us</span>
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

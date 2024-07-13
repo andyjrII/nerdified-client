@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { IoHomeSharp, IoSchool } from 'react-icons/io5';
-import { FaQuestion, FaBlog, FaUserGraduate } from 'react-icons/fa';
+import { FaBlog, FaUserGraduate } from 'react-icons/fa';
+import { GrArticle } from 'react-icons/gr';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
 import '../../assets/styles/navigation.css';
@@ -65,7 +66,7 @@ const Navigation = () => {
             </li>
             <li className='nav-item me-2'>
               <Link className='nav-link text-center' to='/about'>
-                <FaQuestion /> About
+                <GrArticle /> About
               </Link>
             </li>
             <div className='topbar-divider d-none d-sm-block'></div>

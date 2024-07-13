@@ -4,11 +4,11 @@ footer a svg {
   cursor: pointer;
 }
 
-.phone {
+#phone-icon {
   color: #f5f5f5 !important;
 }
 
-footer a #social-icon:hover {
+footer a .social-icon:hover {
   color: #ff6347;
 }
 
@@ -21,6 +21,6 @@ footer a #social-icon:hover {
 
 #footer-logo {
   border-radius: 5px;
-  width: 120px;
-  height: 70px;
+  width: 140px;
+  height: 110px;
 }
