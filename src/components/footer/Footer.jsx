@@ -96,9 +96,9 @@ const Footer = () => {
             </Link>
           </p>
           <p>
-            <Link className='text-white' to='/classes'>
+            <Link className='text-white' to='/courses'>
               <GrBook className='nav-icon' />
-              <span> Classes</span>
+              <span> Class</span>
             </Link>
           </p>
           <p>

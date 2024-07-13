@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
-import { IoHomeSharp, IoSchool } from 'react-icons/io5';
+import { IoHomeSharp, IoBook } from 'react-icons/io5';
 import { FaBlog, FaUserGraduate } from 'react-icons/fa';
 import { GrArticle, GrLock } from 'react-icons/gr';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
@@ -56,7 +56,7 @@ const Navigation = () => {
 
             <li className='nav-item me-2'>
               <Link className='nav-link text-center' to='/courses'>
-                <IoSchool /> Courses
+                <IoBook /> Class
               </Link>
             </li>
             <li className='nav-item me-2'>
@@ -69,7 +69,6 @@ const Navigation = () => {
                 <GrArticle /> About
               </Link>
             </li>
-            <div className='topbar-divider d-none d-sm-block'></div>
 
             {/*  Nav Item - Login/User Information */}
 
