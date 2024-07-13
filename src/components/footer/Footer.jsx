@@ -7,6 +7,7 @@ import {
   GrHome,
   GrBlog,
   GrArticle,
+  GrMap,
 } from 'react-icons/gr';
 import '../../assets/styles/footer.css';
 import Logo from '../../assets/images/logo.png';
@@ -54,16 +55,22 @@ const Footer = () => {
           <p>
             <Link
               className='text-white'
-              to='https://chat.whatsapp.com/HyKLt42tu8WFv4z2CRU9ky'
+              to='https://wa.me/2349063368647'
               target='_blank'
             >
               <FaWhatsapp className='social-icon' />
-              <span> Whatsapp Community</span>
+              <span> Whatsapp</span>
             </Link>
           </p>
         </div>
         <div className='col-md-3'>
           <h6 className='mb-3'>CONTACT US</h6>
+          <p>
+            <Link className='text-white'>
+              <GrMap className='social-icon' />
+              <span> Efab Estate, Lokogoma, Abuja</span>
+            </Link>
+          </p>
           <p>
             <Link
               className='text-white'
@@ -75,18 +82,8 @@ const Footer = () => {
             </Link>
           </p>
           <p>
-            <Link
-              className='text-white'
-              to='https://wa.me/2349063368647'
-              target='_blank'
-            >
-              <FaWhatsapp className='social-icon' />
-              <span> +2349063368647</span>
-            </Link>
-          </p>
-          <p>
             <Link className='text-white'>
-              <GrPhone id='phone-icon' />
+              <GrPhone className='social-icon' />
               <span> +2349063368647</span>
             </Link>
           </p>
