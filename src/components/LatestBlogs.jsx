@@ -52,7 +52,7 @@ const LatestBlogs = () => {
         <p className='blog-date'>
           Posted on: <Moment format='MMMM D, YYYY'>{blog.datePosted}</Moment>
         </p>
-        <Link to={`/blog/${blog.postUrl}`} className='read-more-button'>
+        <Link to={`https://${blog.postUrl}`} className='read-more-button'>
           Read More
         </Link>
       </div>
