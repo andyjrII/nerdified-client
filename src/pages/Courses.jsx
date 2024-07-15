@@ -7,12 +7,14 @@ import Moment from 'react-moment';
 import ReactPaginate from 'react-paginate';
 import '../assets/styles/navpages.css';
 import { motion } from 'framer-motion';
+import { IoHeart } from 'react-icons/io5';
+import { FaHeart } from 'react-icons/fa';
+import { GrHeart } from 'react-icons/gr';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [level, setLevel] = useState();
   const [totalCourses, setTotalCourses] = useState();
 
   const coursesPerPage = 20;
@@ -25,7 +27,6 @@ const Courses = () => {
           {
             params: {
               search: searchQuery,
-              level,
             },
           },
           {
@@ -40,7 +41,7 @@ const Courses = () => {
       }
     };
     getCourses();
-  }, [currentPage, searchQuery, level, courses]);
+  }, [currentPage, searchQuery, courses]);
 
   const pageCount = Math.ceil(totalCourses / coursesPerPage);
 
@@ -59,29 +60,33 @@ const Courses = () => {
             </h1>
             <ul className='list-unstyled mt-1 mb-3'>
               <li>
-                Level:{' '}
-                <small className='text-muted fw-light'>{course.level}</small>
-              </li>
-              <li>
-                Start Date:{' '}
+                Last Updated:{' '}
                 <small className='text-muted fw-light'>
-                  <Moment format='MMMM D, YYYY'>{course.deadline}</Moment>
+                  <Moment format='MMMM D, YYYY'>{course.updatedAt}</Moment>
                 </small>
               </li>
               <li>
                 <small className='text-dark fw-light course-description'>
-                  {course.description}
+                  {course.rating}
                 </small>
               </li>
             </ul>
             <Link
               to='/courses/course'
               role='button'
-              className='w-50 btn btn-lg'
+              className='w-50 btn btn-lg mr-2'
               id='check-btn'
               onClick={() => saveCourse(course)}
             >
               View
+            </Link>
+            <Link
+              to='/courses/course'
+              role='button'
+              onClick={() => saveCourse(course)}
+              title='Add to Wishlist'
+            >
+              <FaHeart className='wish-btn' />
             </Link>
           </div>
         </div>
@@ -117,8 +122,8 @@ const Courses = () => {
       </header>
       <div className='container'>
         {/* Search filter for Courses */}
-        <div className='p-3 pb-md-4 mx-auto row'>
-          <div className='col-sm-8 mb-4'>
+        <div className='p-3 mx-auto row'>
+          <div className='col-sm-12 mb-4'>
             <input
               type='text'
               className='form-control rounded'
@@ -127,19 +132,6 @@ const Courses = () => {
               onChange={handleSearchChange}
               value={searchQuery}
             />
-          </div>
-          <div className='col-sm-4'>
-            <select
-              className='form-select rounded'
-              id='level'
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-            >
-              <option value=''>Choose Level</option>
-              <option value='BEGINNER'>Beginner</option>
-              <option value='INTERMEDIATE'>Intermediate</option>
-              <option value='ADVANCE'>Advance</option>
-            </select>
           </div>
         </div>
 
