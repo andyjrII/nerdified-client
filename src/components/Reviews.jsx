@@ -8,20 +8,26 @@ const Reviews = ({ courseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const studentId = parseInt(localStorage.getItem('STUDENT_ID'));
   const accessToken = localStorage.getItem('ACCESS_TOKEN');
+  const email = localStorage.getItem('STUDENT_EMAIL');
 
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
+  const [imagePath, setImagePath] = useState('');
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axiosPrivate.get(`/reviews/course/${courseId}`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      });
+      await fetchImage();
+      setReviews(response.data);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await axiosPrivate.get(`/reviews/course/${courseId}`);
-        setReviews(response.data);
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-      }
-    };
-
     fetchReviews();
   }, [courseId]);
 
@@ -47,10 +53,23 @@ const Reviews = ({ courseId }) => {
       );
       setNewReview({ rating: 0, comment: '' });
       // Refresh reviews after submission
-      const response = await axiosPrivate.get(`/reviews/course/${courseId}`);
+      const response = fetchReviews();
       setReviews(response.data);
     } catch (error) {
       console.error('Error submitting review:', error);
+    }
+  };
+
+  const fetchImage = async () => {
+    try {
+      const response = await axiosPrivate.get(`students/image/${email}`, {
+        responseType: 'arraybuffer', // Set the response type to 'arraybuffer'
+      });
+      const imageBlob = new Blob([response.data], { type: 'image/jpeg' }); // Create a Blob from the binary data
+      const imageUrl = URL.createObjectURL(imageBlob); // Create a temporary URL for the image
+      setImagePath(imageUrl);
+    } catch (error) {
+      console.error('Error:', error);
     }
   };
 
@@ -63,12 +82,12 @@ const Reviews = ({ courseId }) => {
         reviews.map((review) => (
           <div key={review.id} className='review-item'>
             <img
-              src={review.studentImage}
+              src={imagePath}
               alt={review.studentName}
               className='review-student-image'
             />
             <div className='review-content'>
-              <h5>{review.studentName}</h5>
+              <h5>{review.student.name}</h5>
               <StarRating rating={review.rating} />
               <p>{review.comment}</p>
               <small className='text-muted'>
@@ -88,7 +107,6 @@ const Reviews = ({ courseId }) => {
           <StarRating
             rating={newReview.rating}
             setRating={(rating) => setNewReview({ ...newReview, rating })}
-            size={25}
             editable
           />
         </p>

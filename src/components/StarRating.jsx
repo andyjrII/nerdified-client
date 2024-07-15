@@ -35,7 +35,7 @@ const StarRating = ({ rating, setRating, editable = false }) => {
     }
   }
 
-  return <div>{stars}</div>;
+  return <>{stars}</>;
 };
 
 // Helper function to round to the nearest 0.5
