@@ -1,11 +1,11 @@
-import Footer from "../components/footer/Footer";
-import Navigation from "../components/navigation/Navigation";
-import { Link } from "react-router-dom";
-import "../assets/styles/navpages.css";
-import { useState, useEffect } from "react";
-import axios from "../api/axios";
-import Moment from "react-moment";
-import ReactPaginate from "react-paginate";
+import Footer from '../components/Footer';
+import Navigation from '../components/navigation/Navigation';
+import { Link } from 'react-router-dom';
+import '../assets/styles/navpages.css';
+import { useState, useEffect } from 'react';
+import axios from '../api/axios';
+import Moment from 'react-moment';
+import ReactPaginate from 'react-paginate';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -13,7 +13,7 @@ const Blog = () => {
   const [imagePaths, setImagePaths] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
 
@@ -32,7 +32,7 @@ const Blog = () => {
             },
           },
           {
-            headers: { "Content-Type": "application/json" },
+            headers: { 'Content-Type': 'application/json' },
             withCredentials: true,
           }
         );
@@ -40,7 +40,7 @@ const Blog = () => {
         setPosts(response.data.posts);
         setTotalPosts(response.data.totalPosts);
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     };
     fetchPosts();
@@ -59,9 +59,9 @@ const Blog = () => {
       const imageBlobs = await Promise.all(
         imageUrls.map(async (imageUrl) => {
           const imageResponse = await axios.get(`blog/image/${imageUrl}`, {
-            responseType: "arraybuffer",
+            responseType: 'arraybuffer',
           });
-          return new Blob([imageResponse.data], { type: "image/jpeg" });
+          return new Blob([imageResponse.data], { type: 'image/jpeg' });
         })
       );
       const images = imageBlobs.map((imageBlob) =>
@@ -69,7 +69,7 @@ const Blog = () => {
       );
       setImagePaths(images);
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   };
 
@@ -77,25 +77,25 @@ const Blog = () => {
 
   const displayPosts = posts.map((post, index) => {
     return (
-      <div className="col-lg-6" key={post.id}>
-        <div className="card mb-4">
+      <div className='col-lg-6' key={post.id}>
+        <div className='card mb-4'>
           <Link to={`https://${post.postUrl}`}>
             <img
-              className="card-img-top post-image"
+              className='card-img-top post-image'
               src={imagePaths[index]}
-              alt="..."
+              alt='...'
             />
           </Link>
-          <div className="card-body">
-            <div className="small text-muted">
-              <Moment format="MMMM D, YYYY">{post.datePosted}</Moment>
+          <div className='card-body'>
+            <div className='small text-muted'>
+              <Moment format='MMMM D, YYYY'>{post.datePosted}</Moment>
             </div>
-            <h2 className="card-title">{post.title}</h2>
-            <p className="card-text">{post.description}</p>
+            <h2 className='card-title'>{post.title}</h2>
+            <p className='card-text'>{post.description}</p>
             <Link
-              className="btn"
+              className='btn'
               to={`https://${post.postUrl}`}
-              target="_blank"
+              target='_blank'
             >
               Read more →
             </Link>
@@ -117,68 +117,68 @@ const Blog = () => {
   return (
     <>
       <Navigation />
-      <header className="py-3 bg-light border-bottom mb-4 header-bg">
-        <div className="container">
-          <div className="text-center my-3">
-            <p className="h1">
-              <span className="badge bg-danger">Blog</span>
+      <header className='py-3 bg-light border-bottom mb-4 header-bg'>
+        <div className='container'>
+          <div className='text-center my-3'>
+            <p className='h1'>
+              <span className='badge bg-danger'>Blog</span>
             </p>
           </div>
         </div>
       </header>
       {/* Page content */}
-      <div className="container">
-        <div className="row">
+      <div className='container'>
+        <div className='row'>
           {/* Blog entries */}
-          <div className="col-lg-8">
-            <div className="row">{displayPosts}</div>
+          <div className='col-lg-8'>
+            <div className='row'>{displayPosts}</div>
           </div>
 
           {/* Side widgets */}
-          <div className="col-lg-4">
-            <div className="card mb-4">
-              <div className="card-header">Search</div>
-              <div className="card-body">
-                <div className="input-group">
+          <div className='col-lg-4'>
+            <div className='card mb-4'>
+              <div className='card-header'>Search</div>
+              <div className='card-body'>
+                <div className='input-group'>
                   <input
-                    className="form-control rounded"
-                    type="text"
-                    placeholder="Enter search term..."
-                    aria-label="Enter search term..."
-                    aria-describedby="button-search"
+                    className='form-control rounded'
+                    type='text'
+                    placeholder='Enter search term...'
+                    aria-label='Enter search term...'
+                    aria-describedby='button-search'
                     onChange={handleSearchChange}
                     value={searchQuery}
                   />
                 </div>
               </div>
             </div>
-            <div className="card mb-4">
-              <div className="card-header">Time Frame</div>
-              <div className="card-body">
-                <div className="row">
-                  <div className="input-group mb-3">
-                    <span className="input-group-text" id="start-date">
+            <div className='card mb-4'>
+              <div className='card-header'>Time Frame</div>
+              <div className='card-body'>
+                <div className='row'>
+                  <div className='input-group mb-3'>
+                    <span className='input-group-text' id='start-date'>
                       Start Date
                     </span>
                     <input
-                      type="date"
-                      className="form-control rounded"
-                      id="start-date"
+                      type='date'
+                      className='form-control rounded'
+                      id='start-date'
                       onChange={(e) => setStartDate(e.target.value)}
                       value={startDate}
-                      max={new Date().toISOString().split("T")[0]}
+                      max={new Date().toISOString().split('T')[0]}
                     />
                   </div>
                 </div>
-                <div className="row">
-                  <div className="input-group mb-3">
-                    <span className="input-group-text" id="end-date">
+                <div className='row'>
+                  <div className='input-group mb-3'>
+                    <span className='input-group-text' id='end-date'>
                       End Date
                     </span>
                     <input
-                      type="date"
-                      className="form-control rounded"
-                      id="end-date"
+                      type='date'
+                      className='form-control rounded'
+                      id='end-date'
                       onChange={(e) => setEndDate(e.target.value)}
                       value={endDate}
                       min={startDate}
@@ -191,19 +191,19 @@ const Blog = () => {
         </div>
 
         {/* Pagination */}
-        <div className="row">
-          <nav aria-label="Pagination pt-5">
-            <hr className="my-0" />
+        <div className='row'>
+          <nav aria-label='Pagination pt-5'>
+            <hr className='my-0' />
             <ReactPaginate
-              previousLabel={"Previous"}
-              nextLabel={"Next"}
+              previousLabel={'Previous'}
+              nextLabel={'Next'}
               pageCount={pageCount}
               onPageChange={changePage}
-              containerClassName={"paginationBttns"}
-              previousLinkClassName={"previousBttn"}
-              nextLinkClassName={"nextBttn"}
-              disabledClassName={"paginationDisabled"}
-              activeClassName={"paginationActive"}
+              containerClassName={'paginationBttns'}
+              previousLinkClassName={'previousBttn'}
+              nextLinkClassName={'nextBttn'}
+              disabledClassName={'paginationDisabled'}
+              activeClassName={'paginationActive'}
             />
           </nav>
         </div>

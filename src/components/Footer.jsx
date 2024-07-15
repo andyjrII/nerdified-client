@@ -9,8 +9,8 @@ import {
   GrArticle,
   GrMap,
 } from 'react-icons/gr';
-import '../../assets/styles/footer.css';
-import Logo from '../../assets/images/logo.png';
+import '../assets/styles/footer.css';
+import Logo from '../assets/images/logo.png';
 
 const Footer = () => {
   return (

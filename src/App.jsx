@@ -10,6 +10,7 @@ import Missing from './pages/Missing';
 import Courses from './pages/Courses';
 import Student from './pages/Student';
 import CourseDetails from './pages/CourseDetails';
+import CourseEnrollment from './pages/CourseEnrollment';
 import Admin from './pages/admin/Admin';
 import UpdateCourse from './pages/admin/UpdateCourse';
 import AllStudents from './pages/admin/AllStudents';
@@ -38,6 +39,7 @@ function App() {
         <Route path='/signup' element={<Signup />} />
         <Route path='courses' element={<Courses />} />
         <Route path='courses/course' element={<CourseDetails />} />
+        <Route path='courses/course/enroll' element={<CourseEnrollment />} />
         <Route path='blog' element={<Blog />} />
         <Route path='about' element={<About />} />
 

@@ -3,8 +3,8 @@ import '../assets/styles/home.css';
 import Marketing1 from '../assets/images/marketing/marketing-1.jpg';
 import Marketing2 from '../assets/images/marketing/marketing-2.jpg';
 import Navigation from '../components/navigation/Navigation';
-import Footer from '../components/footer/Footer';
-import Hero from '../components/carousels/Hero';
+import Footer from '../components/Footer';
+import Hero from '../components/Hero';
 import LatestBlogs from '../components/LatestBlogs';
 import { motion } from 'framer-motion';
 

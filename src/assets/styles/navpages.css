@@ -89,7 +89,7 @@ div span {
 }
 
 .wish-btn:hover {
-  background-color: #000232;
+  border-width: 4px;
 }
 
 /* Store Page */

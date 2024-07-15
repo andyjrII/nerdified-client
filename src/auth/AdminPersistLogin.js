@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAdminRefreshToken from '../hooks/useAdminRefreshToken';
 import useAuth from '../hooks/useAuth';
-import Spinners from '../components/spinner/Spinners';
+import Spinners from '../components/Spinners';
 
 const AdminPersistLogin = () => {
   const [isLoading, setIsLoading] = useState(true);

@@ -1,5 +1,5 @@
 import Navigation from '../components/navigation/Navigation';
-import Footer from '../components/footer/Footer';
+import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
@@ -8,7 +8,7 @@ import ReactPaginate from 'react-paginate';
 import '../assets/styles/navpages.css';
 import { motion } from 'framer-motion';
 import { FaHeart } from 'react-icons/fa';
-import StarRating from '../components/stars/StarRating';
+import StarRating from '../components/StarRating';
 
 const Courses = () => {
   const axiosPrivate = useAxiosPrivate();

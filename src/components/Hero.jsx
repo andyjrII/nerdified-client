@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import Carousel1 from '../../assets/images/hero/carousel-bg-1.jpg';
-import Carousel2 from '../../assets/images/hero/carousel-bg-2.jpg';
-import Carousel3 from '../../assets/images/hero/carousel-bg-3.jpg';
-import Carousel4 from '../../assets/images/hero/carousel-bg-4.jpg';
-import Carousel5 from '../../assets/images/hero/carousel-bg-5.jpg';
+import Carousel1 from '../assets/images/hero/carousel-bg-1.jpg';
+import Carousel2 from '../assets/images/hero/carousel-bg-2.jpg';
+import Carousel3 from '../assets/images/hero/carousel-bg-3.jpg';
+import Carousel4 from '../assets/images/hero/carousel-bg-4.jpg';
+import Carousel5 from '../assets/images/hero/carousel-bg-5.jpg';
 
 const Hero = () => {
   return (

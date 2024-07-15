@@ -1,0 +1,189 @@
+import { useState, useEffect, useRef } from 'react';
+import Navigation from '../components/navigation/Navigation';
+import Footer from '../components/Footer';
+import '../assets/styles/navpages.css';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import Moment from 'react-moment';
+import { SiLevelsdotfyi } from 'react-icons/si';
+import { FaClock, FaDollarSign } from 'react-icons/fa';
+import { PaystackButton } from 'react-paystack';
+import { useNavigate, Link } from 'react-router-dom';
+import Missing from './Missing';
+
+const publicKey = 'pk_test_244916c0bd11624711bdab398418c05413687296';
+
+const CourseEnrollment = () => {
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+
+  const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
+  if (course) {
+    var courseId = course.id;
+    var amount = course.price;
+    var courseTitle = course.title;
+  }
+  const email = localStorage.getItem('STUDENT_EMAIL');
+  const accessToken = localStorage.getItem('ACCESS_TOKEN');
+  const reference = localStorage.getItem('PAYMENT_REFERENCE');
+
+  const pdfViewerRef = useRef();
+
+  const [courseEnrolled, setCourseEnrolled] = useState(null);
+  const [pdfData, setPdfData] = useState();
+
+  useEffect(() => {
+    const isCourseEnrolled = async () => {
+      try {
+        const response = await axiosPrivate.get(
+          `students/course_enrolled/${courseId}`,
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true,
+          }
+        );
+        setCourseEnrolled(response.data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+    isCourseEnrolled();
+  }, [courseId]);
+
+  const paymentsProps = {
+    email,
+    amount: parseFloat(amount * 100),
+    metadata: {
+      'Course Title': courseTitle,
+    },
+    publicKey,
+    text: 'Pay Now',
+    onSuccess: (response) => {
+      const message =
+        'Payment with Reference: ' +
+        response.reference +
+        ' complete! Thanks for doing business with us! Come back soon!!';
+      localStorage.setItem(
+        'PAYMENT_REFERENCE',
+        JSON.stringify(response.reference)
+      );
+      savePaymentInfo();
+      alert(message);
+      navigate('/courses', { replace: true });
+    },
+    onClose: () => alert("Wait! You need this course, don't go!!!!"),
+  };
+
+  const savePaymentInfo = async () => {
+    try {
+      await axiosPrivate.post(
+        `students/enroll`,
+        JSON.stringify({ email, courseId, amount, reference }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  return (
+    <>
+      {course ? (
+        <>
+          <Navigation />
+          <header className='py-3 bg-light border-bottom mb-4 header-bg'>
+            <div className='container'>
+              <div className='text-center my-3'>
+                <p className='h1'>
+                  <span className='badge bg-danger'>{courseTitle}</span>
+                </p>
+              </div>
+            </div>
+          </header>
+
+          {/* Course Payment */}
+          <div className='container-fluid my-5'>
+            <div className='row'>
+              <div className='col-md-4'>
+                <div className='modal-content rounded-4 shadow'>
+                  <div className='modal-body p-3'>
+                    <div className='payment-head rounded py-2'>
+                      <h5 className='fw-bold text-center text-white'>
+                        Payment Details
+                      </h5>
+                    </div>
+                    <ul className='d-grid gap-4 list-unstyled p-3'>
+                      <li className='d-flex gap-4'>
+                        <SiLevelsdotfyi className='bi text-success flex-shrink-0' />
+                        <div>
+                          <h5 className='mb-0 section-heading'>Level</h5>
+                          <span className='text-success'>{course.level}</span>
+                        </div>
+                      </li>
+                      <li className='d-flex gap-4'>
+                        <FaClock className='bi text-danger flex-shrink-0' />
+                        <div>
+                          <h5 className='mb-0 section-heading'>Start Date</h5>
+                          <span className='text-danger'>
+                            <Moment format='MMMM D, YYYY'>
+                              {course.deadline}
+                            </Moment>
+                          </span>
+                        </div>
+                      </li>
+                      <li className='d-flex gap-4'>
+                        <FaDollarSign className='bi text-warning flex-shrink-0' />
+                        <div>
+                          <h5 className='mb-0 section-heading'>Price</h5>
+                          <span className='text-warning'>
+                            &#8358;{course.price}.00
+                          </span>
+                        </div>
+                      </li>
+                      <li className='d-flex text-center fs-5'>
+                        {course.description}
+                      </li>
+                    </ul>
+                    <div className='text-center pt-0'>
+                      {accessToken && email ? (
+                        courseEnrolled ? (
+                          <button
+                            type='button'
+                            className='btn btn-lg text-white pay-button fw-bold'
+                            disabled
+                          >
+                            Enrolled Already
+                          </button>
+                        ) : (
+                          <PaystackButton
+                            type='button'
+                            className='btn btn-lg text-white pay-button fw-bold'
+                            {...paymentsProps}
+                          />
+                        )
+                      ) : (
+                        <Link
+                          to='/signin'
+                          className='btn btn-lg text-white pay-button fw-bold'
+                        >
+                          Login to Pay!
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <Missing />
+      )}
+      <Footer />
+    </>
+  );
+};
+
+export default CourseEnrollment;
