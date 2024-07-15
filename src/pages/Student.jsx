@@ -69,7 +69,7 @@ const Student = () => {
               <br />
               Starts{' '}
               <Moment format='MMMM D, YYYY'>
-                {enrollmentDetail.course.deadline}
+                {enrollmentDetail.course.updatedAt}
               </Moment>
             </div>
           </div>

@@ -7,9 +7,7 @@ import Moment from 'react-moment';
 import ReactPaginate from 'react-paginate';
 import '../assets/styles/navpages.css';
 import { motion } from 'framer-motion';
-import { IoHeart } from 'react-icons/io5';
 import { FaHeart } from 'react-icons/fa';
-import { GrHeart } from 'react-icons/gr';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -17,35 +15,90 @@ const Courses = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCourses, setTotalCourses] = useState();
 
+  const [wishlist, setWishlist] = useState([]);
+
+  const studentId = localStorage.getItem('STUDENT_ID');
+  const access = localStorage.getItem('ACCESS_TOKEN');
+  const refresh = localStorage.getItem('REFRESH_TOKEN');
+
   const coursesPerPage = 20;
 
-  useEffect(() => {
-    const getCourses = async () => {
-      try {
-        const response = await axios.get(
-          `courses/${currentPage}`,
-          {
-            params: {
-              search: searchQuery,
-            },
+  const getCourses = async () => {
+    try {
+      const response = await axios.get(
+        `courses/${currentPage}`,
+        {
+          params: {
+            search: searchQuery,
           },
-          {
-            headers: { 'Content-Type': 'application/json' },
-            withCredentials: true,
-          }
-        );
-        setTotalCourses(response.data.totalCourses);
-        setCourses(response.data.courses);
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+      setTotalCourses(response.data.totalCourses);
+      setCourses(response.data.courses);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const getWishlist = async () => {
+    try {
+      const response = await axios.get(`wishlist/${studentId}`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      });
+      setWishlist(response?.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
     getCourses();
-  }, [currentPage, searchQuery, courses]);
+    getWishlist();
+  }, [currentPage, searchQuery]);
+
+  const handleWishlistToggle = async (courseId, isInWishlist) => {
+    if (access && refresh && studentId) {
+      try {
+        if (isInWishlist) {
+          await axios.delete('/wishlist/remove', {
+            data: { studentId, courseId },
+          });
+        } else {
+          await axios.post('/wishlist/add', { studentId, courseId });
+        }
+      } catch (error) {
+        console.error('Error toggling wishlist:', error);
+      }
+    } else {
+      alert('You must be signed in first to be able to add class to wishlist');
+    }
+  };
 
   const pageCount = Math.ceil(totalCourses / coursesPerPage);
 
+  const changePage = ({ selected }) => {
+    selected += 1;
+    setCurrentPage(selected);
+  };
+
+  const saveCourse = async (course) => {
+    localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(course));
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value.trim();
+    setSearchQuery(query);
+  };
+
   const displayCourses = courses.map((course) => {
+    const isInWishlist = wishlist.some(
+      (wishlist) => wishlist.studentId === studentId
+    );
     return (
       <motion.div layout className='mb-4' key={course.id}>
         <div className='card mb-0 rounded-3 shadow-sm'>
@@ -67,7 +120,7 @@ const Courses = () => {
               </li>
               <li>
                 <small className='text-dark fw-light course-description'>
-                  {course.rating}
+                  Average Rating: {course.averageRating}
                 </small>
               </li>
             </ul>
@@ -80,33 +133,18 @@ const Courses = () => {
             >
               View
             </Link>
-            <Link
-              to='/courses/course'
+            <FaHeart
+              onClick={() => handleWishlistToggle(course.id, isInWishlist)}
+              className='wish-btn'
+              color={isInWishlist ? 'tomato' : 'grey'}
               role='button'
-              onClick={() => saveCourse(course)}
-              title='Add to Wishlist'
-            >
-              <FaHeart className='wish-btn' />
-            </Link>
+              title='Add Course to Wishlist'
+            />
           </div>
         </div>
       </motion.div>
     );
   });
-
-  const changePage = ({ selected }) => {
-    selected += 1;
-    setCurrentPage(selected);
-  };
-
-  const saveCourse = async (course) => {
-    localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(course));
-  };
-
-  const handleSearchChange = (e) => {
-    const query = e.target.value.trim();
-    setSearchQuery(query);
-  };
 
   return (
     <>
@@ -115,7 +153,7 @@ const Courses = () => {
         <div className='container'>
           <div className='text-center my-3'>
             <p className='h1'>
-              <span className='badge bg-danger'>Class</span>
+              <span className='badge bg-danger'>Courses</span>
             </p>
           </div>
         </div>

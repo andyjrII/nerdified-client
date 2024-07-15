@@ -82,9 +82,11 @@ div span {
 }
 
 .wish-btn {
-  color: #f5f5f5;
-  outline: #ff6347;
-  font-size: 40px;
+  font-size: 30px;
+}
+
+.wish-btn:hover {
+  font-size: 33px;
 }
 
 /* Store Page */
