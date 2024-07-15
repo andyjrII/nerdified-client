@@ -1,19 +1,37 @@
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
-const StarRating = ({ rating }) => {
+const StarRating = ({ rating, setRating, editable = false }) => {
   const roundedRating = roundToHalf(rating);
 
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     if (i <= roundedRating) {
-      stars.push(<FaStar key={i} style={{ color: 'gold' }} />);
+      stars.push(
+        <span key={i} onClick={() => editable && setRating(i)}>
+          <FaStar
+            style={{ color: 'gold', cursor: editable ? 'pointer' : 'default' }}
+          />
+        </span>
+      );
     } else if (
       i === Math.ceil(roundedRating) &&
       !Number.isInteger(roundedRating)
     ) {
-      stars.push(<FaStarHalfAlt key={i} style={{ color: 'gold' }} />);
+      stars.push(
+        <span key={i} onClick={() => editable && setRating(i - 0.5)}>
+          <FaStarHalfAlt
+            style={{ color: 'gold', cursor: editable ? 'pointer' : 'default' }}
+          />
+        </span>
+      );
     } else {
-      stars.push(<FaRegStar key={i} style={{ color: 'grey' }} />);
+      stars.push(
+        <span key={i} onClick={() => editable && setRating(i)}>
+          <FaRegStar
+            style={{ color: 'grey', cursor: editable ? 'pointer' : 'default' }}
+          />
+        </span>
+      );
     }
   }
 

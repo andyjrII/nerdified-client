@@ -203,7 +203,7 @@ const CourseDetails = () => {
               </div>
             </div>
             <div className='row'>
-              <Reviews />
+              <Reviews courseId={courseId} />
             </div>
           </div>
         </>

@@ -56,7 +56,7 @@ const Navigation = () => {
 
             <li className='nav-item me-2'>
               <Link className='nav-link text-center' to='/courses'>
-                <IoBook /> Class
+                <IoBook /> Courses
               </Link>
             </li>
             <li className='nav-item me-2'>
