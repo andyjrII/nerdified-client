@@ -167,7 +167,7 @@ const CourseDetails = () => {
                             id='check-btn'
                             disabled
                           >
-                            Enrolled Already
+                            Enrolled
                           </button>
                         ) : (
                           <Link
@@ -175,7 +175,7 @@ const CourseDetails = () => {
                             className='btn btn-lg w-50'
                             id='check-btn'
                           >
-                            Pay
+                            Enrol now
                           </Link>
                         )
                       ) : (
@@ -184,15 +184,18 @@ const CourseDetails = () => {
                           className='btn btn-lg w-50'
                           id='check-btn'
                         >
-                          Login to Pay!
+                          Login to enrol!
                         </Link>
                       )}
                       <FaHeart
                         onClick={() => handleWishlistToggle(course.id)}
-                        className='wish-btn ml-2'
-                        color={isInWishlist ? 'tomato' : 'grey'}
+                        className={isInWishlist ? 'wish-btn' : 'no-wish-btn'}
                         role='button'
-                        title='Add Course to Wishlist'
+                        title={
+                          isInWishlist
+                            ? 'Remove Course from Wishlist'
+                            : 'Add Course to Wishlist'
+                        }
                       />
                     </div>
                   </div>

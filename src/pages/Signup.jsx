@@ -375,11 +375,11 @@ const Signup = () => {
                       placeholder='Phone Number'
                       value={phone}
                       autoComplete='off'
-                      required
                       type='tel'
                       onChange={(e) => setPhone(e.target.value)}
                       onFocus={() => setPhoneFocus(true)}
                       onBlur={() => setPhoneFocus(false)}
+                      required
                     />
                     <div className='valid-icon d-flex align-items-center justify-content-center'>
                       <span className={validPhone ? 'valid' : 'hide'}>

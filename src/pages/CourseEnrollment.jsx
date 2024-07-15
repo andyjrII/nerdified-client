@@ -1,20 +1,29 @@
 import { useState, useEffect, useRef } from 'react';
 import Navigation from '../components/navigation/Navigation';
 import Footer from '../components/Footer';
-import '../assets/styles/navpages.css';
+import '../assets/styles/signin.css';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import Moment from 'react-moment';
-import { SiLevelsdotfyi } from 'react-icons/si';
-import { FaClock, FaDollarSign } from 'react-icons/fa';
 import { PaystackButton } from 'react-paystack';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Missing from './Missing';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FcGlobe, FcCalendar, FcClock } from 'react-icons/fc';
 
 const publicKey = 'pk_test_244916c0bd11624711bdab398418c05413687296';
 
 const CourseEnrollment = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+
+  const errRef = useRef();
+
+  const [selectedDays, setSelectedDays] = useState([]);
+
+  const [selectedTime, setSelectedTime] = useState('MORNING');
+  const [selectedMode, setSelectedMode] = useState('ONLINE');
+
+  const [errMsg, setErrMsg] = useState('');
 
   const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
   if (course) {
@@ -23,31 +32,23 @@ const CourseEnrollment = () => {
     var courseTitle = course.title;
   }
   const email = localStorage.getItem('STUDENT_EMAIL');
-  const accessToken = localStorage.getItem('ACCESS_TOKEN');
   const reference = localStorage.getItem('PAYMENT_REFERENCE');
 
-  const pdfViewerRef = useRef();
-
-  const [courseEnrolled, setCourseEnrolled] = useState(null);
-  const [pdfData, setPdfData] = useState();
-
   useEffect(() => {
-    const isCourseEnrolled = async () => {
-      try {
-        const response = await axiosPrivate.get(
-          `students/course_enrolled/${courseId}`,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            withCredentials: true,
-          }
-        );
-        setCourseEnrolled(response.data);
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    isCourseEnrolled();
-  }, [courseId]);
+    setErrMsg('');
+  }, [selectedDays]);
+
+  const handleCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+
+    if (checked && selectedDays.length < 3) {
+      setSelectedDays([...selectedDays, value]);
+    } else if (!checked) {
+      setSelectedDays(selectedDays.filter((item) => item !== value));
+    } else {
+      setErrMsg('Number of days should not be more than 3');
+    }
+  };
 
   const paymentsProps = {
     email,
@@ -77,7 +78,15 @@ const CourseEnrollment = () => {
     try {
       await axiosPrivate.post(
         `students/enroll`,
-        JSON.stringify({ email, courseId, amount, reference }),
+        JSON.stringify({
+          email,
+          courseId,
+          amount,
+          reference,
+          classDays: selectedDays,
+          preferredTime: selectedTime,
+          mode: selectedMode,
+        }),
         {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
@@ -103,76 +112,270 @@ const CourseEnrollment = () => {
             </div>
           </header>
 
-          {/* Course Payment */}
-          <div className='container-fluid my-5'>
-            <div className='row'>
-              <div className='col-md-4'>
-                <div className='modal-content rounded-4 shadow'>
-                  <div className='modal-body p-3'>
-                    <div className='payment-head rounded py-2'>
-                      <h5 className='fw-bold text-center text-white'>
-                        Payment Details
-                      </h5>
-                    </div>
-                    <ul className='d-grid gap-4 list-unstyled p-3'>
-                      <li className='d-flex gap-4'>
-                        <SiLevelsdotfyi className='bi text-success flex-shrink-0' />
-                        <div>
-                          <h5 className='mb-0 section-heading'>Level</h5>
-                          <span className='text-success'>{course.level}</span>
-                        </div>
-                      </li>
-                      <li className='d-flex gap-4'>
-                        <FaClock className='bi text-danger flex-shrink-0' />
-                        <div>
-                          <h5 className='mb-0 section-heading'>Start Date</h5>
-                          <span className='text-danger'>
-                            <Moment format='MMMM D, YYYY'>
-                              {course.deadline}
-                            </Moment>
-                          </span>
-                        </div>
-                      </li>
-                      <li className='d-flex gap-4'>
-                        <FaDollarSign className='bi text-warning flex-shrink-0' />
-                        <div>
-                          <h5 className='mb-0 section-heading'>Price</h5>
-                          <span className='text-warning'>
-                            &#8358;{course.price}.00
-                          </span>
-                        </div>
-                      </li>
-                      <li className='d-flex text-center fs-5'>
-                        {course.description}
-                      </li>
-                    </ul>
-                    <div className='text-center pt-0'>
-                      {accessToken && email ? (
-                        courseEnrolled ? (
-                          <button
-                            type='button'
-                            className='btn btn-lg text-white pay-button fw-bold'
-                            disabled
-                          >
-                            Enrolled Already
-                          </button>
-                        ) : (
-                          <PaystackButton
-                            type='button'
-                            className='btn btn-lg text-white pay-button fw-bold'
-                            {...paymentsProps}
-                          />
-                        )
-                      ) : (
-                        <Link
-                          to='/signin'
-                          className='btn btn-lg text-white pay-button fw-bold'
+          <div className='container mb-5 mt-2'>
+            <div className='row justify-content-center'>
+              <div className='col-md-6'>
+                <div className='login-wrap py-4'>
+                  <div
+                    className='img d-flex align-items-center justify-content-center'
+                    id='form-image'
+                  ></div>
+                  <h3 className='text-center mb-0'>Enroll for a Course</h3>
+                  <p
+                    ref={errRef}
+                    className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
+                  >
+                    {errMsg}
+                  </p>
+
+                  <form className='rounded shadow-lg'>
+                    {/* Checkbox for Number of Sessions Per Week*/}
+                    <div className='form-group'>
+                      <div className='mb-2 text-white'>
+                        <FcCalendar /> Number of Sessions Per Week
+                      </div>
+                      <div
+                        className='btn-group'
+                        role='group'
+                        aria-label='Days of the Week you will be available'
+                      >
+                        <input
+                          type='checkbox'
+                          className='btn-check'
+                          id='monday'
+                          autoComplete='off'
+                          onChange={handleCheckboxChange}
+                          checked={selectedDays.includes('MONDAY')}
+                          value='MONDAY'
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='monday'
                         >
-                          Login to Pay!
-                        </Link>
-                      )}
+                          Monday
+                        </label>
+
+                        <input
+                          type='checkbox'
+                          className='btn-check'
+                          id='tuesday'
+                          autoComplete='off'
+                          onChange={handleCheckboxChange}
+                          checked={selectedDays.includes('TUESDAY')}
+                          value='TUESDAY'
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='tuesday'
+                        >
+                          Tuesday
+                        </label>
+
+                        <input
+                          type='checkbox'
+                          className='btn-check'
+                          id='wednesday'
+                          autoComplete='off'
+                          onChange={handleCheckboxChange}
+                          checked={selectedDays.includes('WEDNESDAY')}
+                          value='WEDNESDAY'
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='wednesday'
+                        >
+                          Wednesday
+                        </label>
+
+                        <input
+                          type='checkbox'
+                          className='btn-check'
+                          id='thursday'
+                          autoComplete='off'
+                          onChange={handleCheckboxChange}
+                          checked={selectedDays.includes('THURSDAY')}
+                          value='THURSDAY'
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='thursday'
+                        >
+                          Thursday
+                        </label>
+
+                        <input
+                          type='checkbox'
+                          className='btn-check'
+                          id='friday'
+                          autoComplete='off'
+                          onChange={handleCheckboxChange}
+                          checked={selectedDays.includes('FRIDAY')}
+                          value='FRIDAY'
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='friday'
+                        >
+                          Friday
+                        </label>
+
+                        <input
+                          type='checkbox'
+                          className='btn-check'
+                          id='saturday'
+                          autoComplete='off'
+                          onChange={handleCheckboxChange}
+                          checked={selectedDays.includes('SATURDAY')}
+                          value='SATURDAY'
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='saturday'
+                        >
+                          Saturday
+                        </label>
+                      </div>
+                      <p className='instructions'>
+                        <FontAwesomeIcon icon={faInfoCircle} />
+                        Select Maximum of 3 days
+                      </p>
                     </div>
-                  </div>
+
+                    <hr className='bg-primary m-3' />
+
+                    {/* Radio Button for Preferrable time of the day */}
+                    <div className='form-group'>
+                      <div className='mb-2 text-white'>
+                        <FcClock /> Time of Day
+                      </div>
+                      <div
+                        className='btn-group'
+                        role='group'
+                        aria-label='Select Time of the Day'
+                      >
+                        <input
+                          type='radio'
+                          className='btn-check'
+                          id='morning'
+                          name='time'
+                          value='MORNING'
+                          autoComplete='off'
+                          checked={selectedTime === 'MORNING'}
+                          onChange={() => setSelectedTime('MORNING')}
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='morning'
+                        >
+                          Morning
+                        </label>
+
+                        <input
+                          type='radio'
+                          className='btn-check'
+                          id='afternoon'
+                          name='time'
+                          value='AFTERNOON'
+                          autoComplete='off'
+                          checked={selectedTime === 'AFTERNOON'}
+                          onChange={() => setSelectedTime('AFTERNOON')}
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='afternoon'
+                        >
+                          Afternoon
+                        </label>
+
+                        <input
+                          type='radio'
+                          className='btn-check'
+                          id='evening'
+                          name='time'
+                          value='EVENING'
+                          autoComplete='off'
+                          checked={selectedTime === 'EVENING'}
+                          onChange={() => setSelectedTime('EVENING')}
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='evening'
+                        >
+                          Evening
+                        </label>
+                      </div>
+                      <p className='instructions'>
+                        <FontAwesomeIcon icon={faInfoCircle} />
+                        Select time of the day you will be available for your
+                        classes
+                      </p>
+                    </div>
+
+                    <hr className='bg-primary m-3' />
+
+                    {/* Radio button for Mode of learning */}
+                    <div className='form-group mt-2'>
+                      <div className='mb-2 text-white'>
+                        <FcGlobe /> Mode of Learning
+                      </div>
+                      <div
+                        className='btn-group'
+                        role='group'
+                        aria-label='Select Time of the Day'
+                      >
+                        <input
+                          type='radio'
+                          className='btn-check'
+                          id='online'
+                          name='mode'
+                          value='ONLINE'
+                          autoComplete='off'
+                          checked={selectedMode === 'ONLINE'}
+                          onChange={() => setSelectedMode('ONLINE')}
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='online'
+                        >
+                          Online
+                        </label>
+
+                        <input
+                          type='radio'
+                          className='btn-check'
+                          id='onsite'
+                          name='mode'
+                          value='ONSITE'
+                          autoComplete='off'
+                          checked={selectedMode === 'ONSITE'}
+                          onChange={() => setSelectedMode('ONSITE')}
+                        />
+                        <label
+                          className='btn btn-outline-primary'
+                          htmlFor='onsite'
+                        >
+                          Onsite
+                        </label>
+                      </div>
+                      <p className='instructions'>
+                        <FontAwesomeIcon icon={faInfoCircle} />
+                        Select your most preferred Mode of Learning
+                      </p>
+                    </div>
+
+                    <div className='form-group w-100 py-3'>
+                      <PaystackButton
+                        type='button'
+                        className='btn form-control btn-primary rounded px-3'
+                        {...paymentsProps}
+                        disabled={
+                          !selectedDays || !selectedTime || !selectedMode
+                            ? true
+                            : false
+                        }
+                      />
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>

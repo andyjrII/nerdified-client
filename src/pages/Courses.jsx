@@ -138,7 +138,7 @@ const Courses = () => {
             <Link
               to='/courses/course'
               role='button'
-              className='w-50 btn btn-lg mr-2'
+              className='w-50 btn btn-lg'
               id='check-btn'
               onClick={() => saveCourse(course)}
             >
@@ -146,10 +146,13 @@ const Courses = () => {
             </Link>
             <FaHeart
               onClick={() => handleWishlistToggle(course.id)}
-              className='wish-btn'
-              color={isInWishlist ? 'tomato' : 'grey'}
+              className={isInWishlist ? 'wish-btn' : 'no-wish-btn'}
               role='button'
-              title='Add Course to Wishlist'
+              title={
+                isInWishlist
+                  ? 'Remove Course from Wishlist'
+                  : 'Add Course to Wishlist'
+              }
             />
           </div>
         </div>
