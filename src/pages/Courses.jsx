@@ -2,7 +2,7 @@ import Navigation from '../components/navigation/Navigation';
 import Footer from '../components/footer/Footer';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from '../api/axios';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import Moment from 'react-moment';
 import ReactPaginate from 'react-paginate';
 import '../assets/styles/navpages.css';
@@ -11,14 +11,16 @@ import { FaHeart } from 'react-icons/fa';
 import StarRating from '../components/stars/StarRating';
 
 const Courses = () => {
+  const axiosPrivate = useAxiosPrivate();
+
   const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCourses, setTotalCourses] = useState();
 
-  const [wishlist, setWishlist] = useState([]);
+  const [wishlist, setWishlist] = useState(new Set());
 
-  const studentId = localStorage.getItem('STUDENT_ID');
+  const studentId = parseInt(localStorage.getItem('STUDENT_ID'));
   const access = localStorage.getItem('ACCESS_TOKEN');
   const refresh = localStorage.getItem('REFRESH_TOKEN');
 
@@ -26,7 +28,7 @@ const Courses = () => {
 
   const getCourses = async () => {
     try {
-      const response = await axios.get(
+      const response = await axiosPrivate.get(
         `courses/${currentPage}`,
         {
           params: {
@@ -47,11 +49,12 @@ const Courses = () => {
 
   const getWishlist = async () => {
     try {
-      const response = await axios.get(`wishlist/${studentId}`, {
+      const response = await axiosPrivate.get(`wishlist/${studentId}`, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       });
-      setWishlist(response?.data);
+      const wishlistSet = new Set(response.data.map((item) => item.courseId));
+      setWishlist(wishlistSet);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -59,19 +62,31 @@ const Courses = () => {
 
   useEffect(() => {
     getCourses();
-    getWishlist();
+    if (studentId) getWishlist();
   }, [currentPage, searchQuery]);
 
-  const handleWishlistToggle = async (courseId, isInWishlist) => {
-    console.log(studentId);
+  const handleWishlistToggle = async (courseId) => {
     if (access && refresh && studentId) {
       try {
-        if (isInWishlist) {
-          await axios.delete('/wishlist/remove', {
+        if (wishlist.has(courseId)) {
+          await axiosPrivate.delete('/wishlist/remove', {
             data: { studentId, courseId },
           });
+          setWishlist((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(courseId);
+            return newSet;
+          });
         } else {
-          await axios.post('/wishlist/add', { studentId, courseId });
+          await axiosPrivate.post(
+            '/wishlist/add',
+            { studentId, courseId },
+            {
+              headers: { 'Content-Type': 'application/json' },
+              withCredentials: true,
+            }
+          );
+          setWishlist((prev) => new Set(prev).add(courseId));
         }
       } catch (error) {
         console.error('Error toggling wishlist:', error);
@@ -98,9 +113,7 @@ const Courses = () => {
   };
 
   const displayCourses = courses.map((course) => {
-    const isInWishlist = wishlist.some(
-      (wishlist) => wishlist.studentId === studentId
-    );
+    const isInWishlist = wishlist.has(course.id);
     return (
       <motion.div layout className='mb-4' key={course.id}>
         <div className='card mb-0 rounded-3 shadow-sm'>
@@ -110,19 +123,17 @@ const Courses = () => {
             </h4>
           </div>
           <div className='card-body'>
-            <h1 className='card-title pricing-card-title'>
-              &#8358;{course.price}
-            </h1>
             <ul className='list-unstyled mt-1 mb-3'>
-              <li>
-                Last Updated:{' '}
+              <li className='mb-2'>
+                Updated:{' '}
                 <small className='text-muted fw-light'>
                   <Moment format='MMMM D, YYYY'>{course.updatedAt}</Moment>
                 </small>
               </li>
-              <li>
+              <li className='mb-2'>
                 <StarRating rating={course.averageRating} />
               </li>
+              <li>&#8358;{course.price}</li>
             </ul>
             <Link
               to='/courses/course'
@@ -134,7 +145,7 @@ const Courses = () => {
               View
             </Link>
             <FaHeart
-              onClick={() => handleWishlistToggle(course.id, isInWishlist)}
+              onClick={() => handleWishlistToggle(course.id)}
               className='wish-btn'
               color={isInWishlist ? 'tomato' : 'grey'}
               role='button'
