@@ -8,6 +8,7 @@ import ReactPaginate from 'react-paginate';
 import '../assets/styles/navpages.css';
 import { motion } from 'framer-motion';
 import { FaHeart } from 'react-icons/fa';
+import StarRating from '../components/stars/StarRating';
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -62,6 +63,7 @@ const Courses = () => {
   }, [currentPage, searchQuery]);
 
   const handleWishlistToggle = async (courseId, isInWishlist) => {
+    console.log(studentId);
     if (access && refresh && studentId) {
       try {
         if (isInWishlist) {
@@ -119,9 +121,7 @@ const Courses = () => {
                 </small>
               </li>
               <li>
-                <small className='text-dark fw-light course-description'>
-                  Average Rating: {course.averageRating}
-                </small>
+                <StarRating rating={course.averageRating} />
               </li>
             </ul>
             <Link

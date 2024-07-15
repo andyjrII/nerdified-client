@@ -40,16 +40,15 @@ const Signin = () => {
       );
       const accessToken = response?.data?.access_token;
       const refreshToken = response?.data?.refresh_token;
-      const studentId = response?.data?.id;
 
       localStorage.setItem('REFRESH_TOKEN', refreshToken);
       localStorage.setItem('ACCESS_TOKEN', accessToken);
       localStorage.setItem('STUDENT_EMAIL', email);
-      localStorage.setItem('STUDENT_ID', studentId);
 
       setAuth({ email, accessToken, refreshToken });
       const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
       if (course) navigate(-1);
+      alert('Sign in Successful!');
       navigate('/student', { replace: true });
     } catch (err) {
       if (!err?.response) {
