@@ -20,6 +20,7 @@ const Reviews = ({ courseId }) => {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       });
+      console.log(response.data);
       await fetchImage();
       setReviews(response.data);
     } catch (error) {
@@ -75,24 +76,26 @@ const Reviews = ({ courseId }) => {
 
   return (
     <div className='reviews-container mt-3'>
-      <p className='h2'>
+      <p className='h2 mb-4'>
         <span className='badge bg-danger'>Reviews</span>
       </p>
-      {reviews.length > 0 ? (
+      {reviews ? (
         reviews.map((review) => (
-          <div key={review.id} className='review-item'>
-            <img
-              src={imagePath}
-              alt={review.studentName}
-              className='review-student-image'
-            />
-            <div className='review-content'>
+          <div key={review.id} className='review-item row'>
+            <div className='col-md-2 text-center py-3 mx-2 shadow rounded-2'>
+              <img
+                src={imagePath}
+                alt={review.student.name}
+                className='review-student-image'
+              />
               <h5>{review.student.name}</h5>
               <StarRating rating={review.rating} />
-              <p>{review.comment}</p>
+            </div>
+            <div className='review-content col-md-6 py-3 mx-2 shadow rounded-2'>
               <small className='text-muted'>
                 <Moment format='MMMM D, YYYY'>{review.createdAt}</Moment>
               </small>
+              <p className='mt-3'>{review.comment}</p>
             </div>
           </div>
         ))
