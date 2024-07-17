@@ -20,7 +20,6 @@ const Reviews = ({ courseId }) => {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       });
-      console.log(response.data);
       await fetchImage();
       setReviews(response.data);
     } catch (error) {

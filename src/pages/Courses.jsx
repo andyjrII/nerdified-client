@@ -116,7 +116,7 @@ const Courses = () => {
     const isInWishlist = wishlist.has(course.id);
     return (
       <motion.div layout className='mb-4' key={course.id}>
-        <div className='card mb-0 rounded-3 shadow-sm'>
+        <div className='card mb-0 rounded-3 shadow-lg'>
           <div className='card-header py-3 course-card'>
             <h4 className='my-0 fw-normal text-white course-title'>
               {course.title}
@@ -136,7 +136,7 @@ const Courses = () => {
               <li>&#8358;{course.price}</li>
             </ul>
             <Link
-              to='/courses/course'
+              to='/courses/course-details'
               role='button'
               className='w-50 btn btn-lg'
               id='check-btn'
@@ -161,7 +161,7 @@ const Courses = () => {
   });
 
   return (
-    <>
+    <main>
       <Navigation />
       <header className='py-3 bg-light border-bottom mb-4 header-bg'>
         <div className='container'>
@@ -209,7 +209,7 @@ const Courses = () => {
         />
       </div>
       <Footer />
-    </>
+    </main>
   );
 };
 

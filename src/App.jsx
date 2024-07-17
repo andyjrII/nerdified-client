@@ -38,8 +38,8 @@ function App() {
         <Route path='/signin' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='courses' element={<Courses />} />
-        <Route path='courses/course' element={<CourseDetails />} />
-        <Route path='courses/course/enroll' element={<CourseEnrollment />} />
+        <Route path='courses/course-details' element={<CourseDetails />} />
+        <Route path='courses/course-enroll' element={<CourseEnrollment />} />
         <Route path='blog' element={<Blog />} />
         <Route path='about' element={<About />} />
 

@@ -101,7 +101,8 @@ p .carousel-button:hover {
 .home-bg {
   background-image: url('../images/bg/home-bg.jpg');
   background-position: center;
-  background-size: contain;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 .page-section {

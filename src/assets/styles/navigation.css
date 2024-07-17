@@ -166,8 +166,8 @@ li svg {
 }
 
 .navbar-dark .navbar-brand img {
-  border-radius: 50%;
-  width: 70px;
+  border-radius: 25%;
+  width: 90px;
   height: 70px;
 }
 

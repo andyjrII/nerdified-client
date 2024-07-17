@@ -14,7 +14,7 @@ import Logo from '../assets/images/logo.png';
 
 const Footer = () => {
   return (
-    <footer className='navy text-white p-4'>
+    <footer className='navy text-white p-4 border-top'>
       <div className='row'>
         <div className='col-md-3'>
           <div className='row mb-2'>
@@ -23,7 +23,7 @@ const Footer = () => {
             </Link>
           </div>
           <div className='row'>
-            <p className='text-white'>
+            <p className='text-white ml-3'>
               <span>
                 <FaCopyright className='bi' /> 2024 Nerdified
               </span>

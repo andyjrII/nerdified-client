@@ -71,8 +71,8 @@ const Home = () => {
                     meet the needs of both on-site & distant learners.
                   </p>
                   <div className='intro-button mx-auto'>
-                    <Link className='btn btn-xl text-white' to='courses'>
-                      Enroll now!
+                    <Link className='btn btn-xl text-white' to='about'>
+                      About us
                     </Link>
                   </div>
                 </motion.div>
@@ -112,11 +112,8 @@ const Home = () => {
                     web development spectrum, from design to deployment.
                   </p>
                   <div className='intro-button mx-auto'>
-                    <Link
-                      className='btn btn-xl text-white'
-                      to='https://www.github.com/andyjrii'
-                    >
-                      Visit GitHub!
+                    <Link className='btn btn-xl text-white' to='courses'>
+                      Enroll now!
                     </Link>
                   </div>
                 </motion.div>
