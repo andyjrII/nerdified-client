@@ -6,7 +6,7 @@ import '../assets/styles/reviews.css';
 
 const Reviews = ({ courseId }) => {
   const axiosPrivate = useAxiosPrivate();
-  const studentId = parseInt(localStorage.getItem('STUDENT_ID'));
+  const email = localStorage.getItem('STUDENT_EMAIL');
   const accessToken = localStorage.getItem('ACCESS_TOKEN');
 
   const [reviews, setReviews] = useState([]);
@@ -20,7 +20,7 @@ const Reviews = ({ courseId }) => {
       await fetchImages(emails);
       setReviews(response.data);
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      alert('Error fetching reviews');
     }
   };
 
@@ -29,11 +29,10 @@ const Reviews = ({ courseId }) => {
   }, []);
 
   const handleReviewSubmit = async () => {
-    if (!accessToken || !studentId) {
+    if (!accessToken || !email) {
       alert('You must be signed in to submit a review');
       return;
     }
-
     if (newReview.rating === 0) {
       alert('Please select a star rating');
       return;
@@ -42,7 +41,7 @@ const Reviews = ({ courseId }) => {
     try {
       await axiosPrivate.post(
         `/reviews`,
-        { courseId, studentId, ...newReview },
+        { courseId, email, ...newReview },
         {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
@@ -53,7 +52,7 @@ const Reviews = ({ courseId }) => {
       const response = fetchReviews();
       setReviews(response.data);
     } catch (error) {
-      console.error('Error submitting review:', error);
+      alert('Error submitting review');
     }
   };
 
@@ -99,7 +98,7 @@ const Reviews = ({ courseId }) => {
                   className='review-student-image'
                 />
               ))}
-              <h5>{review.student.name}</h5>
+              <h6>{review.student.name}</h6>
               <StarRating rating={review.rating} />
             </div>
             <div className='review-content col-md-6 py-3 mx-2 shadow rounded-2'>

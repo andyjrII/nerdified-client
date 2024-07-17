@@ -119,12 +119,10 @@ const Signup = () => {
       );
       const accessToken = response?.data?.access_token;
       const refreshToken = response?.data?.refresh_token;
-      const studentId = response?.data?.id;
 
       localStorage.setItem('REFRESH_TOKEN', refreshToken);
       localStorage.setItem('ACCESS_TOKEN', accessToken);
       localStorage.setItem('STUDENT_EMAIL', email);
-      localStorage.setItem('STUDENT_ID', studentId);
 
       setAuth({ email, password, accessToken, refreshToken });
       navigate('/student', { replace: true });
