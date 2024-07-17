@@ -40,7 +40,7 @@ const CourseDetails = () => {
         );
         setCourseEnrolled(response.data);
       } catch (error) {
-        console.error('Error:', error);
+        //console.error('Error:', error);
       }
     };
     isCourseEnrolled();
@@ -56,7 +56,7 @@ const CourseDetails = () => {
         const wishlistSet = new Set(response.data.map((item) => item.courseId));
         setIsInWishlist(wishlistSet.has(courseId));
       } catch (error) {
-        console.error('Error:', error);
+        //console.error('Error:', error);
       }
     };
     if (localStorage.getItem('STUDENT_ID')) {

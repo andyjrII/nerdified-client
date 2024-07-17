@@ -1,27 +1,27 @@
-import useAuth from "./useAuth";
-import axios from "../api/axios";
+import useAuth from './useAuth';
+import axios from '../api/axios';
 
 const useRefreshToken = () => {
   const { setAuth } = useAuth();
-  const refreshToken = localStorage.getItem("REFRESH_TOKEN");
+  const refreshToken = localStorage.getItem('REFRESH_TOKEN');
 
   const refresh = async () => {
     try {
-      const response = await axios.post("auth/refresh", null, {
+      const response = await axios.post('auth/refresh', null, {
         headers: {
-          Authorization: `Bearer ${refreshToken}`
+          Authorization: `Bearer ${refreshToken}`,
         },
-        withCredentials: true
+        withCredentials: true,
       });
 
       setAuth((prevAuth) => ({
         ...prevAuth,
-        accessToken: response?.data?.access_token
+        accessToken: response?.data?.access_token,
       }));
-      localStorage.setItem("ACCESS_TOKEN", response.data.access_token);
+      localStorage.setItem('ACCESS_TOKEN', response.data.access_token);
       return response.data.access_token;
     } catch (error) {
-      throw error;
+      //throw error;
     }
   };
 

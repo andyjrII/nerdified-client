@@ -76,6 +76,8 @@ const CourseEnrollment = () => {
   };
 
   const handlePayment = async () => {
+    console.log('Initiating Paystack payment...');
+    console.log('Payment details:', { email, amount, courseTitle });
     const paystack = new PaystackPop();
     paystack.newTransaction({
       key: publicKey,

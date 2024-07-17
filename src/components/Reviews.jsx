@@ -8,19 +8,16 @@ const Reviews = ({ courseId }) => {
   const axiosPrivate = useAxiosPrivate();
   const studentId = parseInt(localStorage.getItem('STUDENT_ID'));
   const accessToken = localStorage.getItem('ACCESS_TOKEN');
-  const email = localStorage.getItem('STUDENT_EMAIL');
 
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
-  const [imagePath, setImagePath] = useState('');
+  const [imageUrls, setImageUrls] = useState([]);
 
   const fetchReviews = async () => {
     try {
-      const response = await axiosPrivate.get(`/reviews/course/${courseId}`, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
-      await fetchImage();
+      const response = await axiosPrivate.get(`/reviews/course/${courseId}`);
+      const emails = response.data.map((datum) => datum.student.email);
+      await fetchImages(emails);
       setReviews(response.data);
     } catch (error) {
       console.error('Error fetching reviews:', error);
@@ -29,7 +26,7 @@ const Reviews = ({ courseId }) => {
 
   useEffect(() => {
     fetchReviews();
-  }, [courseId]);
+  }, []);
 
   const handleReviewSubmit = async () => {
     if (!accessToken || !studentId) {
@@ -60,16 +57,28 @@ const Reviews = ({ courseId }) => {
     }
   };
 
-  const fetchImage = async () => {
+  const fetchImages = async (emails) => {
     try {
-      const response = await axiosPrivate.get(`students/image/${email}`, {
-        responseType: 'arraybuffer', // Set the response type to 'arraybuffer'
-      });
-      const imageBlob = new Blob([response.data], { type: 'image/jpeg' }); // Create a Blob from the binary data
-      const imageUrl = URL.createObjectURL(imageBlob); // Create a temporary URL for the image
-      setImagePath(imageUrl);
+      const response = await axiosPrivate.post(`students/imagepaths`, emails);
+      const imagePaths = response.data;
+      const imageBlobs = await Promise.all(
+        imagePaths.map(async (imagePath) => {
+          const imageResponse = await axiosPrivate.get(
+            `students/student/image/${imagePath}`,
+            {
+              responseType: 'arraybuffer',
+            }
+          );
+          return new Blob([imageResponse.data], { type: 'image/jpeg' });
+        })
+      );
+      const images = imageBlobs.map((imageBlob) =>
+        URL.createObjectURL(imageBlob)
+      );
+      setImageUrls(images);
     } catch (error) {
       console.error('Error:', error);
+      return [];
     }
   };
 
@@ -82,11 +91,14 @@ const Reviews = ({ courseId }) => {
         reviews.map((review) => (
           <div key={review.id} className='review-item row'>
             <div className='col-md-2 text-center py-3 mx-2 shadow rounded-2'>
-              <img
-                src={imagePath}
-                alt={review.student.name}
-                className='review-student-image'
-              />
+              {imageUrls.map((url, index) => (
+                <img
+                  key={index}
+                  src={url}
+                  alt={review.student.name}
+                  className='review-student-image'
+                />
+              ))}
               <h5>{review.student.name}</h5>
               <StarRating rating={review.rating} />
             </div>
