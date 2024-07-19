@@ -49,12 +49,11 @@ aside .profile {
   padding-top: 0px;
 }
 
-aside .profile img {
-  width: 150px;
-  height: 160px;
-  margin: 0 auto;
-  border-radius: 20% !important;
-  border: 3px solid #ff0000;
+#student-img {
+  width: 120px;
+  height: 150px;
+  border-radius: 5px;
+  float: right;
 }
 
 .profile .name {
@@ -127,15 +126,6 @@ aside .nav-menu ul li a:hover {
     #5089dd 90deg,
     #000232 210deg
   );
-}
-
-.bolded {
-  font-weight: bold;
-}
-
-.side-icon {
-  width: 25px;
-  height: 25px;
 }
 
 #image-change {

@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../assets/styles/student.css';
 import Navigation from '../components/navigation/Navigation';
-import StudentRightAside from '../components/navigation/StudentRightAside';
-import StudentNavItems from '../components/navigation/StudentNavItems';
+import StudentSidebar from '../components/navigation/StudentSidebar';
 import Footer from '../components/Footer';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import Moment from 'react-moment';
-import Logo from '../assets/images/logo.png';
 
 const Student = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -15,8 +13,26 @@ const Student = () => {
 
   const email = localStorage.getItem('STUDENT_EMAIL');
 
+  const [imagePath, setImagePath] = useState('');
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await axiosPrivate.get(`students/image/${email}`, {
+          responseType: 'arraybuffer',
+        });
+        const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
+        const imageUrl = URL.createObjectURL(imageBlob);
+        setImagePath(imageUrl);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchImage();
+  }, []);
 
   useEffect(() => {
     getEnrolledCourses();
@@ -85,9 +101,9 @@ const Student = () => {
       <Navigation />
       <section className='row mb-0' id='student-section'>
         <aside className='col-md-1 student-left'>
-          <StudentNavItems />
+          <StudentSidebar />
         </aside>
-        <main className='col-md-9' id='student-main'>
+        <main className='col-md-11' id='student-main'>
           <div className='row'>
             <div className='col p-5'>
               <div className='card'>
@@ -102,10 +118,9 @@ const Student = () => {
                   </div>
                   <div className='col-md-2'>
                     <img
-                      src={Logo}
-                      width='100%'
-                      height='100%'
-                      alt='<Nerdified />'
+                      src={imagePath}
+                      id='student-img'
+                      alt='Profile Picture'
                     />
                   </div>
                 </div>
@@ -120,7 +135,6 @@ const Student = () => {
             {displayMyCourses}
           </div>
         </main>
-        <aside className='col-md-2 bg-light'>{<StudentRightAside />}</aside>
       </section>
       <Footer />
     </>

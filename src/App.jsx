@@ -9,6 +9,7 @@ import Unauthorized from './pages/Unauthorized';
 import Missing from './pages/Missing';
 import Courses from './pages/Courses';
 import Student from './pages/Student';
+import Profile from './pages/Profile';
 import CourseDetails from './pages/CourseDetails';
 import CourseEnrollment from './pages/CourseEnrollment';
 import Admin from './pages/admin/Admin';
@@ -50,6 +51,7 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path='student' element={<Student />} />
             <Route path='student/settings' element={<StudentSettings />} />
+            <Route path='profile' element={<Profile />} />
           </Route>
         </Route>
 

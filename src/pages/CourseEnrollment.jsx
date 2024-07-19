@@ -53,7 +53,6 @@ const CourseEnrollment = () => {
 
   const savePaymentInfo = async () => {
     try {
-      console.log('save payment called');
       await axiosPrivate.post(
         `students/enroll`,
         JSON.stringify({
@@ -71,13 +70,11 @@ const CourseEnrollment = () => {
         }
       );
     } catch (error) {
-      console.error('Error:', error);
+      alert('Error occurred');
     }
   };
 
   const handlePayment = async () => {
-    console.log('Initiating Paystack payment...');
-    console.log('Payment details:', { email, amount, courseTitle });
     const paystack = new PaystackPop();
     paystack.newTransaction({
       key: publicKey,
