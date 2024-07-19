@@ -124,7 +124,7 @@ const CourseDetails = () => {
                     </div>
                     <ul className='d-grid gap-4 list-unstyled p-3'>
                       <li className='d-flex gap-4'>
-                        <FaClock className='bi text-success flex-shrink-0' />
+                        <FaClock className='bi text-black flex-shrink-0' />
                         <div>
                           <h5 className='mb-0 section-heading'>Last Updated</h5>
                           <span className='text-dark'>
@@ -140,13 +140,13 @@ const CourseDetails = () => {
                           <h5 className='mb-0 section-heading'>
                             Average Rating
                           </h5>
-                          <span>
+                          <span className='d-flex'>
                             <StarRating rating={course.averageRating} />
                           </span>
                         </div>
                       </li>
                       <li className='d-flex gap-4'>
-                        <FaMoneyBill className='bi text-secondary flex-shrink-0' />
+                        <FaMoneyBill className='bi text-success flex-shrink-0' />
                         <div>
                           <h5 className='mb-0 section-heading'>Price</h5>
                           <span className='text-dark'>
@@ -154,11 +154,8 @@ const CourseDetails = () => {
                           </span>
                         </div>
                       </li>
-                      <li className='d-flex text-center fs-5'>
-                        {course.description}
-                      </li>
                     </ul>
-                    <div className='text-center pt-0'>
+                    <div className='pt-0 d-flex justify-content-center'>
                       {accessToken && email ? (
                         courseEnrolled ? (
                           <button

@@ -123,37 +123,39 @@ const Courses = () => {
             </h4>
           </div>
           <div className='card-body'>
-            <ul className='list-unstyled mt-1 mb-3'>
+            <ul className='list-unstyled mt-1 mb-3 justify-content-center'>
               <li className='mb-2'>
                 Updated:{' '}
                 <small className='text-muted fw-light'>
                   <Moment format='MMMM D, YYYY'>{course.updatedAt}</Moment>
                 </small>
               </li>
-              <li className='mb-2'>
+              <li className='mb-2 d-flex align-items-center justify-content-center'>
                 <StarRating rating={course.averageRating} />
               </li>
               <li>&#8358;{course.price}</li>
             </ul>
-            <Link
-              to='/courses/course-details'
-              role='button'
-              className='w-50 btn btn-lg'
-              id='check-btn'
-              onClick={() => saveCourse(course)}
-            >
-              View
-            </Link>
-            <FaHeart
-              onClick={() => handleWishlistToggle(course.id)}
-              className={isInWishlist ? 'wish-btn' : 'no-wish-btn'}
-              role='button'
-              title={
-                isInWishlist
-                  ? 'Remove Course from Wishlist'
-                  : 'Add Course to Wishlist'
-              }
-            />
+            <div className='justify-content-center d-flex'>
+              <Link
+                to='/courses/course-details'
+                role='button'
+                className='w-50 btn btn-lg'
+                id='check-btn'
+                onClick={() => saveCourse(course)}
+              >
+                View
+              </Link>
+              <FaHeart
+                onClick={() => handleWishlistToggle(course.id)}
+                className={isInWishlist ? 'wish-btn' : 'no-wish-btn'}
+                role='button'
+                title={
+                  isInWishlist
+                    ? 'Remove Course from Wishlist'
+                    : 'Add Course to Wishlist'
+                }
+              />
+            </div>
           </div>
         </div>
       </motion.div>

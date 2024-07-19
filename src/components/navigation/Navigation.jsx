@@ -49,24 +49,37 @@ const Navigation = () => {
         <div className='collapse navbar-collapse' id='navbarCollapse'>
           <ul className='navbar-nav ms-auto py-4 py-lg-0'>
             <li className='nav-item me-2'>
-              <Link className='nav-link text-center' aria-current='page' to='/'>
-                <IoHomeSharp /> Home
+              <Link
+                className='nav-link text-center d-flex align-items-center'
+                aria-current='page'
+                to='/'
+              >
+                <IoHomeSharp className='mr-2' /> Home
               </Link>
             </li>
 
             <li className='nav-item me-2'>
-              <Link className='nav-link text-center' to='/courses'>
-                <IoBook /> Courses
+              <Link
+                className='nav-link text-center d-flex align-items-center'
+                to='/courses'
+              >
+                <IoBook className='mr-2' /> Courses
               </Link>
             </li>
             <li className='nav-item me-2'>
-              <Link className='nav-link text-center' to='/blog'>
-                <FaBlog /> Blog
+              <Link
+                className='nav-link text-center d-flex align-items-center'
+                to='/blog'
+              >
+                <FaBlog className='mr-2' /> Blog
               </Link>
             </li>
             <li className='nav-item me-2'>
-              <Link className='nav-link text-center' to='/about'>
-                <GrArticle /> About
+              <Link
+                className='nav-link text-center d-flex align-items-center'
+                to='/about'
+              >
+                <GrArticle className='mr-2' /> About
               </Link>
             </li>
 
@@ -74,19 +87,19 @@ const Navigation = () => {
 
             <li className='nav-item text-center'>
               <Link
-                className='nav-link'
+                className='nav-link d-flex align-items-center'
                 id='userDropdown'
                 role='button'
                 to={access && refresh && email ? '/student' : '/signin'}
               >
                 {access && refresh && email ? (
                   <>
-                    <FaUserGraduate />
+                    <FaUserGraduate className='mr-2' />
                     {student.name}
                   </>
                 ) : (
                   <>
-                    <GrLock />
+                    <GrLock className='mr-2' />
                     Sign in
                   </>
                 )}

@@ -76,7 +76,7 @@ const Reviews = ({ courseId }) => {
       );
       setImageUrls(images);
     } catch (error) {
-      console.error('Error:', error);
+      alert('Error getting images');
       return [];
     }
   };
@@ -89,17 +89,21 @@ const Reviews = ({ courseId }) => {
       {reviews ? (
         reviews.map((review) => (
           <div key={review.id} className='review-item row'>
-            <div className='col-md-2 text-center py-3 mx-2 shadow rounded-2'>
+            <div className='col-md-2 py-3 mx-2 d-flex shadow rounded-2'>
               {imageUrls.map((url, index) => (
                 <img
                   key={index}
                   src={url}
                   alt={review.student.name}
-                  className='review-student-image'
+                  className='review-student-image mr-2'
                 />
               ))}
-              <h6>{review.student.name}</h6>
-              <StarRating rating={review.rating} />
+              <div className=' align-self-center'>
+                <h6 className='text-wrap'>{review.student.name}</h6>
+                <span className='d-flex'>
+                  <StarRating rating={review.rating} />
+                </span>
+              </div>
             </div>
             <div className='review-content col-md-6 py-3 mx-2 shadow rounded-2'>
               <small className='text-muted'>
@@ -117,11 +121,13 @@ const Reviews = ({ courseId }) => {
         <h4>Leave a Review</h4>
         <p>
           Give us a rating:
-          <StarRating
-            rating={newReview.rating}
-            setRating={(rating) => setNewReview({ ...newReview, rating })}
-            editable
-          />
+          <span className='d-flex'>
+            <StarRating
+              rating={newReview.rating}
+              setRating={(rating) => setNewReview({ ...newReview, rating })}
+              editable
+            />
+          </span>
         </p>
         <textarea
           value={newReview.comment}

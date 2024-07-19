@@ -40,7 +40,7 @@ const Blog = () => {
         setPosts(response.data.posts);
         setTotalPosts(response.data.totalPosts);
       } catch (error) {
-        console.error('Error:', error);
+        alert('Error getting posts');
       }
     };
     fetchPosts();
@@ -69,7 +69,7 @@ const Blog = () => {
       );
       setImagePaths(images);
     } catch (error) {
-      console.error('Error:', error);
+      alert('Error fetching images');
     }
   };
 

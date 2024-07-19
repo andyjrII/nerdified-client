@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../assets/styles/student.css';
+import Navigation from '../components/navigation/Navigation';
 import StudentRightAside from '../components/navigation/StudentRightAside';
 import StudentNavItems from '../components/navigation/StudentNavItems';
+import Footer from '../components/Footer';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import Moment from 'react-moment';
 import Logo from '../assets/images/logo.png';
@@ -79,45 +81,49 @@ const Student = () => {
   });
 
   return (
-    <section className='row mb-0' id='student-section'>
-      <aside className='col-md-1 student-left'>
-        <StudentNavItems />
-      </aside>
-      <main className='col-md-9' id='student-main'>
-        <div className='row'>
-          <div className='col p-5'>
-            <div className='card'>
-              <div className='card-body row'>
-                <div className='col-md-10'>
-                  <p className='card-text text-white'>Welcome Back!</p>
-                  <h5 className='card-title text-white'>Your Dashboard</h5>
-                  <p className='card-text text-white'>
-                    "Education is the ability to listen to anything without
-                    losing your temper or your self-confidence"
-                  </p>
-                </div>
-                <div className='col-md-2'>
-                  <img
-                    src={Logo}
-                    width='100%'
-                    height='100%'
-                    alt='<Nerdified />'
-                  />
+    <>
+      <Navigation />
+      <section className='row mb-0' id='student-section'>
+        <aside className='col-md-1 student-left'>
+          <StudentNavItems />
+        </aside>
+        <main className='col-md-9' id='student-main'>
+          <div className='row'>
+            <div className='col p-5'>
+              <div className='card'>
+                <div className='card-body row'>
+                  <div className='col-md-10'>
+                    <p className='card-text text-white'>Welcome Back!</p>
+                    <h5 className='card-title text-white'>Your Dashboard</h5>
+                    <p className='card-text text-white'>
+                      "Education is the ability to listen to anything without
+                      losing your temper or your self-confidence"
+                    </p>
+                  </div>
+                  <div className='col-md-2'>
+                    <img
+                      src={Logo}
+                      width='100%'
+                      height='100%'
+                      alt='<Nerdified />'
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        {/* Enrolled Courses */}
-        <div className='row p-3 mx-2 shadow'>
-          <h1 className='bolded pb-2'>
-            My Courses <span className='total-courses'>({totalCount})</span>
-          </h1>
-          {displayMyCourses}
-        </div>
-      </main>
-      <aside className='col-md-2 bg-light'>{<StudentRightAside />}</aside>
-    </section>
+
+          <div className='row p-3 mx-2 shadow'>
+            <h1 className='bolded pb-2'>
+              My Courses <span className='total-courses'>({totalCount})</span>
+            </h1>
+            {displayMyCourses}
+          </div>
+        </main>
+        <aside className='col-md-2 bg-light'>{<StudentRightAside />}</aside>
+      </section>
+      <Footer />
+    </>
   );
 };
 

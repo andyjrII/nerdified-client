@@ -133,8 +133,9 @@ const CourseEnrollment = () => {
                   s
                   <div className='form-group'>
                     {/* Checkbox for Number of Sessions Per Week*/}
-                    <div className='mb-2 text-white'>
-                      <FcCalendar /> Number of Sessions Per Week
+                    <div className='mb-2 text-white d-flex'>
+                      <FcCalendar className='align-self-center mr-2' /> Number
+                      of Sessions Per Week
                     </div>
                     <div
                       className='btn-group'
@@ -241,8 +242,8 @@ const CourseEnrollment = () => {
                   <hr className='bg-primary m-3' />
                   {/* Radio Button for Preferrable time of the day */}
                   <div className='form-group'>
-                    <div className='mb-2 text-white'>
-                      <FaClock /> Time of Day
+                    <div className='mb-2 text-white d-flex'>
+                      <FaClock className='align-self-center mr-2' /> Time of Day
                     </div>
                     <div
                       className='btn-group'
@@ -307,8 +308,9 @@ const CourseEnrollment = () => {
                   <hr className='bg-primary m-3' />
                   {/* Radio button for Mode of learning */}
                   <div className='form-group mt-2'>
-                    <div className='mb-2 text-white'>
-                      <FcGlobe /> Mode of Learning
+                    <div className='mb-2 text-white d-flex'>
+                      <FcGlobe className='align-self-center mr-2' /> Mode of
+                      Learning
                     </div>
                     <div
                       className='btn-group'

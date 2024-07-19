@@ -24,8 +24,8 @@ const Footer = () => {
           </div>
           <div className='row'>
             <p className='text-white ml-3'>
-              <span>
-                <FaCopyright className='bi' /> 2024 Nerdified
+              <span className='d-flex align-items-center'>
+                <FaCopyright className='bi mr-2' /> 2024 Nerdified
               </span>
             </p>
           </div>
@@ -34,31 +34,31 @@ const Footer = () => {
           <h6 className='mb-3'>JOIN US ON SOCIAL MEDIA</h6>
           <p>
             <Link
-              className='text-white'
+              className='text-white d-flex align-items-center'
               to='https://www.facebook.com/get-nerdifiedIT'
               target='_blank'
             >
-              <FaFacebook className='social-icon' />
+              <FaFacebook className='social-icon mr-2' />
               <span> Facebook</span>
             </Link>
           </p>
           <p>
             <Link
-              className='text-white'
+              className='text-white d-flex align-items-center'
               to='https://www.youtube.com/channel/UC6X7jQL8km-8ILVVlOq_xjg'
               target='_blank'
             >
-              <FaYoutube className='social-icon' />
+              <FaYoutube className='social-icon mr-2' />
               <span> YouTube</span>
             </Link>
           </p>
           <p>
             <Link
-              className='text-white'
+              className='text-white d-flex align-items-center'
               to='https://wa.me/2349063368647'
               target='_blank'
             >
-              <FaWhatsapp className='social-icon' />
+              <FaWhatsapp className='social-icon mr-2' />
               <span> Whatsapp</span>
             </Link>
           </p>
@@ -66,50 +66,53 @@ const Footer = () => {
         <div className='col-md-3'>
           <h6 className='mb-3'>CONTACT US</h6>
           <p>
-            <Link className='text-white'>
-              <GrMap className='social-icon' />
+            <Link className='text-white d-flex align-items-center'>
+              <GrMap className='social-icon mr-2' />
               <span> Efab Estate, Lokogoma, Abuja</span>
             </Link>
           </p>
           <p>
             <Link
-              className='text-white'
+              className='text-white d-flex align-items-center'
               to='mailto:nerdified.get@gmail.com'
               target='_blank'
             >
-              <GrMail className='social-icon' />
+              <GrMail className='social-icon mr-2' />
               <span> nerdified.get@gmail.com</span>
             </Link>
           </p>
           <p>
-            <Link className='text-white'>
-              <GrPhone className='social-icon' />
+            <Link className='text-white d-flex align-items-center'>
+              <GrPhone className='social-icon mr-2' />
               <span> +2349063368647</span>
             </Link>
           </p>
         </div>
         <div className='col-md-3'>
           <p>
-            <Link className='text-white' to='/'>
-              <GrHome />
+            <Link className='text-white d-flex align-items-center' to='/'>
+              <GrHome className='mr-2' />
               <span> Home</span>
             </Link>
           </p>
           <p>
-            <Link className='text-white' to='/courses'>
-              <GrBook className='nav-icon' />
+            <Link
+              className='text-white d-flex align-items-center'
+              to='/courses'
+            >
+              <GrBook className='nav-icon mr-2' />
               <span> Courses</span>
             </Link>
           </p>
           <p>
-            <Link className='text-white' to='/blog'>
-              <GrBlog />
+            <Link className='text-white d-flex align-items-center' to='/blog'>
+              <GrBlog className='mr-2' />
               <span> Blog</span>
             </Link>
           </p>
           <p>
-            <Link className='text-white' to='/about'>
-              <GrArticle />
+            <Link className='text-white d-flex align-items-center' to='/about'>
+              <GrArticle className='mr-2' />
               <span> About Us</span>
             </Link>
           </p>
