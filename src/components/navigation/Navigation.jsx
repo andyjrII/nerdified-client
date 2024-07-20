@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { IoHomeSharp, IoBook, IoInformationCircle } from 'react-icons/io5';
-import { FaBlog, FaUserGraduate, FaLock } from 'react-icons/fa';
+import { FaBlogger, FaUserGraduate, FaLock } from 'react-icons/fa';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
 import '../../assets/styles/navigation.css';
@@ -71,7 +71,7 @@ const Navigation = () => {
                 className='nav-link text-center d-flex align-items-center'
                 to='/blog'
               >
-                <FaBlog className='mr-2' /> Blog
+                <FaBlogger className='mr-2' /> Blog
               </Link>
             </li>
             <li className='nav-item me-2'>

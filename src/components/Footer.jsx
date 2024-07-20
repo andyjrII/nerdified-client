@@ -1,7 +1,19 @@
 import { Link } from 'react-router-dom';
-import { FaFacebook, FaYoutube, FaWhatsapp, FaCopyright } from 'react-icons/fa';
-import { GrMail, GrPhone, GrBook, GrHome, GrBlog, GrMap } from 'react-icons/gr';
-import { IoInformationCircle } from 'react-icons/io5';
+import {
+  FaFacebook,
+  FaYoutube,
+  FaWhatsapp,
+  FaCopyright,
+  FaBlogger,
+} from 'react-icons/fa';
+import {
+  IoInformationCircle,
+  IoMail,
+  IoCall,
+  IoBook,
+  IoHome,
+  IoMap,
+} from 'react-icons/io5';
 import '../assets/styles/footer.css';
 import Logo from '../assets/images/logo.png';
 
@@ -60,7 +72,7 @@ const Footer = () => {
           <h6 className='mb-3'>CONTACT US</h6>
           <p>
             <Link className='text-white d-flex align-items-center'>
-              <GrMap className='social-icon mr-2' />
+              <IoMap className='social-icon mr-2' />
               <span> Efab Estate, Lokogoma, Abuja</span>
             </Link>
           </p>
@@ -70,13 +82,13 @@ const Footer = () => {
               to='mailto:nerdified.get@gmail.com'
               target='_blank'
             >
-              <GrMail className='social-icon mr-2' />
+              <IoMail className='social-icon mr-2' />
               <span> nerdified.get@gmail.com</span>
             </Link>
           </p>
           <p>
             <Link className='text-white d-flex align-items-center'>
-              <GrPhone className='social-icon mr-2' />
+              <IoCall className='social-icon mr-2' />
               <span> +2349063368647</span>
             </Link>
           </p>
@@ -84,7 +96,7 @@ const Footer = () => {
         <div className='col-md-3'>
           <p>
             <Link className='text-white d-flex align-items-center' to='/'>
-              <GrHome className='mr-2' />
+              <IoHome className='mr-2' />
               <span> Home</span>
             </Link>
           </p>
@@ -93,13 +105,13 @@ const Footer = () => {
               className='text-white d-flex align-items-center'
               to='/courses'
             >
-              <GrBook className='nav-icon mr-2' />
+              <IoBook className='nav-icon mr-2' />
               <span> Courses</span>
             </Link>
           </p>
           <p>
             <Link className='text-white d-flex align-items-center' to='/blog'>
-              <GrBlog className='mr-2' />
+              <FaBlogger className='mr-2' />
               <span> Blog</span>
             </Link>
           </p>
