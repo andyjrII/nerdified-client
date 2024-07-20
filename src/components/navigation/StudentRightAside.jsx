@@ -4,7 +4,7 @@ import StudentProfile from '../../assets/images/navpages/person_profile.jpg';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IoHomeSharp, IoSchool, IoMail } from 'react-icons/io5';
+import { IoHomeSharp, IoMail } from 'react-icons/io5';
 import { FaPhone } from 'react-icons/fa';
 
 const StudentRightAside = () => {

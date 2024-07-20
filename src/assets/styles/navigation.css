@@ -149,9 +149,9 @@ li svg {
 }
 
 .navbar-dark .navbar-brand span {
-  font-family: 'Abril Fatface', Arial, sans-serif;
-  font-weight: 900;
-  font-size: 20px;
+  font-family: 'Old English Text', Arial, sans-serif;
+  font-weight: bold;
+  font-size: 30px;
 }
 
 .navbar-dark .navbar-brand {
@@ -166,7 +166,7 @@ li svg {
 }
 
 .navbar-dark .navbar-brand img {
-  border-radius: 25%;
+  border-radius: 50%;
   width: 90px;
   height: 70px;
 }

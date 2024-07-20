@@ -56,7 +56,7 @@ const CourseDetails = () => {
         const wishlistSet = new Set(response.data.map((item) => item.courseId));
         setIsInWishlist(wishlistSet.has(courseId));
       } catch (error) {
-        //console.error('Error:', error);
+        alert('Error fetching Wishlist!');
       }
     };
     if (localStorage.getItem('STUDENT_ID')) {
@@ -87,7 +87,7 @@ const CourseDetails = () => {
           setIsInWishlist(true);
         }
       } catch (error) {
-        console.error('Error toggling wishlist:', error);
+        alert('Error toggling Wishlist!');
       }
     } else {
       alert('You must be signed in first to be able to add class to wishlist');

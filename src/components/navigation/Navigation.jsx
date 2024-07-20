@@ -32,8 +32,9 @@ const Navigation = () => {
   return (
     <nav className='navbar navbar-expand-lg navbar-dark nerd-navbar-light navy'>
       <div className='container-fluid'>
-        <Link className='navbar-brand' to='/'>
+        <Link className='navbar-brand d-flex' to='/'>
           <img src={Logo} alt='<Nerdified />' id='nerdified-logo' />
+          <span className='align-self-center ml-2'>&lt;Nerdified /&gt;</span>
         </Link>
         <button
           className='navbar-toggler'

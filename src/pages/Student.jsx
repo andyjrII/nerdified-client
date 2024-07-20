@@ -15,7 +15,6 @@ const Student = () => {
 
   const [imagePath, setImagePath] = useState('');
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -36,8 +35,7 @@ const Student = () => {
 
   useEffect(() => {
     getEnrolledCourses();
-    totalCourses();
-  }, [totalCount]);
+  }, []);
 
   const getEnrolledCourses = async () => {
     try {
@@ -59,15 +57,6 @@ const Student = () => {
       });
       localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
       navigate('/courses/course');
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const totalCourses = async () => {
-    try {
-      const response = await axiosPrivate.get(`students/total/${email}`);
-      setTotalCount(response?.data);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -117,11 +106,7 @@ const Student = () => {
                     </p>
                   </div>
                   <div className='col-md-2'>
-                    <img
-                      src={imagePath}
-                      id='student-img'
-                      alt='Profile Picture'
-                    />
+                    <img src={imagePath} id='student-img' alt='Profile' />
                   </div>
                 </div>
               </div>
@@ -129,9 +114,7 @@ const Student = () => {
           </div>
 
           <div className='row p-3 mx-2 shadow'>
-            <h1 className='bolded pb-2'>
-              My Courses <span className='total-courses'>({totalCount})</span>
-            </h1>
+            <h1 className='bolded pb-2'>My Courses</h1>
             {displayMyCourses}
           </div>
         </main>

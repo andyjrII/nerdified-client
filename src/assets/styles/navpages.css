@@ -109,18 +109,6 @@ div span {
   color: #ff6347;
 }
 
-/* Store Page */
-
-#product-url {
-  color: #ffffff;
-  background-color: #ff6347;
-}
-
-#product-url:hover {
-  color: #e2d3d3;
-  background-color: #ff6347;
-}
-
 /* Blog Page */
 .post-image {
   height: 200px;
