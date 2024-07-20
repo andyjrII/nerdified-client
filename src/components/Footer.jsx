@@ -44,7 +44,7 @@ const Footer = () => {
               target='_blank'
             >
               <FaFacebook className='social-icon mr-2' />
-              <span> Facebook</span>
+              <span> Get Nerdified</span>
             </Link>
           </p>
           <p>
@@ -54,7 +54,7 @@ const Footer = () => {
               target='_blank'
             >
               <FaYoutube className='social-icon mr-2' />
-              <span> YouTube</span>
+              <span> GetNerdified</span>
             </Link>
           </p>
           <p>
@@ -64,7 +64,7 @@ const Footer = () => {
               target='_blank'
             >
               <FaWhatsapp className='social-icon mr-2' />
-              <span> Whatsapp</span>
+              <span> +2349056539717</span>
             </Link>
           </p>
         </div>

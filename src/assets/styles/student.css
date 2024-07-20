@@ -92,7 +92,8 @@ aside .nav-menu ul li a:hover {
 }
 
 #studentProfileLabel,
-#wishlistLabel {
+#wishlistLabel,
+#accountSettingsLabel {
   color: #f5f5f5;
   font-weight: bold;
   text-shadow: -1px 0 0 #000232, 1px 0 0 #000232, 0 -1px 0 #000232,
@@ -111,6 +112,11 @@ aside .nav-menu ul li a:hover {
 
 tr {
   background-color: #000232;
+}
+
+.accordion-header > button {
+  background-color: #000232;
+  color: #f5f5f5;
 }
 
 .view-courses {
