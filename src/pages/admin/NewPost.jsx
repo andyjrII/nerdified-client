@@ -1,59 +1,53 @@
-import AdminSidebar from "../../components/navigation/AdminSidebar";
-import { useRef, useState, useEffect } from "react";
-import useAdminAxiosPrivate from "../../hooks/useAdminAxiosPrivate";
-import "../../assets/styles/admin.css";
+import AdminSidebar from '../../components/navigation/AdminSidebar';
+import { useRef, useState, useEffect } from 'react';
+import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
+import '../../assets/styles/admin.css';
 
 const NewPost = () => {
   const axiosPrivate = useAdminAxiosPrivate();
   const errRef = useRef();
 
-  const [post, setPost] = useState("");
-  const [title, setTitle] = useState("");
-  const [postUrl, setPostUrl] = useState("");
-  const [description, setDescription] = useState("");
-  const [datePosted, setDatePosted] = useState("");
+  const [post, setPost] = useState('');
+  const [title, setTitle] = useState('');
+  const [postUrl, setPostUrl] = useState('');
+  const [datePosted, setDatePosted] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const [errMsg, setErrMsg] = useState("");
+  const [errMsg, setErrMsg] = useState('');
 
   useEffect(() => {
-    setErrMsg("");
-  }, [title, datePosted, postUrl, description, selectedImage]);
+    setErrMsg('');
+  }, [title, datePosted, postUrl, selectedImage]);
 
   const handleImageChange = (e) => {
     setSelectedImage(e.target.files[0]);
-  };
-
-  const handleTextarea = (e) => {
-    setDescription(e.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axiosPrivate.post(
-        "blog/create",
-        JSON.stringify({ title, datePosted, postUrl, description }),
+        'blog/create',
+        JSON.stringify({ title, datePosted, postUrl }),
         {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
         }
       );
       await imageUpload(response?.data.id);
       setPost(response?.data);
       alert(`${title} with URL ${postUrl} successfully created!`);
-      setTitle("");
-      setPostUrl("");
-      setDescription("");
+      setTitle('');
+      setPostUrl('');
     } catch (err) {
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        setErrMsg('No Server Response');
       } else if (err.response?.status === 400) {
-        setErrMsg("Missing Credentials");
+        setErrMsg('Missing Credentials');
       } else if (err.response?.status === 403) {
-        setErrMsg("Unauthorized");
+        setErrMsg('Unauthorized');
       } else {
-        setErrMsg("Post Creation Failed");
+        setErrMsg('Post Creation Failed');
       }
       errRef.current.focus();
     }
@@ -61,14 +55,14 @@ const NewPost = () => {
 
   const imageUpload = async (id) => {
     const formData = new FormData();
-    formData.append("image", selectedImage);
+    formData.append('image', selectedImage);
     try {
       await axiosPrivate.patch(`blog/upload/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
       });
     } catch (err) {
-      setErrMsg("Image upload Failed");
+      setErrMsg('Image upload Failed');
       errRef.current.focus();
     }
   };
@@ -83,7 +77,7 @@ const NewPost = () => {
 
         <div className='p-3 pb-md-4 mx-auto row'>
           {/* Form for creating a new post */}
-          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"}>
+          <p ref={errRef} className={errMsg ? 'errmsg' : 'offscreen'}>
             {errMsg}
           </p>
           <form onSubmit={handleSubmit}>
@@ -113,7 +107,7 @@ const NewPost = () => {
                     aria-label='Publication Date'
                     onChange={(e) => setDatePosted(e.target.value)}
                     value={datePosted}
-                    max={new Date().toISOString().split("T")[0]}
+                    max={new Date().toISOString().split('T')[0]}
                     required
                   />
                 </div>
@@ -132,24 +126,12 @@ const NewPost = () => {
                 </div>
               </div>
 
-              <div className='col-sm-8'>
-                <div className='input-group mb-3'>
-                  <textarea
-                    className='form-control bg-dark texy-white'
-                    aria-label='Description'
-                    value={description}
-                    onChange={handleTextarea}
-                    placeholder='A short description about the course.'
-                    required
-                  />
-                </div>
-              </div>
-
               <div className='col-sm-4'>
                 <div className='input-group mb-3'>
                   <span
                     className='input-group-text bg-dark text-white'
-                    id='image'>
+                    id='image'
+                  >
                     Post Image
                   </span>
                   <input
