@@ -6,6 +6,7 @@ import Navigation from '../components/navigation/Navigation';
 import Footer from '../components/Footer';
 import Hero from '../components/Hero';
 import LatestBlogs from '../components/LatestBlogs';
+import Testimonial from '../components/Testimonial';
 import { motion } from 'framer-motion';
 
 const Home = () => {
@@ -72,7 +73,7 @@ const Home = () => {
                   </p>
                   <div className='intro-button mx-auto'>
                     <Link className='btn btn-xl text-white' to='about'>
-                      About us
+                      Check us out
                     </Link>
                   </div>
                 </motion.div>
@@ -129,6 +130,17 @@ const Home = () => {
                 </span>
               </p>
               <LatestBlogs />
+            </div>
+          </section>
+
+          <section className='page-section clearfix'>
+            <div className='testimonial_section text-center'>
+              <p className='h1'>
+                <span className='badge text-white my-2 tomato'>
+                  Testimonials
+                </span>
+              </p>
+              <Testimonial />
             </div>
           </section>
         </section>

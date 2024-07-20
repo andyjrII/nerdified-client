@@ -1,5 +1,14 @@
 import ClientImage from '../assets/images/testimonial/client-img.png';
-import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
+import {
+  FaQuoteLeft,
+  FaQuoteRight,
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaTiktok,
+  FaLinkedin,
+} from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Testimonial = () => {
   return (
@@ -60,10 +69,21 @@ const Testimonial = () => {
             </div>
             <div className='client_right col-md-8 bg-faded text-dark rounded'>
               <h3 className='client_name'>Chineye</h3>
-              <p className='client_text text-black'>
+              <p className='client_text text-black d-flex justify-content-center'>
                 <FaQuoteLeft className='mr-2 text-black' />
                 I honestly love how I was taught!
                 <FaQuoteRight className='ml-2 text-black' />
+              </p>
+              <p className='d-flex justify-content-center'>
+                <Link className='client_icon mx-2'>
+                  <FaFacebook />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaTwitter />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaTiktok />
+                </Link>
               </p>
             </div>
           </div>
@@ -85,13 +105,24 @@ const Testimonial = () => {
             </div>
             <div className='client_right col-md-8 bg-faded text-dark rounded'>
               <h3 className='client_name'>Michael Owen</h3>
-              <p className='client_text text-black'>
+              <p className='client_text text-black d-flex justify-content-center'>
                 <FaQuoteLeft className='mr-2 text-black' />
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
                 nisi ut aliquip.
                 <FaQuoteRight className='ml-2 text-black' />
+              </p>
+              <p className='d-flex justify-content-center'>
+                <Link className='client_icon mx-2'>
+                  <FaFacebook />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaInstagram />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaTiktok />
+                </Link>
               </p>
             </div>
           </div>
@@ -113,13 +144,24 @@ const Testimonial = () => {
             </div>
             <div className='client_right col-md-8 bg-faded text-dark rounded'>
               <h3 className='client_name'>John Smith</h3>
-              <p className='client_text text-black'>
+              <p className='client_text text-black d-flex justify-content-center'>
                 <FaQuoteLeft className='mr-2 text-black' />
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
                 nisi ut aliquip.
                 <FaQuoteRight className='ml-2 text-black' />
+              </p>
+              <p className='d-flex justify-content-center'>
+                <Link className='client_icon mx-2'>
+                  <FaFacebook />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaTwitter />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaLinkedin />
+                </Link>
               </p>
             </div>
           </div>
@@ -141,13 +183,30 @@ const Testimonial = () => {
             </div>
             <div className='client_right col-md-8 bg-faded text-dark rounded'>
               <h3 className='client_name'>Ismael Bennacer</h3>
-              <p className='client_text text-black'>
+              <p className='client_text text-black d-flex justify-content-center'>
                 <FaQuoteLeft className='mr-2 text-black' />
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
                 nisi ut aliquip.
                 <FaQuoteRight className='ml-2 text-black' />
+              </p>
+              <p className='d-flex justify-content-center'>
+                <Link className='client_icon mx-2'>
+                  <FaFacebook />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaInstagram />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaLinkedin />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaTwitter />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaTiktok />
+                </Link>
               </p>
             </div>
           </div>
@@ -169,7 +228,7 @@ const Testimonial = () => {
             </div>
             <div className='client_right col-md-8 bg-faded text-dark rounded'>
               <h3 className='client_name'>Christian Pulisic</h3>
-              <p className='client_text text-black'>
+              <p className='client_text text-black d-flex justify-content-center'>
                 <FaQuoteLeft className='mr-2 text-black' />
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
@@ -177,6 +236,18 @@ const Testimonial = () => {
                 nisi ut aliquip.
                 <FaQuoteRight className='ml-2 text-black' />
               </p>
+              <Link className='client_icon mx-2'>
+                <FaLinkedin />
+              </Link>
+              <Link className='client_icon mx-2'>
+                <FaFacebook />
+              </Link>
+              <Link className='client_icon mx-2'>
+                <FaTwitter />
+              </Link>
+              <Link className='client_icon mx-2'>
+                <FaTiktok />
+              </Link>
             </div>
           </div>
         </div>

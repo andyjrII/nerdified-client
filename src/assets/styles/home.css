@@ -406,10 +406,20 @@ p .carousel-button:hover {
   }
 }
 
-/* Testimonial Section 
+/* Testimonial Section */
 
 .testimonial_section .h1 {
   font-size: 50px;
+}
+
+.client_icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: #000232;
+}
+
+.client_icon:hover {
+  color: #ff6347;
 }
 
 #testimonialCarousel .carousel-item {
@@ -476,5 +486,3 @@ p .carousel-button:hover {
 .client_name {
   font-size: 20px;
 }
-
-*/
