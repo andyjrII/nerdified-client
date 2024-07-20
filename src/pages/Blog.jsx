@@ -91,9 +91,8 @@ const Blog = () => {
               <Moment format='MMMM D, YYYY'>{post.datePosted}</Moment>
             </div>
             <h2 className='card-title'>{post.title}</h2>
-            <p className='card-text'>{post.description}</p>
             <Link
-              className='btn'
+              className='btn mt-2'
               to={`https://${post.postUrl}`}
               target='_blank'
             >

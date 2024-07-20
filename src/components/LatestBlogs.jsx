@@ -48,7 +48,6 @@ const LatestBlogs = () => {
       <div className='blog-card' key={blog.id}>
         <img src={imagePaths[index]} alt={blog.title} className='blog-image' />
         <h3 className='blog-title'>{blog.title}</h3>
-        <p className='blog-description'>{blog.description}</p>
         <p className='blog-date'>
           Posted on: <Moment format='MMMM D, YYYY'>{blog.datePosted}</Moment>
         </p>
