@@ -1,14 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaYoutube, FaWhatsapp, FaCopyright } from 'react-icons/fa';
-import {
-  GrMail,
-  GrPhone,
-  GrBook,
-  GrHome,
-  GrBlog,
-  GrArticle,
-  GrMap,
-} from 'react-icons/gr';
+import { GrMail, GrPhone, GrBook, GrHome, GrBlog, GrMap } from 'react-icons/gr';
+import { IoInformationCircle } from 'react-icons/io5';
 import '../assets/styles/footer.css';
 import Logo from '../assets/images/logo.png';
 
@@ -112,7 +105,7 @@ const Footer = () => {
           </p>
           <p>
             <Link className='text-white d-flex align-items-center' to='/about'>
-              <GrArticle className='mr-2' />
+              <IoInformationCircle className='mr-2' />
               <span> About Us</span>
             </Link>
           </p>

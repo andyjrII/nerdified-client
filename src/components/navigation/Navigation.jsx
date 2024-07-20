@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
-import { IoHomeSharp, IoBook } from 'react-icons/io5';
-import { FaBlog, FaUserGraduate } from 'react-icons/fa';
-import { GrArticle, GrLock } from 'react-icons/gr';
+import { IoHomeSharp, IoBook, IoInformationCircle } from 'react-icons/io5';
+import { FaBlog, FaUserGraduate, FaLock } from 'react-icons/fa';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
 import '../../assets/styles/navigation.css';
@@ -80,7 +79,7 @@ const Navigation = () => {
                 className='nav-link text-center d-flex align-items-center'
                 to='/about'
               >
-                <GrArticle className='mr-2' /> About
+                <IoInformationCircle className='mr-2' /> About us
               </Link>
             </li>
 
@@ -100,7 +99,7 @@ const Navigation = () => {
                   </>
                 ) : (
                   <>
-                    <GrLock className='mr-2' />
+                    <FaLock className='mr-2' />
                     Sign in
                   </>
                 )}
