@@ -9,7 +9,6 @@ import Unauthorized from './pages/Unauthorized';
 import Missing from './pages/Missing';
 import Courses from './pages/Courses';
 import Student from './pages/Student';
-import Profile from './pages/Profile';
 import CourseDetails from './pages/CourseDetails';
 import CourseEnrollment from './pages/CourseEnrollment';
 import Admin from './pages/admin/Admin';
@@ -39,7 +38,7 @@ function App() {
         <Route path='/signin' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='courses' element={<Courses />} />
-        <Route path='courses/course-details' element={<CourseDetails />} />
+        <Route path='course-details' element={<CourseDetails />} />
         <Route path='courses/course-enroll' element={<CourseEnrollment />} />
         <Route path='blog' element={<Blog />} />
         <Route path='about' element={<About />} />
@@ -51,7 +50,6 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path='student' element={<Student />} />
             <Route path='student/settings' element={<StudentSettings />} />
-            <Route path='profile' element={<Profile />} />
           </Route>
         </Route>
 

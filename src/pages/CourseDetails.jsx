@@ -115,7 +115,7 @@ const CourseDetails = () => {
               {/* PDF Viewer */}
               <PDFViewer />
               <div className='col-md-3'>
-                <div className='modal-content rounded-4 shadow'>
+                <div className='rounded-4 shadow'>
                   <div className='modal-body p-3'>
                     <div className='payment-head rounded py-2'>
                       <h5 className='fw-bold text-center text-white'>

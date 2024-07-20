@@ -137,7 +137,7 @@ const Courses = () => {
             </ul>
             <div className='justify-content-center d-flex'>
               <Link
-                to='/courses/course-details'
+                to='/course-details'
                 role='button'
                 className='w-50 btn btn-lg'
                 id='check-btn'

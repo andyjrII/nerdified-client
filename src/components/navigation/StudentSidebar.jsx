@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IoSettings, IoMail, IoCall } from 'react-icons/io5';
 import { FaHeart, FaSignOutAlt, FaUserGraduate } from 'react-icons/fa';
-import { GrMap } from 'react-icons/gr';
+import { GrMap, GrView } from 'react-icons/gr';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
@@ -19,6 +19,7 @@ const StudentSidebar = () => {
   const { student, setStudent } = useStudent();
   const [totalCount, setTotalCount] = useState(0);
   const [totalWishes, setTotalWishes] = useState(0);
+  const [wishlist, setWishlist] = useState([]);
 
   const fetchStudent = async () => {
     try {
@@ -28,9 +29,10 @@ const StudentSidebar = () => {
       });
       localStorage.setItem('STUDENT_ID', response?.data.id);
       await totalWishItems(response.data.id);
+      await getWishlist(response.data.id);
       setStudent(response?.data);
     } catch (error) {
-      console.error('Error:', error);
+      alert('Error fetching Student Profile');
       navigate('/signin', { state: { from: location }, replace: true });
     }
   };
@@ -43,7 +45,19 @@ const StudentSidebar = () => {
       });
       setTotalWishes(response?.data);
     } catch (error) {
-      console.error('Error:', error);
+      alert('Error getting total Wishlist items');
+    }
+  };
+
+  const getWishlist = async (studentId) => {
+    try {
+      const response = await axiosPrivate.get(`wishlist/${studentId}`, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+      setWishlist(response?.data);
+    } catch (error) {
+      alert('Error getting Wishlist');
     }
   };
 
@@ -52,8 +66,30 @@ const StudentSidebar = () => {
       const response = await axiosPrivate.get(`students/total/${email}`);
       setTotalCount(response?.data);
     } catch (error) {
-      console.error('Error:', error);
+      alert('Error getting total number of Courses');
     }
+  };
+
+  const handleRemove = async (studentId, courseId) => {
+    try {
+      await axiosPrivate.delete(
+        'wishlist/remove',
+        { data: { studentId, courseId } },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+      alert('Course successfully removed!');
+      getWishlist(studentId);
+    } catch (error) {
+      alert('Error removing Course');
+    }
+  };
+
+  const handleCourseView = async (course) => {
+    localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(course));
+    navigate('/course-details');
   };
 
   useEffect(() => {
@@ -65,6 +101,32 @@ const StudentSidebar = () => {
     await logout();
     navigate('/');
   };
+
+  const displayWishlist = wishlist.map((wish) => {
+    return (
+      <tr key={wish.id} className='text-white'>
+        <td>{wish.course.title}</td>
+        <td>
+          <GrView
+            role='button'
+            tabIndex='0'
+            title='View Course'
+            data-bs-dismiss='modal'
+            onClick={() => handleCourseView(wish.course)}
+          />
+        </td>
+        <td>
+          <FaHeart
+            role='button'
+            tabIndex='0'
+            title='Remove from Wishlist'
+            className='text-danger'
+            onClick={() => handleRemove(student.id, wish.courseId)}
+          />
+        </td>
+      </tr>
+    );
+  });
 
   return (
     <div className='nav-menu'>
@@ -80,43 +142,41 @@ const StudentSidebar = () => {
               <FaUserGraduate />
             </span>
           </Link>
-          {/*  Modal */}
+          {/*  Profile Modal */}
           <div
-            class='modal fade'
+            className='modal fade'
             id='studentProfile'
             data-bs-backdrop='static'
             data-bs-keyboard='false'
-            tabindex='-1'
+            tabIndex='-1'
             aria-labelledby='studentProfileLabel'
             aria-hidden='true'
           >
-            <div class='modal-dialog modal-dialog-centered'>
-              <div class='modal-content'>
-                <div class='modal-header'>
-                  <h1 class='modal-title fs-5' id='studentProfileLabel'>
+            <div className='modal-dialog modal-dialog-centered'>
+              <div className='modal-content'>
+                <div className='modal-header'>
+                  <h1 className='modal-title fs-5' id='studentProfileLabel'>
                     {student.name} Profile
                   </h1>
                   <button
                     type='button'
-                    class='btn-close'
+                    className='btn-close'
                     data-bs-dismiss='modal'
                     aria-label='Close'
                   ></button>
                 </div>
-                <div class='modal-body text-center'>
+                <div className='modal-body text-center'>
                   <div className='m-2'>
-                    <button type='button' className='btn btn-primary mx-2'>
-                      Courses{' '}
-                      <span class='badge text-bg-secondary'>{totalCount}</span>
-                    </button>
-                    <button type='button' className='btn btn-primary mx-2'>
-                      Wishlist{' '}
-                      <span class='badge text-bg-secondary'>{totalWishes}</span>
+                    <button type='button' className='btn btn-primary'>
+                      My Courses{' '}
+                      <span className='badge text-bg-secondary'>
+                        {totalCount}
+                      </span>
                     </button>
                   </div>
                   <p className='d-inline-flex gap-1 m-2'>
                     <button
-                      class='btn btn-primary'
+                      className='btn btn-primary'
                       type='button'
                       data-bs-toggle='collapse'
                       data-bs-target='#email'
@@ -126,7 +186,7 @@ const StudentSidebar = () => {
                       <IoMail />
                     </button>
                     <button
-                      class='btn btn-primary'
+                      className='btn btn-primary'
                       type='button'
                       data-bs-toggle='collapse'
                       data-bs-target='#phoneNumber'
@@ -146,32 +206,34 @@ const StudentSidebar = () => {
                       <GrMap />
                     </button>
                   </p>
-                  <div class='row'>
-                    <div class='col'>
-                      <div class='collapse multi-collapse' id='email'>
-                        <div class='card card-body'>Email: {student.email}</div>
+                  <div className='row'>
+                    <div className='col'>
+                      <div className='collapse multi-collapse' id='email'>
+                        <div className='card card-body'>
+                          Email: {student.email}
+                        </div>
                       </div>
                     </div>
-                    <div class='col'>
-                      <div class='collapse multi-collapse' id='phoneNumber'>
-                        <div class='card card-body'>
+                    <div className='col'>
+                      <div className='collapse multi-collapse' id='phoneNumber'>
+                        <div className='card card-body'>
                           Phone: {student.phoneNumber}
                         </div>
                       </div>
                     </div>
-                    <div class='col'>
-                      <div class='collapse multi-collapse' id='address'>
-                        <div class='card card-body'>
+                    <div className='col'>
+                      <div className='collapse multi-collapse' id='address'>
+                        <div className='card card-body'>
                           Address: {student.address}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class='modal-footer'>
+                <div className='modal-footer'>
                   <button
                     type='button'
-                    class='btn'
+                    className='btn'
                     id='btn-profile'
                     data-bs-dismiss='modal'
                   >
@@ -183,11 +245,64 @@ const StudentSidebar = () => {
           </div>
         </li>
         <li>
-          <Link to='/wishlist' title='Wishlist'>
+          <Link
+            title='Wishlist'
+            role='button'
+            data-bs-toggle='modal'
+            data-bs-target='#wishlist'
+          >
             <span className='span-icons'>
               <FaHeart />
             </span>
           </Link>
+          {/* Wishlist Modal */}
+          <div
+            className='modal fade'
+            id='wishlist'
+            data-bs-backdrop='static'
+            data-bs-keyboard='false'
+            tabIndex='-1'
+            aria-labelledby='wishlistLabel'
+            aria-hidden='true'
+          >
+            <div className='modal-dialog modal-dialog-centered modal-dialog-scrollable'>
+              <div className='modal-content'>
+                <div className='modal-header'>
+                  <h1 className='modal-title fs-5' id='wishlistLabel'>
+                    {student.name} Wishlist
+                  </h1>
+                  <button
+                    type='button'
+                    className='btn-close'
+                    data-bs-dismiss='modal'
+                    aria-label='Close'
+                  ></button>
+                </div>
+                <div className='modal-body'>
+                  <button type='button' className='btn btn-primary m-2'>
+                    Wishlist{' '}
+                    <span className='badge text-bg-secondary'>
+                      {totalWishes}
+                    </span>
+                  </button>
+                  <table className='table table-responsive'>
+                    {/* Display Wishlist */}
+                    <tbody>{displayWishlist}</tbody>
+                  </table>
+                </div>
+                <div className='modal-footer'>
+                  <button
+                    type='button'
+                    className='btn'
+                    id='btn-profile'
+                    data-bs-dismiss='modal'
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </li>
         <li>
           <Link to='/student/settings' title='Account Settings'>
