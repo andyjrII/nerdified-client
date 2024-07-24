@@ -64,7 +64,7 @@ const Footer = () => {
               target='_blank'
             >
               <FaWhatsapp className='social-icon mr-2' />
-              <span> +2349056539717</span>
+              <span> +2349063368647</span>
             </Link>
           </p>
         </div>

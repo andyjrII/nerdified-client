@@ -91,7 +91,7 @@ const CourseEnrollment = () => {
         localStorage.setItem('PAYMENT_REFERENCE', response.reference);
         await savePaymentInfo();
         alert(message);
-        navigate('/courses/course-details', { replace: true });
+        navigate('/course-details', { replace: true });
       },
       onClose: () => alert("Wait! You need this course, don't go!!!!"),
     });
