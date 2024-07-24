@@ -168,7 +168,7 @@ const CourseDetails = () => {
                           </button>
                         ) : (
                           <Link
-                            to='/courses/course-enroll'
+                            to='/course-enroll'
                             className='btn btn-lg w-50'
                             id='check-btn'
                           >

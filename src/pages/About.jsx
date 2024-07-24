@@ -61,6 +61,36 @@ const About = () => {
                 </div>
               </div>
             </li>
+            <li>
+              <div className='timeline-image'>
+                <img
+                  className='rounded-circle img-fluid'
+                  src={PurposeImage}
+                  alt='...'
+                />
+              </div>
+              <div className='timeline-panel'>
+                <div className='timeline-heading'>
+                  <h3 className='subheading'>Our Services</h3>
+                </div>
+                <div className='timeline-body'>
+                  <p>Offline & online Coding classes</p>
+                  <p>Mentorship for beginners</p>
+                  <p>Internship programs for our students</p>
+                  <p>Web applications for business & individuals</p>
+                  <p>Mobile app development for business & individuals</p>
+                </div>
+              </div>
+            </li>
+            <li className='timeline-inverted'>
+              <div className='timeline-image bg-black'>
+                <div className='timeline-heading'>
+                  <h3 className='subheading' id='tag'>
+                    Educate. Empower. Nerdify
+                  </h3>
+                </div>
+              </div>
+            </li>
           </ul>
         </div>
       </section>

@@ -349,6 +349,26 @@ timeline > li .timeline-panel:after {
   color: #ffffff;
 }
 
+#tag {
+  margin-top: 15%;
+}
+
+@media (max-width: 360px) {
+  .subheading {
+    font-size: 18px;
+  }
+
+  .timeline .timeline-body {
+    background-color: rgba(000, 000, 000, 0.4);
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  .timeline .timeline-body > p {
+    font-size: 15px;
+  }
+}
+
 @media (min-width: 768px) {
   .timeline:before {
     left: 50%;

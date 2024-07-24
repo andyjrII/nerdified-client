@@ -79,7 +79,7 @@ const Blog = () => {
     return (
       <div className='col-lg-6' key={post.id}>
         <div className='card mb-4'>
-          <Link to={`https://${post.postUrl}`}>
+          <Link to={post.postUrl}>
             <img
               className='card-img-top post-image'
               src={imagePaths[index]}

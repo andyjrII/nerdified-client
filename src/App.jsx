@@ -25,7 +25,6 @@ import AdminSignin from './pages/admin/AdminSignin';
 import About from './pages/About';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
-import StudentSettings from './pages/StudentSettings';
 import CreateAdmin from './pages/admin/CreateAdmin';
 import AllAdmins from './pages/admin/AllAdmins';
 
@@ -39,7 +38,7 @@ function App() {
         <Route path='/signup' element={<Signup />} />
         <Route path='courses' element={<Courses />} />
         <Route path='course-details' element={<CourseDetails />} />
-        <Route path='courses/course-enroll' element={<CourseEnrollment />} />
+        <Route path='course-enroll' element={<CourseEnrollment />} />
         <Route path='blog' element={<Blog />} />
         <Route path='about' element={<About />} />
 
@@ -49,7 +48,6 @@ function App() {
         <Route element={<PersistLogin />}>
           <Route element={<RequireAuth />}>
             <Route path='student' element={<Student />} />
-            <Route path='student/settings' element={<StudentSettings />} />
           </Route>
         </Route>
 
