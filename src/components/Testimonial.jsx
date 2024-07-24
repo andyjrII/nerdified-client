@@ -74,7 +74,7 @@ const Testimonial = () => {
                 I honestly love how I was taught!
                 <FaQuoteRight className='ml-2 text-black' />
               </p>
-              <p className='d-flex justify-content-center'>
+              <p className='d-flex justify-content-center text-wrap'>
                 <Link className='client_icon mx-2'>
                   <FaFacebook />
                 </Link>
@@ -113,7 +113,7 @@ const Testimonial = () => {
                 nisi ut aliquip.
                 <FaQuoteRight className='ml-2 text-black' />
               </p>
-              <p className='d-flex justify-content-center'>
+              <p className='d-flex justify-content-center text-wrap'>
                 <Link className='client_icon mx-2'>
                   <FaFacebook />
                 </Link>
@@ -152,7 +152,7 @@ const Testimonial = () => {
                 nisi ut aliquip.
                 <FaQuoteRight className='ml-2 text-black' />
               </p>
-              <p className='d-flex justify-content-center'>
+              <p className='d-flex justify-content-center text-wrap'>
                 <Link className='client_icon mx-2'>
                   <FaFacebook />
                 </Link>
@@ -191,7 +191,7 @@ const Testimonial = () => {
                 nisi ut aliquip.
                 <FaQuoteRight className='ml-2 text-black' />
               </p>
-              <p className='d-flex justify-content-center'>
+              <p className='d-flex justify-content-center text-wrap'>
                 <Link className='client_icon mx-2'>
                   <FaFacebook />
                 </Link>
@@ -236,18 +236,20 @@ const Testimonial = () => {
                 nisi ut aliquip.
                 <FaQuoteRight className='ml-2 text-black' />
               </p>
-              <Link className='client_icon mx-2'>
-                <FaLinkedin />
-              </Link>
-              <Link className='client_icon mx-2'>
-                <FaFacebook />
-              </Link>
-              <Link className='client_icon mx-2'>
-                <FaTwitter />
-              </Link>
-              <Link className='client_icon mx-2'>
-                <FaTiktok />
-              </Link>
+              <p className='d-flex justify-content-center text-wrap'>
+                <Link className='client_icon mx-2'>
+                  <FaLinkedin />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaFacebook />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaTwitter />
+                </Link>
+                <Link className='client_icon mx-2'>
+                  <FaTiktok />
+                </Link>
+              </p>
             </div>
           </div>
         </div>

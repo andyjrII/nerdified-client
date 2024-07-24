@@ -426,14 +426,20 @@ p .carousel-button:hover {
   height: 25rem;
   width: 100%;
 }
+
 #testimonialCarousel .carousel-item .row {
   width: 60%;
   margin: auto;
   padding-bottom: 20px;
 }
+
 #testimonialCarousel .carousel-item .row .client_right {
   margin: auto;
   padding: 20px;
+}
+
+.client_name {
+  font-size: 20px;
 }
 
 @media (max-width: 1200px) {
@@ -477,12 +483,12 @@ p .carousel-button:hover {
     height: 40rem;
   }
 
+  #testimonialCarousel .carousel-item .row .client_right {
+    width: 90%;
+  }
+
   .testimonial-button {
     position: absolute;
     bottom: 300px;
   }
-}
-
-.client_name {
-  font-size: 20px;
 }
