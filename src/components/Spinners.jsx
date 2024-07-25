@@ -1,31 +1,14 @@
+import '../assets/styles/spinner.css';
+
 const Spinners = () => {
   return (
-    <div className='text-center'>
-      <div className='align-center'>
-        <div className='spinner-grow text-primary' role='status'>
-          <span className='visually-hidden'>Loading...</span>
-        </div>
-        <div className='spinner-grow text-secondary' role='status'>
-          <span className='visually-hidden'>Loading...</span>
-        </div>
-        <div className='spinner-grow text-success' role='status'>
-          <span className='visually-hidden'>Loading...</span>
-        </div>
-        <div className='spinner-grow text-danger' role='status'>
-          <span className='visually-hidden'>Loading...</span>
-        </div>
-        <div className='spinner-grow text-warning' role='status'>
-          <span className='visually-hidden'>Loading...</span>
-        </div>
-        <div className='spinner-grow text-info' role='status'>
-          <span className='visually-hidden'>Loading...</span>
-        </div>
-        <div className='spinner-grow text-light' role='status'>
-          <span className='visually-hidden'>Loading...</span>
-        </div>
-        <div className='spinner-grow text-dark' role='status'>
-          <span className='visually-hidden'>Loading...</span>
-        </div>
+    <div className='d-flex align-items-center my-auto'>
+      <strong role='status'>Loading...</strong>
+      <div className='spinner-border ms-auto' role='status'>
+        <span className='visually-hidden'>Loading...</span>
+      </div>
+      <div className='spinner-grow ms-auto' role='status'>
+        <span className='visually-hidden'>Loading...</span>
       </div>
     </div>
   );

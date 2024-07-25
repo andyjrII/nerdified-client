@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { IoSettings, IoMail, IoCall } from 'react-icons/io5';
-import { FaHeart, FaSignOutAlt, FaUserGraduate } from 'react-icons/fa';
+import { IoMail, IoCall } from 'react-icons/io5';
+import { FaHeart } from 'react-icons/fa';
+import { FcSettings, FcLock, FcLike, FcBusinessman } from 'react-icons/fc';
 import { GrMap, GrView } from 'react-icons/gr';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
@@ -141,7 +142,7 @@ const StudentSidebar = () => {
             data-bs-target='#studentProfile'
           >
             <span className='span-icons'>
-              <FaUserGraduate />
+              <FcBusinessman />
             </span>
           </Link>
           {/*  Profile Modal */}
@@ -254,7 +255,7 @@ const StudentSidebar = () => {
             data-bs-target='#wishlist'
           >
             <span className='span-icons'>
-              <FaHeart />
+              <FcLike />
             </span>
           </Link>
           {/* Wishlist Modal */}
@@ -315,7 +316,7 @@ const StudentSidebar = () => {
             data-bs-target='#accountSettings'
           >
             <span className='span-icons'>
-              <IoSettings />
+              <FcSettings />
             </span>
           </Link>
           {/* Account Settings Modal */}
@@ -412,7 +413,7 @@ const StudentSidebar = () => {
         <li>
           <Link role='button' onClick={signOut} title='Sign Out'>
             <span className='span-icons'>
-              <FaSignOutAlt />
+              <FcLock />
             </span>
           </Link>
         </li>

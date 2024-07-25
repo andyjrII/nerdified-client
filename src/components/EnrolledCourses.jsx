@@ -32,6 +32,29 @@ const EnrolledCourses = () => {
     getEnrolledCourses();
   }, [axiosPrivate, email]);
 
+  const separatedDays = (days) => {
+    if (Array.isArray(days)) {
+      days = days.join('');
+    }
+    const daysOfWeek = [
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+      'SUNDAY',
+    ];
+    const regex = new RegExp(daysOfWeek.join('|'), 'g');
+    const matchedDays = days.match(regex);
+    if (matchedDays) {
+      return matchedDays
+        .map((day) => day.charAt(0) + day.slice(1).toLowerCase())
+        .join(', ');
+    }
+    return '';
+  };
+
   const NextArrow = ({ onClick }) => {
     return (
       <div
@@ -110,20 +133,39 @@ const EnrolledCourses = () => {
   const displayMyCourses = enrollmentDetails.map((enrollmentDetail) => {
     return (
       <div className='col-md-12 p-2' key={enrollmentDetail.id}>
-        <div className='card rounded-3'>
-          <div className='card-body course-body rounded-3'>
-            <div
-              role='button'
-              className='text-center text-white rounded p-3 mycourse-title'
+        <div
+          className='card text-bg-primary mb-3'
+          style={{ maxWidth: '18rem' }}
+        >
+          <div className='card-header text-bg-primary'>
+            Enrolled on{' '}
+            <Moment format='MMMM D, YYYY'>
+              {enrollmentDetail.dateEnrolled}
+            </Moment>
+          </div>
+          <div className='card-body'>
+            <h5 className='card-title text-wrap'>
+              {enrollmentDetail.course.title}
+            </h5>
+            <p className='card-text text-white'>
+              Class Days: [{separatedDays(enrollmentDetail.classDays)}]
+            </p>
+            <p className='card-text text-white'>
+              Time:{' '}
+              {enrollmentDetail.preferredTime.charAt(0) +
+                enrollmentDetail.preferredTime.slice(1).toLowerCase()}
+            </p>
+            <p className='card-text text-white'>
+              Mode of Learning:{' '}
+              {enrollmentDetail.mode.charAt(0) +
+                enrollmentDetail.mode.slice(1).toLowerCase()}
+            </p>
+            <button
+              className='btn btn-lg btn-enrolled'
               onClick={() => getCourse(enrollmentDetail.courseId)}
             >
-              <span className='bolded'>{enrollmentDetail.course.title}</span>
-              <br />
-              Last Updated:{' '}
-              <Moment format='MMMM D, YYYY'>
-                {enrollmentDetail.course.updatedAt}
-              </Moment>
-            </div>
+              View
+            </button>
           </div>
         </div>
       </div>
