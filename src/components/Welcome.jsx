@@ -15,10 +15,9 @@ const Welcome = () => {
   const fetchQuote = async () => {
     try {
       const response = await axios.get(url);
-      console.log(response.data.slip.advice);
       setQuote(response.data.slip.advice);
     } catch (error) {
-      console.error('Error fetching quote:', error);
+      console.error('Error fetching Quote!');
     }
   };
 
@@ -31,7 +30,7 @@ const Welcome = () => {
       const imageUrl = URL.createObjectURL(imageBlob);
       setImagePath(imageUrl);
     } catch (error) {
-      alert('Error getting profile image');
+      console.log('Error getting Profile picture!');
     }
   };
 
@@ -50,8 +49,7 @@ const Welcome = () => {
     <div className='card'>
       <div className='card-body row'>
         <div className='col-md-10'>
-          <p className='card-text text-white'>Welcome Back!</p>
-          <h5 className='card-title text-white mb-2'>Your Dashboard</h5>
+          <h5 className='card-title text-white mb-3'>Welcome Back!</h5>
           <div className='d-flex text-white'>
             <FaQuoteLeft />
             {quote ? (

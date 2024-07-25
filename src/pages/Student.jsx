@@ -11,23 +11,23 @@ const Student = () => {
   return (
     <>
       <Navigation />
-      <section id='student-section'>
-        <main id='student-main'>
+      <section id='student-section' className='border-top border-bottom'>
+        <main id='student-main' className='shadow'>
           <div className='row'>
             <div className='col p-5'>
               <Welcome />
             </div>
           </div>
 
-          <div className='p-3 m-3 shadow'>
+          <div className='p-3 m-3 border rounded'>
             <EnrolledCourses />
           </div>
 
-          <div className='p-3 m-3 shadow'>
+          <div className='p-3 m-3 border rounded'>
             <MostEnrolled />
           </div>
 
-          <div className='p-3 m-3 shadow'>
+          <div className='p-3 m-3 border rounded'>
             <NewestCourses />
           </div>
         </main>
