@@ -159,7 +159,7 @@ const StudentSidebar = () => {
               <div className='modal-content'>
                 <div className='modal-header'>
                   <h1 className='modal-title fs-5' id='studentProfileLabel'>
-                    {student.name} Profile
+                    My Profile
                   </h1>
                   <button
                     type='button'
@@ -272,7 +272,7 @@ const StudentSidebar = () => {
               <div className='modal-content'>
                 <div className='modal-header'>
                   <h1 className='modal-title fs-5' id='wishlistLabel'>
-                    {student.name} Wishlist
+                    My Wishlist
                   </h1>
                   <button
                     type='button'
@@ -333,7 +333,7 @@ const StudentSidebar = () => {
               <div className='modal-content'>
                 <div className='modal-header'>
                   <h1 className='modal-title fs-5' id='accountSettingsLabel'>
-                    {student.name} Settings
+                    My Settings
                   </h1>
                   <button
                     type='button'

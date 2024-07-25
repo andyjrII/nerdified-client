@@ -151,7 +151,9 @@ li svg {
 .navbar-dark .navbar-brand span {
   font-family: 'Old English Text', Arial, sans-serif;
   font-weight: bold;
-  font-size: 25px;
+  font-size: 28px;
+  text-decoration: underline double #ff6347;
+  padding: 14px 0;
 }
 
 @media (max-width: 360px) {

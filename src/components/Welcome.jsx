@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import axios from '../api/axios';
+import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
 
 const Welcome = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const email = localStorage.getItem('STUDENT_EMAIL');
+  const url = 'https://api.adviceslip.com/advice';
 
   const [imagePath, setImagePath] = useState('');
   const [quote, setQuote] = useState('');
 
   const fetchQuote = async () => {
     try {
-      const response = await axios.get(
-        'https://programming-quotes-api.herokuapp.com/quotes/random'
-      );
-      setQuote(response.data.en);
+      const response = await axios.get(url);
+      console.log(response.data.slip.advice);
+      setQuote(response.data.slip.advice);
     } catch (error) {
-      console.error('Error fetching the quote:', error);
+      console.error('Error fetching quote:', error);
     }
   };
 
@@ -40,7 +41,7 @@ const Welcome = () => {
 
     const intervalId = setInterval(() => {
       fetchQuote(); // Fetch new quote every 10 minutes
-    }, 600000); // 600000ms = 10 minutes
+    }, 300000); // 600000ms = 10 minutes
 
     return () => clearInterval(intervalId);
   }, []);
@@ -50,12 +51,19 @@ const Welcome = () => {
       <div className='card-body row'>
         <div className='col-md-10'>
           <p className='card-text text-white'>Welcome Back!</p>
-          <h5 className='card-title text-white'>Your Dashboard</h5>
-          <p className='card-text text-white'>
-            'Education is the ability to listen to anything without losing your
-            temper or your self-confidence'
-          </p>
-          <p>{quote}</p>
+          <h5 className='card-title text-white mb-2'>Your Dashboard</h5>
+          <div className='d-flex text-white'>
+            <FaQuoteLeft />
+            {quote ? (
+              <p className='card-text text-white mx-2'>{quote}</p>
+            ) : (
+              <p className='card-text text-white mx-2'>
+                Education is the ability to listen to anything without losing
+                your temper or your self-confidence.
+              </p>
+            )}
+            <FaQuoteRight />
+          </div>
         </div>
         <div className='col-md-2'>
           <img src={imagePath} id='student-img' alt='Profile' />

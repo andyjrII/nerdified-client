@@ -42,15 +42,17 @@ const NewestCourses = () => {
     return (
       <div className='col-md-3 p-2' key={latestCourse.id}>
         <div
-          className='card text-bg-success mb-3'
+          className='card text-bg-warning mb-3'
           style={{ maxWidth: '18rem' }}
         >
-          <div className='card-header text-bg-success'>
+          <div className='card-header text-bg-warning text-white'>
             Last Updated on{' '}
             <Moment format='MMMM D, YYYY'>{latestCourse.updatedAt}</Moment>
           </div>
           <div className='card-body'>
-            <h5 className='card-title text-wrap'>{latestCourse.title}</h5>
+            <h5 className='card-title text-wrap text-white'>
+              {latestCourse.title}
+            </h5>
             <p className='card-text text-white'>
               Price: &#8358;{latestCourse.price}.00
             </p>
@@ -68,8 +70,10 @@ const NewestCourses = () => {
 
   return (
     <>
-      <h3 className='bolded mb-2'>Latest Courses</h3>
-      <div className='row'>{displayLatestCourses}</div>
+      <h3 className='bolded'>
+        <span className='badge bg-warning'>Latest Courses</span>
+      </h3>
+      <div className='row p-3'>{displayLatestCourses}</div>
     </>
   );
 };

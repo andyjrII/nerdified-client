@@ -160,6 +160,11 @@ const EnrolledCourses = () => {
               {enrollmentDetail.mode.charAt(0) +
                 enrollmentDetail.mode.slice(1).toLowerCase()}
             </p>
+            <p className='card-text text-white'>
+              Class Status:{' '}
+              {enrollmentDetail.status.charAt(0) +
+                enrollmentDetail.status.slice(1).toLowerCase()}
+            </p>
             <button
               className='btn btn-lg btn-enrolled'
               onClick={() => getCourse(enrollmentDetail.courseId)}
@@ -174,8 +179,12 @@ const EnrolledCourses = () => {
 
   return (
     <>
-      <h3 className='bolded mb-2'>My Courses</h3>
-      <Slider {...settings}>{displayMyCourses}</Slider>
+      <h3 className='bolded'>
+        <span className='badge bg-primary'>My Courses</span>
+      </h3>
+      <Slider {...settings} className='py-3 px-2'>
+        {displayMyCourses}
+      </Slider>
     </>
   );
 };

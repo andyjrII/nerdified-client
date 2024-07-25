@@ -65,8 +65,10 @@ const MostEnrolled = () => {
 
   return (
     <>
-      <h3 className='bolded mb-2'>Top Courses</h3>
-      <div className='row'>{displayTopCourses}</div>
+      <h3 className='bolded'>
+        <span className='badge bg-danger'>Top Courses</span>
+      </h3>
+      <div className='row p-3'>{displayTopCourses}</div>
     </>
   );
 };

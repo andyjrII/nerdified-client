@@ -85,13 +85,12 @@ const CourseEnrollment = () => {
       },
       onSuccess: async (response) => {
         const message =
-          'Payment with Reference: ' +
-          response.reference +
-          ' complete! Thanks for doing business with us! Come back soon!!';
+          courseTitle +
+          ' payment complete! Thanks for doing business with us! Come back soon!!';
         localStorage.setItem('PAYMENT_REFERENCE', response.reference);
         await savePaymentInfo();
         alert(message);
-        navigate('/course-details', { replace: true });
+        navigate('/courses', { replace: true });
       },
       onClose: () => alert("Wait! You need this course, don't go!!!!"),
     });
