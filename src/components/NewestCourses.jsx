@@ -61,7 +61,7 @@ const NewestCourses = () => {
 
   return (
     <>
-      <h3 className='bolded mb-2'>Newest Courses</h3>
+      <h3 className='bolded mb-2'>Latest Courses</h3>
       <div className='row'>{displayLatestCourses}</div>
     </>
   );

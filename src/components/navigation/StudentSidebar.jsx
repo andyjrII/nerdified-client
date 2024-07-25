@@ -131,7 +131,7 @@ const StudentSidebar = () => {
   });
 
   return (
-    <div className='nav-menu'>
+    <div className='floating-nav'>
       <ul className='mt-5'>
         <li>
           <Link

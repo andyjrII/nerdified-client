@@ -11,11 +11,8 @@ const Student = () => {
   return (
     <>
       <Navigation />
-      <section className='row mb-0' id='student-section'>
-        <aside className='col-md-1 student-left'>
-          <StudentSidebar />
-        </aside>
-        <main className='col-md-11' id='student-main'>
+      <section id='student-section'>
+        <main id='student-main'>
           <div className='row'>
             <div className='col p-5'>
               <Welcome />
@@ -34,6 +31,7 @@ const Student = () => {
             <NewestCourses />
           </div>
         </main>
+        <StudentSidebar />
       </section>
       <Footer />
     </>
