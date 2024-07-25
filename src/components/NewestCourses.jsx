@@ -41,18 +41,25 @@ const NewestCourses = () => {
   const displayLatestCourses = latestCourses.map((latestCourse) => {
     return (
       <div className='col-md-3 p-2' key={latestCourse.id}>
-        <div className='card rounded-3'>
-          <div className='card-body course-body rounded-3'>
-            <div
-              role='button'
-              className='text-center text-white rounded p-3 mycourse-title'
+        <div
+          className='card text-bg-success mb-3'
+          style={{ maxWidth: '18rem' }}
+        >
+          <div className='card-header text-bg-success'>
+            Last Updated on{' '}
+            <Moment format='MMMM D, YYYY'>{latestCourse.updatedAt}</Moment>
+          </div>
+          <div className='card-body'>
+            <h5 className='card-title text-wrap'>{latestCourse.title}</h5>
+            <p className='card-text text-white'>
+              Price: &#8358;{latestCourse.price}.00
+            </p>
+            <button
+              className='btn btn-lg btn-enrolled'
               onClick={() => getCourse(latestCourse.id)}
             >
-              <span className='bolded'>{latestCourse.title}</span>
-              <br />
-              Last Updated:{' '}
-              <Moment format='MMMM D, YYYY'>{latestCourse.updatedAt}</Moment>
-            </div>
+              View
+            </button>
           </div>
         </div>
       </div>
