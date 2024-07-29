@@ -127,7 +127,7 @@ const Signin = () => {
                   <div className='form-group'>
                     <button
                       type='submit'
-                      className='btn form-control btn-primary rounded submit px-3'
+                      className='btn form-control btn-primary rounded px-3'
                     >
                       Sign in
                     </button>

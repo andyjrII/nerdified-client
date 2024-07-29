@@ -453,7 +453,7 @@ h3 {
   line-height: 1.5;
   font-weight: 400;
   font-family: 'Lato', Arial, sans-serif;
-  color: #000;
+  color: #000232;
 }
 
 .password-section {
@@ -606,9 +606,11 @@ h3 {
 }
 
 .btn.btn-primary:hover {
-  border: 1px solid #5089dd;
-  background: transparent;
-  color: #5089dd;
+  background: #1965d8 !important;
+}
+
+.btn.btn-primary:active {
+  background: #ff6347 !important;
 }
 
 .btn.btn-primary.btn-outline-primary {

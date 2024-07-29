@@ -12,7 +12,7 @@ const Student = () => {
     <>
       <Navigation />
       <section id='student-section' className='border-top border-bottom'>
-        <main id='student-main' className='shadow'>
+        <main id='student-main' className='shadow m-3 pb-2'>
           <div className='row'>
             <div className='col p-5'>
               <Welcome />
