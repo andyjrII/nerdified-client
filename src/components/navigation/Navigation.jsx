@@ -3,30 +3,35 @@ import { useEffect } from 'react';
 import { IoHomeSharp, IoBook, IoInformationCircle } from 'react-icons/io5';
 import { FaBlogger, FaUserGraduate, FaLock } from 'react-icons/fa';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import useAuth from '../../hooks/useAuth';
+import storage from '../../utils/storage';
 import useStudent from '../../hooks/useStudent';
 import '../../assets/styles/navigation.css';
 import Logo from '../../assets/images/logo.png';
 
 const Navigation = () => {
-  const axios = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate();
+  const { auth, setAuth } = useAuth();
+  const { student, setStudent } = useStudent(null);
 
-  const { student, setStudent } = useStudent();
-
-  const email = localStorage.getItem('STUDENT_EMAIL');
-  const access = localStorage.getItem('ACCESS_TOKEN');
-  const refresh = localStorage.getItem('REFRESH_TOKEN');
+  useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchStudent = async () => {
       try {
-        const response = await axios.get(`students/${email}`);
+        const response = await axiosPrivate.get(`students/${auth.email}`);
         setStudent(response?.data);
       } catch (error) {
         console.error('Error:', error);
       }
     };
-    if (email) fetchStudent();
-  }, []);
+    if (auth) fetchStudent();
+  }, [auth, axiosPrivate]);
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark nerd-navbar-light navy'>
@@ -90,9 +95,9 @@ const Navigation = () => {
                 className='nav-link d-flex align-items-center'
                 id='userDropdown'
                 role='button'
-                to={access && refresh && email ? '/student' : '/signin'}
+                to={auth.email ? '/student' : '/signin'}
               >
-                {access && refresh && email ? (
+                {auth.email ? (
                   <>
                     <FaUserGraduate className='mr-2' />
                     {student.name}

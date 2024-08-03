@@ -3,6 +3,7 @@ import '../assets/styles/signin.css';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from '../api/axios';
 import useAuth from '../hooks/useAuth';
+import storage from '../utils/storage';
 import { FcLock, FcAddressBook } from 'react-icons/fc';
 import Navigation from '../components/navigation/Navigation';
 
@@ -38,14 +39,11 @@ const Signin = () => {
           withCredentials: true,
         }
       );
-      const accessToken = response?.data?.access_token;
-      const refreshToken = response?.data?.refresh_token;
 
-      localStorage.setItem('REFRESH_TOKEN', refreshToken);
-      localStorage.setItem('ACCESS_TOKEN', accessToken);
-      localStorage.setItem('STUDENT_EMAIL', email);
+      const accessToken = response?.data.access_token;
 
-      setAuth({ email, accessToken, refreshToken });
+      setAuth({ email, password, accessToken });
+      storage.setData('auth', { email, accessToken });
       const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
       if (course) navigate(-1);
       alert('Sign in Successful!');

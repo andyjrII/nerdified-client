@@ -18,7 +18,7 @@ const MostEnrolled = () => {
         });
         setCourses(response?.data);
       } catch (error) {
-        alert('Error fetching Top Enrolled Courses');
+        console.error('Error fetching Top Enrolled Courses');
       }
     };
 
@@ -34,7 +34,7 @@ const MostEnrolled = () => {
       localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
       navigate('/course-details');
     } catch (error) {
-      alert('Error fetching Course');
+      console.error('Error fetching Course');
     }
   };
 

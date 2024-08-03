@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import axios from '../api/axios';
 import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
+import useAuth from '../hooks/useAuth';
+import storage from '../utils/storage';
 
 const Welcome = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth, setAuth } = useAuth();
 
-  const email = localStorage.getItem('STUDENT_EMAIL');
   const url = 'https://api.adviceslip.com/advice';
 
   const [imagePath, setImagePath] = useState('');
@@ -23,24 +25,29 @@ const Welcome = () => {
 
   const fetchImage = async () => {
     try {
-      const response = await axiosPrivate.get(`students/image/${email}`, {
+      const response = await axiosPrivate.get(`students/image/${auth.email}`, {
         responseType: 'arraybuffer',
       });
       const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
       const imageUrl = URL.createObjectURL(imageBlob);
       setImagePath(imageUrl);
     } catch (error) {
-      console.log('Error getting Profile picture!');
+      console.error('Error getting Profile picture!');
     }
   };
 
   useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+
     fetchImage();
     fetchQuote(); // Initial fetch
 
     const intervalId = setInterval(() => {
       fetchQuote(); // Fetch new quote every 10 minutes
-    }, 300000); // 600000ms = 10 minutes
+    }, 1800000); // 600000ms = 10 minutes
 
     return () => clearInterval(intervalId);
   }, []);
@@ -53,9 +60,9 @@ const Welcome = () => {
           <div className='d-flex text-white'>
             <FaQuoteLeft />
             {quote ? (
-              <p className='card-text text-white mx-2'>{quote}</p>
+              <p className='card-text text-white mx-2 quote-text'>{quote}</p>
             ) : (
-              <p className='card-text text-white mx-2'>
+              <p className='card-text text-white mx-2 quote-text'>
                 Education is the ability to listen to anything without losing
                 your temper or your self-confidence.
               </p>

@@ -69,7 +69,7 @@ const Hero = () => {
               <p>
                 <Link
                   className='btn btn-lg me-1 carousel-button'
-                  to='/classes'
+                  to='/courses'
                   role='button'
                 >
                   Get Nerdified

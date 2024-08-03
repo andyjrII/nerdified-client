@@ -6,6 +6,8 @@ import { FcSettings, FcLock, FcLike, FcBusinessman } from 'react-icons/fc';
 import { GrMap, GrView } from 'react-icons/gr';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import useAuth from '../../hooks/useAuth';
+import storage from '../../utils/storage';
 import useStudent from '../../hooks/useStudent';
 import useLogout from '../../hooks/useLogout';
 import PasswordChange from '../forms/PasswordChange';
@@ -13,29 +15,35 @@ import ImageChange from '../forms/ImageChange';
 
 const StudentSidebar = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth, setAuth } = useAuth();
+  const { student, setStudent } = useStudent();
+
   const logout = useLogout();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const email = localStorage.getItem('STUDENT_EMAIL');
-
-  const { student, setStudent } = useStudent();
   const [totalCount, setTotalCount] = useState(0);
   const [totalWishes, setTotalWishes] = useState(0);
   const [wishlist, setWishlist] = useState([]);
 
+  useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
+
   const fetchStudent = async () => {
     try {
-      const response = await axiosPrivate.get(`students/${email}`, {
+      const response = await axiosPrivate.get(`students/${auth.email}`, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
-      localStorage.setItem('STUDENT_ID', response?.data.id);
       await totalWishItems(response.data.id);
       await getWishlist(response.data.id);
       setStudent(response?.data);
     } catch (error) {
-      alert('Error fetching Student Profile');
+      console.error('Error fetching Student Profile');
       navigate('/signin', { state: { from: location }, replace: true });
     }
   };
@@ -48,7 +56,7 @@ const StudentSidebar = () => {
       });
       setTotalWishes(response?.data);
     } catch (error) {
-      alert('Error getting total Wishlist items');
+      console.error('Error getting total Wishlist items');
     }
   };
 
@@ -60,16 +68,16 @@ const StudentSidebar = () => {
       });
       setWishlist(response?.data);
     } catch (error) {
-      alert('Error getting Wishlist');
+      console.error('Error getting Wishlist');
     }
   };
 
   const totalCourses = async () => {
     try {
-      const response = await axiosPrivate.get(`students/total/${email}`);
+      const response = await axiosPrivate.get(`students/total/${auth.email}`);
       setTotalCount(response?.data);
     } catch (error) {
-      alert('Error getting total number of Courses');
+      console.error('Error getting total number of Courses');
     }
   };
 

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useAuth from '../hooks/useAuth';
+import storage from '../utils/storage';
 import Moment from 'react-moment';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -9,28 +11,37 @@ import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 
 const EnrolledCourses = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
-
-  const email = localStorage.getItem('STUDENT_EMAIL');
 
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
+
+  useEffect(() => {
     const getEnrolledCourses = async () => {
       try {
-        const response = await axiosPrivate.get(`students/enrolled/${email}`, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
-        });
+        const response = await axiosPrivate.get(
+          `students/enrolled/${auth.email}`,
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true,
+          }
+        );
         setEnrollmentDetails(response?.data);
       } catch (error) {
-        alert('Error fetching Courses');
+        console.error('Error fetching Courses');
       }
     };
 
     getEnrolledCourses();
-  }, [axiosPrivate, email]);
+  }, [axiosPrivate, auth]);
 
   const separatedDays = (days) => {
     if (Array.isArray(days)) {
@@ -126,7 +137,7 @@ const EnrolledCourses = () => {
       localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
       navigate('/course-details');
     } catch (error) {
-      alert('Error fetching Course');
+      console.error('Error fetching Course');
     }
   };
 

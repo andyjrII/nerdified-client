@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
-import RequireAuth from './auth/RequireAuth';
+import RequireAuth from './components/RequireAuth';
 import AdminRequireAuth from './auth/AdminRequireAuth';
-import PersistLogin from './auth/PersistLogin';
+import PersistLogin from './components/PersistLogin';
 import AdminPersistLogin from './auth/AdminPersistLogin';
 import Layout from './components/Layout';
 import Home from './pages/Home';

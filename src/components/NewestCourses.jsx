@@ -18,7 +18,7 @@ const NewestCourses = () => {
         });
         setLatestCourses(response?.data);
       } catch (error) {
-        alert('Error fetching Latest Courses');
+        console.error('Error fetching Latest Courses');
       }
     };
 
@@ -34,7 +34,7 @@ const NewestCourses = () => {
       localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
       navigate('/course-details');
     } catch (error) {
-      alert('Error fetching Course');
+      console.error('Error fetching Course');
     }
   };
 
