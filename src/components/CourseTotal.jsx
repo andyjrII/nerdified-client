@@ -8,6 +8,7 @@ const CourseTotal = () => {
   const { auth, setAuth } = useAuth();
 
   const [totalCourse, setTotalCourse] = useState(0);
+  const [totalWishes, setTotalWishes] = useState(0);
 
   useEffect(() => {
     const storedAuth = storage.getData('auth');
@@ -16,6 +17,7 @@ const CourseTotal = () => {
     }
 
     getTotalCourses();
+    getTotalWishItems();
   }, []);
 
   const getTotalCourses = async () => {
@@ -24,6 +26,18 @@ const CourseTotal = () => {
       setTotalCourse(response?.data);
     } catch (error) {
       console.error('Error getting total number of Courses');
+    }
+  };
+
+  const getTotalWishItems = async () => {
+    try {
+      const response = await axiosPrivate.get(`wishlist/total/${auth.email}`, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+      setTotalWishes(response?.data);
+    } catch (error) {
+      console.error('Error getting total Wishlist items');
     }
   };
 
@@ -51,7 +65,7 @@ const CourseTotal = () => {
             </div>
             <div className='widget-content-right ml-4'>
               <div className='widget-numbers'>
-                <span>rtt55</span>
+                <span>{totalWishes}</span>
               </div>
             </div>
           </div>

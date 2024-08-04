@@ -22,7 +22,6 @@ const StudentSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [totalWishes, setTotalWishes] = useState(0);
   const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
@@ -40,24 +39,11 @@ const StudentSidebar = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
-      await totalWishItems(response.data.id);
       await getWishlist(response.data.id);
       setStudent(response?.data);
     } catch (error) {
       console.error('Error fetching Student Profile');
       navigate('/signin', { state: { from: location }, replace: true });
-    }
-  };
-
-  const totalWishItems = async (studentId) => {
-    try {
-      const response = await axiosPrivate.get(`wishlist/total/${studentId}`, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
-      setTotalWishes(response?.data);
-    } catch (error) {
-      console.error('Error getting total Wishlist items');
     }
   };
 
@@ -269,12 +255,6 @@ const StudentSidebar = () => {
                   ></button>
                 </div>
                 <div className='modal-body'>
-                  <button type='button' className='btn btn-primary m-2'>
-                    Wishlist{' '}
-                    <span className='badge text-bg-secondary'>
-                      {totalWishes}
-                    </span>
-                  </button>
                   <table className='table table-responsive'>
                     {/* Display Wishlist */}
                     <tbody>{displayWishlist}</tbody>
