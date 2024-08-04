@@ -46,12 +46,81 @@ h2 {
   float: right;
 }
 
+/* Total section */
+
+.widget-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.widget-content .widget-content-left .widget-heading {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  font-weight: bold;
+}
+
+.widget-content .widget-content-wrapper {
+  display: flex;
+  flex: 1;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.widget-content .widget-content-left,
+.widget-content .widget-content-right {
+  flex: 0 1 auto;
+}
+
+.widget-content .widget-content-right {
+  margin-left: auto;
+}
+
+.widget-content .widget-numbers {
+  font-weight: bold;
+  font-size: 1.8rem;
+  display: block;
+}
+
+.bg-love-kiss {
+  background-image: linear-gradient(
+    to top,
+    #ff0844 0%,
+    #ffb199 100%
+  ) !important;
+}
+
+.bg-ripe-malin {
+  background-image: linear-gradient(
+    120deg,
+    #f093fb 0%,
+    #f5576c 100%
+  ) !important;
+}
+
+.bg-mean-fruit {
+  background-image: linear-gradient(
+    120deg,
+    #fccb90 0%,
+    #d57eeb 100%
+  ) !important;
+}
+
+@media (max-width: 991.98px) {
+  .widget-content .widget-numbers {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+}
+
 /* Side Bar */
 
 .floating-nav {
   position: fixed;
   bottom: 220px; /* Adjust as needed to position above the footer */
-  right: 10px; /* Adjust as needed */
+  right: 20px; /* Adjust as needed */
   display: flex;
   flex-direction: row;
   align-items: center;

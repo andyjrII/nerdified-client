@@ -22,7 +22,6 @@ const StudentSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [totalCount, setTotalCount] = useState(0);
   const [totalWishes, setTotalWishes] = useState(0);
   const [wishlist, setWishlist] = useState([]);
 
@@ -31,6 +30,8 @@ const StudentSidebar = () => {
     if (storedAuth) {
       setAuth(storedAuth);
     }
+
+    fetchStudent();
   }, []);
 
   const fetchStudent = async () => {
@@ -72,15 +73,6 @@ const StudentSidebar = () => {
     }
   };
 
-  const totalCourses = async () => {
-    try {
-      const response = await axiosPrivate.get(`students/total/${auth.email}`);
-      setTotalCount(response?.data);
-    } catch (error) {
-      console.error('Error getting total number of Courses');
-    }
-  };
-
   const handleRemove = async (studentId, courseId) => {
     try {
       await axiosPrivate.delete(
@@ -102,11 +94,6 @@ const StudentSidebar = () => {
     localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(course));
     navigate('/course-details');
   };
-
-  useEffect(() => {
-    fetchStudent();
-    totalCourses();
-  }, []);
 
   const signOut = async () => {
     await logout();
@@ -177,14 +164,6 @@ const StudentSidebar = () => {
                   ></button>
                 </div>
                 <div className='modal-body text-center'>
-                  <div className='m-2'>
-                    <button type='button' className='btn btn-primary'>
-                      My Courses{' '}
-                      <span className='badge text-bg-secondary'>
-                        {totalCount}
-                      </span>
-                    </button>
-                  </div>
                   <p className='d-inline-flex gap-1 m-2'>
                     <button
                       className='btn btn-primary'
