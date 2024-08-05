@@ -42,8 +42,9 @@ const Signin = () => {
 
       const accessToken = response?.data.access_token;
 
-      setAuth({ email, password, accessToken });
+      setAuth({ email, accessToken });
       storage.setData('auth', { email, accessToken });
+
       const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
       if (course) navigate(-1);
       alert('Sign in Successful!');

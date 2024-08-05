@@ -16,6 +16,7 @@ import {
 import axios from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import storage from '../utils/storage';
 import Navigation from '../components/navigation/Navigation';
 
 const NAME_REGEX = /[A-z-]{3,20}$/;
@@ -118,13 +119,10 @@ const Signup = () => {
         }
       );
       const accessToken = response?.data?.access_token;
-      const refreshToken = response?.data?.refresh_token;
 
-      localStorage.setItem('REFRESH_TOKEN', refreshToken);
-      localStorage.setItem('ACCESS_TOKEN', accessToken);
-      localStorage.setItem('STUDENT_EMAIL', email);
+      setAuth({ email, accessToken });
+      storage.setData('auth', { email, accessToken });
 
-      setAuth({ email, password, accessToken, refreshToken });
       navigate('/student', { replace: true });
     } catch (err) {
       if (!err?.response) {
