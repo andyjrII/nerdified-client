@@ -30,8 +30,8 @@ const Navigation = () => {
         console.error('Error:', error);
       }
     };
-    if (auth) fetchStudent();
-  }, [auth, axiosPrivate]);
+    if (auth.email) fetchStudent();
+  }, [auth.email, axiosPrivate]);
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark nerd-navbar-light navy'>
@@ -95,9 +95,9 @@ const Navigation = () => {
                 className='nav-link d-flex align-items-center'
                 id='userDropdown'
                 role='button'
-                to={auth.email ? '/student' : '/signin'}
+                to={student.name ? '/student' : '/signin'}
               >
-                {auth.email ? (
+                {student.name ? (
                   <>
                     <FaUserGraduate className='mr-2' />
                     {student.name}

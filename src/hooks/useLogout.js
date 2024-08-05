@@ -1,24 +1,35 @@
-import { useNavigate } from "react-router-dom";
-import axios from "../api/axios";
-import useAuth from "./useAuth";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from '../api/axios';
+import useAuth from './useAuth';
+import storage from '../utils/storage';
+import useStudent from './useStudent';
 
 const useLogout = () => {
-  const { setAuth } = useAuth();
+  const { auth, setAuth } = useAuth();
+  const { setStudent } = useStudent();
   const navigate = useNavigate();
-  const email = localStorage.getItem("STUDENT_EMAIL");
+
+  useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
 
   const logout = async () => {
+    const email = auth.email;
     try {
       await axios.post(
-        "auth/signout",
+        'auth/signout',
         {
           params: {
-            email
-          }
+            email,
+          },
         },
         {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
         }
       );
     } catch (err) {
@@ -26,7 +37,8 @@ const useLogout = () => {
     }
     localStorage.clear();
     setAuth({});
-    navigate("/", { replace: true });
+    setStudent({});
+    navigate('/', { replace: true });
   };
 
   return logout;
