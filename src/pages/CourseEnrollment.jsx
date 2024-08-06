@@ -1,21 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
-import Navigation from '../components/navigation/Navigation';
-import Footer from '../components/Footer';
-import '../assets/styles/signin.css';
-import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import PaystackPop from '@paystack/inline-js';
 import { useNavigate } from 'react-router-dom';
-import Missing from './Missing';
+import '../assets/styles/signin.css';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FcGlobe, FcCalendar } from 'react-icons/fc';
 import { FaClock } from 'react-icons/fa';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useAuth from '../hooks/useAuth';
+import storage from '../utils/storage';
+import { unformatCurrency } from '../utils/unformatCurrency';
+import PaystackPop from '@paystack/inline-js';
+import Missing from './Missing';
+import Navigation from '../components/navigation/Navigation';
+import Footer from '../components/Footer';
 
 const publicKey = 'pk_test_244916c0bd11624711bdab398418c05413687296';
 
 const CourseEnrollment = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const { auth, setAuth } = useAuth();
 
   const errRef = useRef();
 
@@ -29,11 +33,18 @@ const CourseEnrollment = () => {
   const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
   if (course) {
     var courseId = course.id;
-    var amount = course.price;
+    var amount = unformatCurrency(course.price);
     var courseTitle = course.title;
   }
-  const email = localStorage.getItem('STUDENT_EMAIL');
+
   const reference = localStorage.getItem('PAYMENT_REFERENCE');
+
+  useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
 
   useEffect(() => {
     setErrMsg('');
@@ -56,7 +67,7 @@ const CourseEnrollment = () => {
       await axiosPrivate.post(
         `students/enroll`,
         JSON.stringify({
-          email,
+          email: auth.email,
           courseId,
           amount,
           reference,
@@ -78,15 +89,15 @@ const CourseEnrollment = () => {
     const paystack = new PaystackPop();
     paystack.newTransaction({
       key: publicKey,
-      email,
-      amount: parseFloat(amount * 100),
+      email: auth.email,
+      amount: amount * 100,
       metadata: {
         'Course Title': courseTitle,
       },
       onSuccess: async (response) => {
         const message =
           courseTitle +
-          ' payment complete! Thanks for doing business with us! Come back soon!!';
+          ' payment complete! Thanks for enrolling with us! Check out our Other Courses!!';
         localStorage.setItem('PAYMENT_REFERENCE', response.reference);
         await savePaymentInfo();
         alert(message);
