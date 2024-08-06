@@ -16,12 +16,24 @@ const EnrolledCourses = () => {
 
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [slidesToShow, setSlidesToShow] = useState();
 
   useEffect(() => {
     const storedAuth = storage.getData('auth');
     if (storedAuth) {
       setAuth(storedAuth);
     }
+
+    const handleResize = () => {
+      setSlidesToShow(getSlidesToShow(window.innerWidth));
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Initial call to set the correct slidesToShow
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
@@ -66,6 +78,19 @@ const EnrolledCourses = () => {
     return '';
   };
 
+  const getCourse = async (id) => {
+    try {
+      const response = await axiosPrivate.get(`courses/course/${id}`, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+      localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
+      navigate('/course-details');
+    } catch (error) {
+      console.error('Error fetching Course');
+    }
+  };
+
   const NextArrow = ({ onClick }) => {
     return (
       <div
@@ -107,8 +132,8 @@ const EnrolledCourses = () => {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
-          infinite: true,
-          dots: true,
+          infinite: false,
+          dots: false,
         },
       },
       {
@@ -116,6 +141,7 @@ const EnrolledCourses = () => {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
+          infinit: false,
         },
       },
       {
@@ -123,22 +149,18 @@ const EnrolledCourses = () => {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
+          infinite: false,
         },
       },
     ],
   };
 
-  const getCourse = async (id) => {
-    try {
-      const response = await axiosPrivate.get(`courses/course/${id}`, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
-      localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
-      navigate('/course-details');
-    } catch (error) {
-      console.error('Error fetching Course');
-    }
+  // Adjust the slidesToShow based on the screen size
+  const getSlidesToShow = (width) => {
+    if (width >= 1024) return 4;
+    if (width >= 600) return 3;
+    if (width >= 480) return 2;
+    return 1;
   };
 
   const displayMyCourses = enrollmentDetails.map((enrollmentDetail) => {

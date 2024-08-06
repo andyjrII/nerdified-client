@@ -8,6 +8,7 @@ import Hero from '../components/Hero';
 import LatestBlogs from '../components/LatestBlogs';
 import Testimonial from '../components/Testimonial';
 import { motion } from 'framer-motion';
+import WhyEnrollFeatures from '../components/WhyEnrollFeatures';
 
 const Home = () => {
   return (
@@ -24,18 +25,7 @@ const Home = () => {
             </p>
 
             <div className='container'>
-              <div className='row justify-content-center'>
-                <iframe
-                  className='rounded-4'
-                  style={{ border: 'none' }}
-                  width='600'
-                  height='400'
-                  src='https://www.youtube.com/embed/819zkRMjn4k?si=1E5f2zphhW52I_6D'
-                  title='Why Get Nerdified?'
-                  referrerPolicy='strict-origin-when-cross-origin'
-                  allowFullScreen
-                ></iframe>
-              </div>
+              <WhyEnrollFeatures />
             </div>
           </section>
 
@@ -73,7 +63,7 @@ const Home = () => {
                   </p>
                   <div className='intro-button mx-auto'>
                     <Link className='btn btn-xl text-white' to='about'>
-                      Check us out
+                      Learn more about us
                     </Link>
                   </div>
                 </motion.div>
@@ -114,7 +104,7 @@ const Home = () => {
                   </p>
                   <div className='intro-button mx-auto'>
                     <Link className='btn btn-xl text-white' to='courses'>
-                      Enroll now!
+                      Check out our courses
                     </Link>
                   </div>
                 </motion.div>
