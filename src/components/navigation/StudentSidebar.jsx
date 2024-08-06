@@ -59,18 +59,18 @@ const StudentSidebar = () => {
     }
   };
 
-  const handleRemove = async (studentId, courseId) => {
+  const handleRemove = async (email, courseId) => {
     try {
       await axiosPrivate.delete(
         'wishlist/remove',
-        { data: { studentId, courseId } },
+        { data: { email, courseId } },
         {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
         }
       );
       alert('Course successfully removed!');
-      getWishlist(studentId);
+      getWishlist(student.id);
     } catch (error) {
       alert('Error removing Course');
     }
@@ -105,7 +105,7 @@ const StudentSidebar = () => {
             tabIndex='0'
             title='Remove from Wishlist'
             className='text-danger'
-            onClick={() => handleRemove(student.id, wish.courseId)}
+            onClick={() => handleRemove(auth.email, wish.courseId)}
           />
         </td>
       </tr>

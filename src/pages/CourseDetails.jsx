@@ -3,6 +3,8 @@ import Navigation from '../components/navigation/Navigation';
 import Footer from '../components/Footer';
 import '../assets/styles/navpages.css';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useAuth from '../hooks/useAuth';
+import storage from '../utils/storage';
 import Moment from 'react-moment';
 import { FaClock, FaMoneyBill, FaStar, FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -13,70 +15,71 @@ import PDFViewer from '../components/PDFViewer';
 
 const CourseDetails = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth, setAuth } = useAuth();
 
   const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
   if (course) {
     var courseId = course.id;
     var courseTitle = course.title;
   }
-  const email = localStorage.getItem('STUDENT_EMAIL');
-  const accessToken = localStorage.getItem('ACCESS_TOKEN');
-  const refreshToken = localStorage.getItem('REFRESH_TOKEN');
-  const studentId = parseInt(localStorage.getItem('STUDENT_ID'));
 
   const [courseEnrolled, setCourseEnrolled] = useState(null);
 
   const [isInWishlist, setIsInWishlist] = useState(false);
 
   useEffect(() => {
-    const isCourseEnrolled = async () => {
-      try {
-        const response = await axiosPrivate.get(
-          `students/course_enrolled/${courseId}`,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            withCredentials: true,
-          }
-        );
-        setCourseEnrolled(response.data);
-      } catch (error) {
-        //console.error('Error:', error);
-      }
-    };
-    isCourseEnrolled();
-  }, [courseId]);
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
 
   useEffect(() => {
-    const checkIfInWishlist = async () => {
-      try {
-        const response = await axiosPrivate.get(`wishlist/${studentId}`, {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        });
-        const wishlistSet = new Set(response.data.map((item) => item.courseId));
-        setIsInWishlist(wishlistSet.has(courseId));
-      } catch (error) {
-        alert('Error fetching Wishlist!');
-      }
-    };
-    if (localStorage.getItem('STUDENT_ID')) {
-      checkIfInWishlist();
-    }
+    isCourseEnrolled();
+    if (auth) checkIfInWishlist();
   }, [courseId]);
 
+  const isCourseEnrolled = async () => {
+    try {
+      const response = await axiosPrivate.get(
+        `students/course_enrolled/${courseId}`,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
+        }
+      );
+      setCourseEnrolled(response.data);
+    } catch (error) {
+      console.error('Error verifying if Course is Enrolled.');
+    }
+  };
+
+  const checkIfInWishlist = async () => {
+    try {
+      const response = await axiosPrivate.get(`wishlist/email/${auth.email}`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      });
+      const wishlistSet = new Set(response.data.map((item) => item.courseId));
+      setIsInWishlist(wishlistSet.has(courseId));
+    } catch (error) {
+      alert('Error fetching Wishlist!');
+    }
+  };
+
   const handleWishlistToggle = async () => {
-    if (accessToken && refreshToken && studentId) {
+    if (auth) {
       try {
         if (isInWishlist) {
           await axiosPrivate.delete('/wishlist/remove', {
-            data: { studentId, courseId },
+            data: { email: auth.email, courseId },
           });
           setIsInWishlist(false);
         } else {
           await axiosPrivate.post(
             '/wishlist/add',
             JSON.stringify({
-              studentId,
+              email: auth.email,
               courseId,
             }),
             {
@@ -90,7 +93,7 @@ const CourseDetails = () => {
         alert('Error toggling Wishlist!');
       }
     } else {
-      alert('You must be signed in first to be able to add class to wishlist');
+      alert('You must Sign to add Course to Wishlist.');
     }
   };
 
@@ -149,14 +152,12 @@ const CourseDetails = () => {
                         <FaMoneyBill className='bi text-success flex-shrink-0' />
                         <div>
                           <h5 className='mb-0 section-heading'>Price</h5>
-                          <span className='text-dark'>
-                            &#8358;{course.price}.00
-                          </span>
+                          <span className='text-dark'>{course.price}</span>
                         </div>
                       </li>
                     </ul>
                     <div className='pt-0 d-flex justify-content-center'>
-                      {accessToken && email ? (
+                      {auth ? (
                         courseEnrolled ? (
                           <button
                             type='button'
