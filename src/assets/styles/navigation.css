@@ -148,12 +148,16 @@ li svg {
   }
 }
 
-.navbar-dark .navbar-brand span {
-  font-family: 'Old English Text', Arial, sans-serif;
+.navbar-dark .navbar-brand .brand-top {
   font-weight: bold;
   font-size: 28px;
-  text-decoration: underline double #ff6347;
-  padding: 14px 0;
+  display: block;
+}
+
+.navbar-dark .navbar-brand .brand-bottom {
+  font-weight: bold;
+  font-size: 14px;
+  display: block;
 }
 
 @media (max-width: 360px) {

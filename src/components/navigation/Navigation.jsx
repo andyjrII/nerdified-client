@@ -38,7 +38,10 @@ const Navigation = () => {
       <div className='container-fluid'>
         <Link className='navbar-brand d-flex' to='/'>
           <img src={Logo} alt='<Nerdified />' id='nerdified-logo' />
-          <span className='align-self-center ml-3'>Nerdified</span>
+          <div className='ml-3'>
+            <span className='brand-top'>Nerdified</span>
+            <span className='brand-bottom'>Educate. Empower. Nerdify</span>
+          </div>
         </Link>
         <button
           className='navbar-toggler'
