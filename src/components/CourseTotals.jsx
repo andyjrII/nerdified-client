@@ -3,12 +3,13 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useAuth from '../hooks/useAuth';
 import storage from '../utils/storage';
 
-const CourseTotal = () => {
+const CourseTotals = () => {
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
 
   const [totalCourse, setTotalCourse] = useState(0);
   const [totalWishes, setTotalWishes] = useState(0);
+  const [totalPaid, setTotalPaid] = useState(0);
 
   useEffect(() => {
     const storedAuth = storage.getData('auth');
@@ -18,6 +19,7 @@ const CourseTotal = () => {
 
     getTotalCourses();
     getTotalWishItems();
+    getPaidAmountTotals();
   }, []);
 
   const getTotalCourses = async () => {
@@ -38,6 +40,17 @@ const CourseTotal = () => {
       setTotalWishes(response?.data);
     } catch (error) {
       console.error('Error getting total Wishlist items');
+    }
+  };
+
+  const getPaidAmountTotals = async () => {
+    try {
+      const response = await axiosPrivate.get(
+        `students/total-paid/${auth.email}`
+      );
+      setTotalPaid(response?.data);
+    } catch (error) {
+      console.error('Error getting total amount paid for Courses');
     }
   };
 
@@ -79,10 +92,7 @@ const CourseTotal = () => {
             </div>
             <div className='widget-content-right ml-4'>
               <div className='widget-numbers'>
-                <span>
-                  <span>&#8358;</span>
-                  656
-                </span>
+                <span>{totalPaid}</span>
               </div>
             </div>
           </div>
@@ -92,4 +102,4 @@ const CourseTotal = () => {
   );
 };
 
-export default CourseTotal;
+export default CourseTotals;

@@ -6,7 +6,7 @@ import Welcome from '../components/Welcome';
 import EnrolledCourses from '../components/EnrolledCourses';
 import NewestCourses from '../components/NewestCourses';
 import MostEnrolled from '../components/MostEnrolled';
-import CourseTotal from '../components/CourseTotal';
+import CourseTotals from '../components/CourseTotals';
 
 const Student = () => {
   return (
@@ -20,7 +20,7 @@ const Student = () => {
             </div>
           </div>
 
-          <CourseTotal />
+          <CourseTotals />
 
           <div className='p-3 m-3 shadow rounded'>
             <EnrolledCourses />

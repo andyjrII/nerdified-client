@@ -48,9 +48,7 @@ const MostEnrolled = () => {
           </div>
           <div className='card-body'>
             <h5 className='card-title text-wrap'>{course.title}</h5>
-            <p className='card-text text-white'>
-              Price: &#8358;{course.price}.00
-            </p>
+            <p className='card-text text-white'>Price: {course.price}</p>
             <button
               className='btn btn-lg btn-enrolled'
               onClick={() => getCourse(course.id)}

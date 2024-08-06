@@ -3,6 +3,8 @@ import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useAuth from '../hooks/useAuth';
+import storage from '../utils/storage';
 import Moment from 'react-moment';
 import ReactPaginate from 'react-paginate';
 import '../assets/styles/navpages.css';
@@ -12,6 +14,7 @@ import StarRating from '../components/StarRating';
 
 const Courses = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth, setAuth } = useAuth();
 
   const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,11 +23,19 @@ const Courses = () => {
 
   const [wishlist, setWishlist] = useState(new Set());
 
-  const studentId = parseInt(localStorage.getItem('STUDENT_ID'));
-  const access = localStorage.getItem('ACCESS_TOKEN');
-  const refresh = localStorage.getItem('REFRESH_TOKEN');
-
   const coursesPerPage = 20;
+
+  useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
+
+  useEffect(() => {
+    getCourses();
+    getWishlist();
+  }, [currentPage, searchQuery]);
 
   const getCourses = async () => {
     try {
@@ -49,7 +60,7 @@ const Courses = () => {
 
   const getWishlist = async () => {
     try {
-      const response = await axiosPrivate.get(`wishlist/${studentId}`, {
+      const response = await axiosPrivate.get(`wishlist/email/${auth.email}`, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       });
@@ -60,17 +71,12 @@ const Courses = () => {
     }
   };
 
-  useEffect(() => {
-    getCourses();
-    if (studentId) getWishlist();
-  }, [currentPage, searchQuery]);
-
   const handleWishlistToggle = async (courseId) => {
-    if (access && refresh && studentId) {
+    if (auth) {
       try {
         if (wishlist.has(courseId)) {
           await axiosPrivate.delete('/wishlist/remove', {
-            data: { studentId, courseId },
+            data: { email: auth.email, courseId },
           });
           setWishlist((prev) => {
             const newSet = new Set(prev);
@@ -80,7 +86,7 @@ const Courses = () => {
         } else {
           await axiosPrivate.post(
             '/wishlist/add',
-            { studentId, courseId },
+            { email: auth.email, courseId },
             {
               headers: { 'Content-Type': 'application/json' },
               withCredentials: true,
@@ -92,7 +98,7 @@ const Courses = () => {
         console.error('Error toggling wishlist:', error);
       }
     } else {
-      alert('You must be signed in first to be able to add class to wishlist');
+      alert('You must be signed in first to be able to add Course to Wishlist');
     }
   };
 
@@ -133,7 +139,7 @@ const Courses = () => {
               <li className='mb-2 d-flex align-items-center justify-content-center'>
                 <StarRating rating={course.averageRating} />
               </li>
-              <li>&#8358;{course.price}</li>
+              <li>{course.price}</li>
             </ul>
             <div className='justify-content-center d-flex'>
               <Link

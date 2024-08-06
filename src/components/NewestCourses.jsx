@@ -53,9 +53,7 @@ const NewestCourses = () => {
             <h5 className='card-title text-wrap text-white'>
               {latestCourse.title}
             </h5>
-            <p className='card-text text-white'>
-              Price: &#8358;{latestCourse.price}.00
-            </p>
+            <p className='card-text text-white'>Price: {latestCourse.price}</p>
             <button
               className='btn btn-lg btn-enrolled'
               onClick={() => getCourse(latestCourse.id)}
