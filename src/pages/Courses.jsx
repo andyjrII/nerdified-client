@@ -34,7 +34,7 @@ const Courses = () => {
 
   useEffect(() => {
     getCourses();
-    getWishlist();
+    if (auth.accessToken) getWishlist();
   }, [currentPage, searchQuery]);
 
   const getCourses = async () => {
@@ -54,7 +54,7 @@ const Courses = () => {
       setTotalCourses(response.data.totalCourses);
       setCourses(response.data.courses);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching Courses!');
     }
   };
 
@@ -67,7 +67,7 @@ const Courses = () => {
       const wishlistSet = new Set(response.data.map((item) => item.courseId));
       setWishlist(wishlistSet);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error getting wishlist');
     }
   };
 

@@ -9,14 +9,12 @@ const Welcome = () => {
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
 
-  const url = 'https://api.adviceslip.com/advice';
-
   const [imagePath, setImagePath] = useState('');
   const [quote, setQuote] = useState('');
 
   const fetchQuote = async () => {
     try {
-      const response = await axios.get(url);
+      const response = await axios.get('https://api.adviceslip.com/advice');
       setQuote(response.data.slip.advice);
     } catch (error) {
       console.error('Error fetching Quote!');

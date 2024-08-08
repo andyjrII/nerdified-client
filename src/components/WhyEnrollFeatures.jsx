@@ -19,7 +19,7 @@ const WhyEnrollFeatures = () => {
               <p className='pt-5 my-4 lh-1 why-enroll-text'>
                 Whether you prefer in-person learning or flexibility of online
                 classes, we have you covered. Our on-site classes offer a
-                collaborative environment, while our online classes esure that
+                collaborative environment, while our online classes ensure that
                 distance is never a barrier to gaining quality education.
               </p>
               <ul className='d-flex list-unstyled mt-auto'>
@@ -46,7 +46,7 @@ const WhyEnrollFeatures = () => {
           <div className='overlay'>
             <div className='d-flex flex-column h-100 p-3 pb-3 text-white'>
               <p className='pt-5 my-4 lh-1 why-enroll-text'>
-                After completing your coursework, we provide an intership
+                After completing your coursework, we provide an internship
                 program that allows you to apply what you've learned in
                 real-world scenarios. This hands-on experience is invaluable for
                 building your resume & gaining practical skills that employers

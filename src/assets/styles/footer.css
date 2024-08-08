@@ -16,7 +16,6 @@ footer a .social-icon:hover {
 }
 
 #footer-logo {
-  border-radius: 50%;
-  width: 140px;
-  height: 110px;
+  border-radius: 5px;
+  width: 55%;
 }

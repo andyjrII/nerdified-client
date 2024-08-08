@@ -37,7 +37,6 @@ const Hero = () => {
             className='bd-placeholder-img'
             width='100%'
             height='100%'
-            loading='lazy'
           />
           <div className='container'>
             <div className='carousel-caption'>
@@ -72,7 +71,6 @@ const Hero = () => {
             className='bd-placeholder-img'
             width='100%'
             height='100%'
-            loading='lazy'
           />
           <div className='container'>
             <div className='carousel-caption text-end'>
@@ -103,7 +101,6 @@ const Hero = () => {
             className='bd-placeholder-img'
             width='100%'
             height='100%'
-            loading='lazy'
           />
           <div className='container'>
             <div className='carousel-caption text-start'>

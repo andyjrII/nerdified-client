@@ -90,9 +90,9 @@ const CourseTotals = () => {
             <div className='widget-content-left mr-4'>
               <div className='widget-heading'>My Spending</div>
             </div>
-            <div className='widget-content-right ml-4'>
+            <div className='widget-content-right ml-3'>
               <div className='widget-numbers'>
-                <span>{totalPaid}</span>
+                <span className='money'>{totalPaid}</span>
               </div>
             </div>
           </div>

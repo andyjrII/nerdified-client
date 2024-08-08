@@ -16,23 +16,30 @@ const EnrolledCourses = () => {
 
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slidesToShow, setSlidesToShow] = useState();
+  const [slidesToShow, setSlidesToShow] = useState(4);
+
+  // Utility function to get the number of slides to show based on window width
+  const getSlidesToShow = (width) => {
+    if (width >= 1024) return 4;
+    if (width >= 600) return 3;
+    if (width >= 480) return 2;
+    return 1;
+  };
 
   useEffect(() => {
     const storedAuth = storage.getData('auth');
     if (storedAuth) {
       setAuth(storedAuth);
     }
+  }, []);
 
+  useEffect(() => {
     const handleResize = () => {
       setSlidesToShow(getSlidesToShow(window.innerWidth));
     };
-
     window.addEventListener('resize', handleResize);
-
     // Initial call to set the correct slidesToShow
     handleResize();
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -95,7 +102,9 @@ const EnrolledCourses = () => {
     return (
       <div
         className={`custom-arrow custom-arrow-next ${
-          currentSlide === enrollmentDetails.length - 4 ? 'd-none' : ''
+          currentSlide === enrollmentDetails.length - slidesToShow
+            ? 'd-none'
+            : ''
         }`}
         onClick={onClick}
       >
@@ -119,9 +128,9 @@ const EnrolledCourses = () => {
 
   const settings = {
     dots: false,
-    infinite: false,
+    infinite: false, // Disable infinite loop
     speed: 500,
-    slidesToShow: 4,
+    slidesToShow: slidesToShow,
     slidesToScroll: 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
@@ -132,8 +141,8 @@ const EnrolledCourses = () => {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
-          infinite: false,
-          dots: false,
+          infinite: false, // Ensure infinite is false here
+          dots: true,
         },
       },
       {
@@ -141,7 +150,7 @@ const EnrolledCourses = () => {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-          infinit: false,
+          infinite: false, // Ensure infinite is false here
         },
       },
       {
@@ -149,18 +158,10 @@ const EnrolledCourses = () => {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          infinite: false,
+          infinite: false, // Ensure infinite is false here
         },
       },
     ],
-  };
-
-  // Adjust the slidesToShow based on the screen size
-  const getSlidesToShow = (width) => {
-    if (width >= 1024) return 4;
-    if (width >= 600) return 3;
-    if (width >= 480) return 2;
-    return 1;
   };
 
   const displayMyCourses = enrollmentDetails.map((enrollmentDetail) => {

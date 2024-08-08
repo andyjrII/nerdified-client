@@ -35,8 +35,10 @@ const CourseDetails = () => {
   }, []);
 
   useEffect(() => {
-    isCourseEnrolled();
-    if (auth) checkIfInWishlist();
+    if (auth.accessToken) {
+      isCourseEnrolled();
+      checkIfInWishlist();
+    }
   }, [courseId]);
 
   const isCourseEnrolled = async () => {
@@ -63,7 +65,7 @@ const CourseDetails = () => {
       const wishlistSet = new Set(response.data.map((item) => item.courseId));
       setIsInWishlist(wishlistSet.has(courseId));
     } catch (error) {
-      alert('Error fetching Wishlist!');
+      console.log('Error fetching Wishlist!');
     }
   };
 
@@ -90,7 +92,7 @@ const CourseDetails = () => {
           setIsInWishlist(true);
         }
       } catch (error) {
-        alert('Error toggling Wishlist!');
+        console.log('Error toggling Wishlist!');
       }
     } else {
       alert('You must Sign to add Course to Wishlist.');
