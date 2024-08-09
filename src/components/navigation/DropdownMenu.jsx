@@ -1,21 +1,16 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faMale,
-  faImage,
-  faEdit,
-  faSignOut,
-} from '@fortawesome/free-solid-svg-icons';
+import { faMale, faEdit, faSignOut } from '@fortawesome/free-solid-svg-icons';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 import storage from '../../utils/storage';
 import useStudent from '../../hooks/useStudent';
 import useLogout from '../../hooks/useLogout';
 import PasswordChange from '../forms/PasswordChange';
-import ImageChange from '../forms/ImageChange';
 import DPDefault from '../../assets/images/navpages/person_profile.jpg';
 import WishlistPopover from '../popovers/WishlistPopover';
+import PicturePopover from '../popovers/PicturePopover';
 
 const DropdownMenu = ({ image }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -82,22 +77,7 @@ const DropdownMenu = ({ image }) => {
           <hr className='dropdown-divider' />
         </li>
         <WishlistPopover email={auth.email} studentId={student.id} />
-        <li>
-          <Link
-            className='dropdown-item d-flex gap-2 align-items-center'
-            role='button'
-            data-bs-toggle='modal'
-            data-bs-target='#accountSettings'
-          >
-            <FontAwesomeIcon
-              icon={faImage}
-              className='me-2'
-              width='16'
-              height='16'
-            />
-            Picture
-          </Link>
-        </li>
+        <PicturePopover email={auth.email} />
         <li>
           <Link
             className='dropdown-item d-flex gap-2 align-items-center'
@@ -162,29 +142,6 @@ const DropdownMenu = ({ image }) => {
                       >
                         <div>
                           <PasswordChange />
-                        </div>
-                      </div>
-                    </div>
-                    <div className='accordion-item'>
-                      <h2 className='accordion-header'>
-                        <button
-                          className='accordion-button collapsed'
-                          type='button'
-                          data-bs-toggle='collapse'
-                          data-bs-target='#pictureSettings'
-                          aria-expanded='false'
-                          aria-controls='pictureSettings'
-                        >
-                          Change Picture
-                        </button>
-                      </h2>
-                      <div
-                        id='pictureSettings'
-                        className='accordion-collapse collapse'
-                        data-bs-parent='#accordionSettings'
-                      >
-                        <div>
-                          <ImageChange />
                         </div>
                       </div>
                     </div>

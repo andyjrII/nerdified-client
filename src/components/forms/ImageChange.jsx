@@ -2,22 +2,12 @@ import { useState, useEffect } from 'react';
 import '../../assets/styles/signin.css';
 import { FcImageFile } from 'react-icons/fc';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import useAuth from '../../hooks/useAuth';
-import storage from '../../utils/storage';
 
-const ImageChange = () => {
+const ImageChange = ({ email }) => {
   const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePath, setImagePath] = useState('');
-
-  useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-  }, []);
 
   useEffect(() => {
     fetchImage();
@@ -25,7 +15,7 @@ const ImageChange = () => {
 
   const fetchImage = async () => {
     try {
-      const response = await axiosPrivate.get(`students/image/${auth.email}`, {
+      const response = await axiosPrivate.get(`students/image/${email}`, {
         responseType: 'arraybuffer', // Set the response type to 'arraybuffer'
       });
       const imageBlob = new Blob([response.data], { type: 'image/jpeg' }); // Create a Blob from the binary data
@@ -45,7 +35,7 @@ const ImageChange = () => {
     const formData = new FormData();
     formData.append('image', selectedImage);
     try {
-      await axiosPrivate.patch(`students/upload/${auth.email}`, formData, {
+      await axiosPrivate.patch(`students/upload/${email}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
