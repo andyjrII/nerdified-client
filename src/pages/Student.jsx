@@ -1,6 +1,5 @@
 import '../assets/styles/student.css';
 import Navigation from '../components/navigation/Navigation';
-import StudentSidebar from '../components/navigation/StudentSidebar';
 import Footer from '../components/Footer';
 import Welcome from '../components/Welcome';
 import EnrolledCourses from '../components/EnrolledCourses';
@@ -34,7 +33,6 @@ const Student = () => {
             <NewestCourses />
           </div>
         </main>
-        <StudentSidebar />
       </section>
       <Footer />
     </>

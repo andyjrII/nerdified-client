@@ -120,7 +120,6 @@ const Navigation = () => {
           </ul>
           {auth.email && (
             <>
-              {' '}
               <Link
                 className='userDropdown dropdown-toggle text-white'
                 id='userDropdown'
@@ -133,7 +132,7 @@ const Navigation = () => {
                   className='dp'
                 />
               </Link>
-              <ul className='dropdown-menu dropdown-menu-dark position-static mx-0 border-0 shadow'>
+              <ul className='dropdown-menu dropdown-menu-dark navy shadow'>
                 <li>
                   <Link
                     className='dropdown-item d-flex gap-2 align-items-center'
