@@ -167,10 +167,7 @@ const EnrolledCourses = () => {
   const displayMyCourses = enrollmentDetails.map((enrollmentDetail) => {
     return (
       <div className='col-md-12 p-2' key={enrollmentDetail.id}>
-        <div
-          className='card text-bg-primary mb-3'
-          style={{ maxWidth: '18rem' }}
-        >
+        <div className='card text-bg-primary' style={{ maxWidth: '18rem' }}>
           <div className='card-header text-bg-primary'>
             Enrolled on{' '}
             <Moment format='MMMM D, YYYY'>
@@ -213,10 +210,10 @@ const EnrolledCourses = () => {
 
   return (
     <>
-      <h3 className='bolded'>
+      <h3 className='bolded px-3'>
         <span className='badge bg-primary'>My Courses</span>
       </h3>
-      <Slider {...settings} className='py-3 px-2'>
+      <Slider {...settings} className='p-2'>
         {displayMyCourses}
       </Slider>
     </>

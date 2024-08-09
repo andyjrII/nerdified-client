@@ -1,10 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { IoMail, IoCall } from 'react-icons/io5';
 import { FaHeart } from 'react-icons/fa';
-import { FcSettings, FcLock, FcLike, FcBusinessman } from 'react-icons/fc';
-import { GrMap, GrView } from 'react-icons/gr';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { GrView } from 'react-icons/gr';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faMale,
+  faHeart,
+  faImage,
+  faEdit,
+  faSignOut,
+  faDashboard,
+} from '@fortawesome/free-solid-svg-icons';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 import storage from '../../utils/storage';
@@ -12,8 +18,10 @@ import useStudent from '../../hooks/useStudent';
 import useLogout from '../../hooks/useLogout';
 import PasswordChange from '../forms/PasswordChange';
 import ImageChange from '../forms/ImageChange';
+import DPDefault from '../../assets/images/navpages/person_profile.jpg';
+import InfoModal from '../modals/InfoModal';
 
-const StudentSidebar = () => {
+const DropdownMenu = ({ image }) => {
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
   const { student, setStudent } = useStudent();
@@ -113,123 +121,69 @@ const StudentSidebar = () => {
   });
 
   return (
-    <div className='floating-nav'>
-      <ul className='mt-5'>
+    <>
+      <Link
+        className='userDropdown dropdown-toggle text-white'
+        id='userDropdown'
+        data-bs-toggle='dropdown'
+        aria-expanded='false'
+      >
+        <img src={!image ? DPDefault : image} alt='Student' className='dp' />
+      </Link>
+      <ul className='dropdown-menu dropdown-menu-dark navy shadow'>
         <li>
           <Link
-            title='Profile'
+            className='dropdown-item d-flex gap-2 align-items-center'
+            to='/student'
+          >
+            <FontAwesomeIcon
+              icon={faDashboard}
+              className='me-2'
+              width='16'
+              height='16'
+            />
+            Dashboard
+          </Link>
+        </li>
+        <li>
+          <hr className='dropdown-divider' />
+        </li>
+        <li>
+          <Link
+            className='dropdown-item d-flex gap-2 align-items-center'
             role='button'
             data-bs-toggle='modal'
             data-bs-target='#studentProfile'
           >
-            <span className='span-icons'>
-              <FcBusinessman />
-            </span>
+            <FontAwesomeIcon
+              icon={faMale}
+              className='me-2'
+              width='16'
+              height='16'
+            />
+            {student.name}
           </Link>
           {/*  Profile Modal */}
-          <div
-            className='modal fade'
-            id='studentProfile'
-            data-bs-backdrop='static'
-            data-bs-keyboard='false'
-            tabIndex='-1'
-            aria-labelledby='studentProfileLabel'
-            aria-hidden='true'
-          >
-            <div className='modal-dialog modal-dialog-centered'>
-              <div className='modal-content'>
-                <div className='modal-header'>
-                  <h1 className='modal-title fs-5' id='studentProfileLabel'>
-                    My Profile
-                  </h1>
-                  <button
-                    type='button'
-                    className='btn-close'
-                    data-bs-dismiss='modal'
-                    aria-label='Close'
-                  ></button>
-                </div>
-                <div className='modal-body text-center'>
-                  <p className='d-inline-flex gap-1 m-2'>
-                    <button
-                      className='btn btn-primary'
-                      type='button'
-                      data-bs-toggle='collapse'
-                      data-bs-target='#email'
-                      aria-expanded='false'
-                      aria-controls='email'
-                    >
-                      <IoMail />
-                    </button>
-                    <button
-                      className='btn btn-primary'
-                      type='button'
-                      data-bs-toggle='collapse'
-                      data-bs-target='#phoneNumber'
-                      aria-expanded='false'
-                      aria-controls='phoneNumber'
-                    >
-                      <IoCall />
-                    </button>
-                    <button
-                      className='btn btn-primary'
-                      type='button'
-                      data-bs-toggle='collapse'
-                      data-bs-target='#address'
-                      aria-expanded='false'
-                      aria-controls='address'
-                    >
-                      <GrMap />
-                    </button>
-                  </p>
-                  <div className='row'>
-                    <div className='col'>
-                      <div className='collapse multi-collapse' id='email'>
-                        <div className='card card-body'>
-                          Email: {student.email}
-                        </div>
-                      </div>
-                    </div>
-                    <div className='col'>
-                      <div className='collapse multi-collapse' id='phoneNumber'>
-                        <div className='card card-body'>
-                          Phone: {student.phoneNumber}
-                        </div>
-                      </div>
-                    </div>
-                    <div className='col'>
-                      <div className='collapse multi-collapse' id='address'>
-                        <div className='card card-body'>
-                          Address: {student.address}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className='modal-footer'>
-                  <button
-                    type='button'
-                    className='btn'
-                    id='btn-profile'
-                    data-bs-dismiss='modal'
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <InfoModal
+            email={student.email}
+            phoneNumber={student.phoneNumber}
+            address={student.address}
+          />
         </li>
         <li>
           <Link
-            title='Wishlist'
+            className='dropdown-item d-flex gap-2 align-items-center'
             role='button'
             data-bs-toggle='modal'
             data-bs-target='#wishlist'
           >
-            <span className='span-icons'>
-              <FcLike />
-            </span>
+            <FontAwesomeIcon
+              icon={faHeart}
+              className='me-2'
+              width='16'
+              height='16'
+            />
+            Wishlist
           </Link>
           {/* Wishlist Modal */}
           <div
@@ -276,15 +230,18 @@ const StudentSidebar = () => {
         </li>
         <li>
           <Link
-            to='/student/settings'
-            title='Account Settings'
+            className='dropdown-item d-flex gap-2 align-items-center'
             role='button'
             data-bs-toggle='modal'
             data-bs-target='#accountSettings'
           >
-            <span className='span-icons'>
-              <FcSettings />
-            </span>
+            <FontAwesomeIcon
+              icon={faEdit}
+              className='me-2'
+              width='16'
+              height='16'
+            />
+            Edit
           </Link>
           {/* Account Settings Modal */}
           <div
@@ -378,15 +335,26 @@ const StudentSidebar = () => {
           </div>
         </li>
         <li>
-          <Link role='button' onClick={signOut} title='Sign Out'>
-            <span className='span-icons'>
-              <FcLock />
-            </span>
+          <hr className='dropdown-divider' />
+        </li>
+        <li>
+          <Link
+            className='dropdown-item d-flex gap-2 align-items-center'
+            role='button'
+            onClick={signOut}
+          >
+            <FontAwesomeIcon
+              icon={faSignOut}
+              className='me-2'
+              width='16'
+              height='16'
+            />
+            Sign Out
           </Link>
         </li>
       </ul>
-    </div>
+    </>
   );
 };
 
-export default StudentSidebar;
+export default DropdownMenu;

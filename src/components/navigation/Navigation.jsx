@@ -2,21 +2,12 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IoHomeSharp, IoBook, IoInformationCircle } from 'react-icons/io5';
 import { FaBlogger, FaLock } from 'react-icons/fa';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFile,
-  faImage,
-  faVideo,
-  faMusic,
-  faGamepad,
-  faTrashCan,
-} from '@fortawesome/free-solid-svg-icons';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 import storage from '../../utils/storage';
 import '../../assets/styles/navigation.css';
 import Logo from '../../assets/images/logo.png';
-import DPDefault from '../../assets/images/navpages/person_profile.jpg';
+import DropdownMenu from './DropdownMenu';
 
 const Navigation = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -118,111 +109,7 @@ const Navigation = () => {
               </li>
             )}
           </ul>
-          {auth.email && (
-            <>
-              <Link
-                className='userDropdown dropdown-toggle text-white'
-                id='userDropdown'
-                data-bs-toggle='dropdown'
-                aria-expanded='false'
-              >
-                <img
-                  src={!imagePath ? DPDefault : imagePath}
-                  alt='Student'
-                  className='dp'
-                />
-              </Link>
-              <ul className='dropdown-menu dropdown-menu-dark navy shadow'>
-                <li>
-                  <Link
-                    className='dropdown-item d-flex gap-2 align-items-center'
-                    to='#'
-                  >
-                    <FontAwesomeIcon
-                      icon={faFile}
-                      className='me-2'
-                      width='16'
-                      height='16'
-                    />
-                    Documents
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className='dropdown-item d-flex gap-2 align-items-center'
-                    to='#'
-                  >
-                    <FontAwesomeIcon
-                      icon={faImage}
-                      className='me-2'
-                      width='16'
-                      height='16'
-                    />
-                    Photos
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className='dropdown-item d-flex gap-2 align-items-center'
-                    to='#'
-                  >
-                    <FontAwesomeIcon
-                      icon={faVideo}
-                      className='me-2'
-                      width='16'
-                      height='16'
-                    />
-                    Movies
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className='dropdown-item d-flex gap-2 align-items-center'
-                    to='#'
-                  >
-                    <FontAwesomeIcon
-                      icon={faMusic}
-                      className='me-2'
-                      width='16'
-                      height='16'
-                    />
-                    Music
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className='dropdown-item d-flex gap-2 align-items-center'
-                    to='#'
-                  >
-                    <FontAwesomeIcon
-                      icon={faGamepad}
-                      className='me-2'
-                      width='16'
-                      height='16'
-                    />
-                    Games
-                  </Link>
-                </li>
-                <li>
-                  <hr className='dropdown-divider' />
-                </li>
-                <li>
-                  <Link
-                    className='dropdown-item d-flex gap-2 align-items-center'
-                    to='#'
-                  >
-                    <FontAwesomeIcon
-                      icon={faTrashCan}
-                      className='me-2'
-                      width='16'
-                      height='16'
-                    />
-                    Trash
-                  </Link>
-                </li>
-              </ul>
-            </>
-          )}
+          {auth.email && <DropdownMenu image={imagePath} />}
         </div>
       </div>
     </nav>

@@ -41,10 +41,7 @@ const NewestCourses = () => {
   const displayLatestCourses = latestCourses.map((latestCourse) => {
     return (
       <div className='col-md-3 p-2' key={latestCourse.id}>
-        <div
-          className='card text-bg-warning mb-3'
-          style={{ maxWidth: '18rem' }}
-        >
+        <div className='card text-bg-warning' style={{ maxWidth: '18rem' }}>
           <div className='card-header text-bg-warning text-white'>
             Last Updated on{' '}
             <Moment format='MMMM D, YYYY'>{latestCourse.updatedAt}</Moment>
@@ -68,10 +65,10 @@ const NewestCourses = () => {
 
   return (
     <>
-      <h3 className='bolded'>
+      <h3 className='bolded px-3'>
         <span className='badge bg-warning'>Latest Courses</span>
       </h3>
-      <div className='row p-3'>{displayLatestCourses}</div>
+      <div className='row px-3 py-2'>{displayLatestCourses}</div>
     </>
   );
 };

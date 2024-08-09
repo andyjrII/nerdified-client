@@ -41,7 +41,7 @@ const MostEnrolled = () => {
   const displayTopCourses = courses.map((course) => {
     return (
       <div className='col-md-3 p-2' key={course.id}>
-        <div className='card text-bg-danger mb-3' style={{ maxWidth: '18rem' }}>
+        <div className='card text-bg-danger' style={{ maxWidth: '18rem' }}>
           <div className='card-header text-bg-danger'>
             Last Updated on{' '}
             <Moment format='MMMM D, YYYY'>{course.updatedAt}</Moment>
@@ -63,10 +63,10 @@ const MostEnrolled = () => {
 
   return (
     <>
-      <h3 className='bolded'>
+      <h3 className='bolded px-3'>
         <span className='badge bg-danger'>Top Courses</span>
       </h3>
-      <div className='row p-3'>{displayTopCourses}</div>
+      <div className='row px-3 py-2'>{displayTopCourses}</div>
     </>
   );
 };

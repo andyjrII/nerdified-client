@@ -55,7 +55,7 @@ const CourseTotals = () => {
   };
 
   return (
-    <div className='row px-5 mx-4 mb-5'>
+    <div className='row mx-5 mb-4'>
       <div className='col-md-6 col-xl-4'>
         <div className='card widget-content bg-love-kiss'>
           <div className='widget-content-wrapper text-white'>
