@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import useAuth from '../hooks/useAuth';
-import storage from '../utils/storage';
 import Moment from 'react-moment';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 
-const EnrolledCourses = () => {
+const EnrolledCourses = ({ email }) => {
   const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
 
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
@@ -27,13 +24,6 @@ const EnrolledCourses = () => {
   };
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-  }, []);
-
-  useEffect(() => {
     const handleResize = () => {
       setSlidesToShow(getSlidesToShow(window.innerWidth));
     };
@@ -46,13 +36,10 @@ const EnrolledCourses = () => {
   useEffect(() => {
     const getEnrolledCourses = async () => {
       try {
-        const response = await axiosPrivate.get(
-          `students/enrolled/${auth.email}`,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            withCredentials: true,
-          }
-        );
+        const response = await axiosPrivate.get(`students/enrolled/${email}`, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
+        });
         setEnrollmentDetails(response?.data);
       } catch (error) {
         console.error('Error fetching Courses');
@@ -60,7 +47,7 @@ const EnrolledCourses = () => {
     };
 
     getEnrolledCourses();
-  }, [axiosPrivate, auth]);
+  }, [axiosPrivate, email]);
 
   const separatedDays = (days) => {
     if (Array.isArray(days)) {

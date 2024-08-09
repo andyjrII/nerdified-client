@@ -339,14 +339,23 @@ li svg {
   background-color: #f5f5f5;
 }
 
+.large-popover {
+  max-width: 600px; /* Customize width */
+  padding: 20px; /* Padding around the contents */
+  background-color: #f5f5f5; /* Ensure background color is set */
+}
+
+.large-popover .popover-body {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 @media (max-width: 767.98px) {
   .dropdown-menu {
     transform: translateX(1%); /* Center the dropdown under the image */
     z-index: 1000;
   }
 }
-
-/* StudenBar */
 
 #btn-profile {
   background-color: #ff6347;

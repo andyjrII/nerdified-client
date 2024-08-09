@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from '../api/axios';
-import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
 
 const Welcome = ({ name }) => {
   const [quote, setQuote] = useState('');

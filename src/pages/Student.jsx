@@ -91,7 +91,7 @@ const Student = () => {
           <CourseTotals />
 
           <div className='p-3 m-3 shadow rounded'>
-            <EnrolledCourses />
+            <EnrolledCourses email={student.email} />
           </div>
 
           <div className='p-3 m-3 shadow rounded'>

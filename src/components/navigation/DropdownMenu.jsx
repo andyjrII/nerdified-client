@@ -1,15 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { FaHeart } from 'react-icons/fa';
-import { GrView } from 'react-icons/gr';
+import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMale,
-  faHeart,
   faImage,
   faEdit,
   faSignOut,
-  faDashboard,
 } from '@fortawesome/free-solid-svg-icons';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
@@ -19,7 +15,7 @@ import useLogout from '../../hooks/useLogout';
 import PasswordChange from '../forms/PasswordChange';
 import ImageChange from '../forms/ImageChange';
 import DPDefault from '../../assets/images/navpages/person_profile.jpg';
-import InfoModal from '../modals/InfoModal';
+import WishlistPopover from '../popovers/WishlistPopover';
 
 const DropdownMenu = ({ image }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -29,8 +25,6 @@ const DropdownMenu = ({ image }) => {
   const logout = useLogout();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
     const storedAuth = storage.getData('auth');
@@ -47,7 +41,6 @@ const DropdownMenu = ({ image }) => {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
-      await getWishlist(response.data.id);
       setStudent(response?.data);
     } catch (error) {
       console.error('Error fetching Student Profile');
@@ -55,70 +48,10 @@ const DropdownMenu = ({ image }) => {
     }
   };
 
-  const getWishlist = async (studentId) => {
-    try {
-      const response = await axiosPrivate.get(`wishlist/${studentId}`, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
-      setWishlist(response?.data);
-    } catch (error) {
-      console.error('Error getting Wishlist');
-    }
-  };
-
-  const handleRemove = async (email, courseId) => {
-    try {
-      await axiosPrivate.delete(
-        'wishlist/remove',
-        { data: { email, courseId } },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        }
-      );
-      alert('Course successfully removed!');
-      getWishlist(student.id);
-    } catch (error) {
-      alert('Error removing Course');
-    }
-  };
-
-  const handleCourseView = async (course) => {
-    localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(course));
-    navigate('/course-details');
-  };
-
   const signOut = async () => {
     await logout();
     navigate('/');
   };
-
-  const displayWishlist = wishlist.map((wish) => {
-    return (
-      <tr key={wish.id} className='text-white'>
-        <td>{wish.course.title}</td>
-        <td>
-          <GrView
-            role='button'
-            tabIndex='0'
-            title='View Course'
-            data-bs-dismiss='modal'
-            onClick={() => handleCourseView(wish.course)}
-          />
-        </td>
-        <td>
-          <FaHeart
-            role='button'
-            tabIndex='0'
-            title='Remove from Wishlist'
-            className='text-danger'
-            onClick={() => handleRemove(auth.email, wish.courseId)}
-          />
-        </td>
-      </tr>
-    );
-  });
 
   return (
     <>
@@ -128,32 +61,13 @@ const DropdownMenu = ({ image }) => {
         data-bs-toggle='dropdown'
         aria-expanded='false'
       >
-        <img src={!image ? DPDefault : image} alt='Student' className='dp' />
+        <img src={image || DPDefault} alt='Student' className='dp' />
       </Link>
       <ul className='dropdown-menu dropdown-menu-dark navy shadow'>
         <li>
           <Link
             className='dropdown-item d-flex gap-2 align-items-center'
             to='/student'
-          >
-            <FontAwesomeIcon
-              icon={faDashboard}
-              className='me-2'
-              width='16'
-              height='16'
-            />
-            Dashboard
-          </Link>
-        </li>
-        <li>
-          <hr className='dropdown-divider' />
-        </li>
-        <li>
-          <Link
-            className='dropdown-item d-flex gap-2 align-items-center'
-            role='button'
-            data-bs-toggle='modal'
-            data-bs-target='#studentProfile'
           >
             <FontAwesomeIcon
               icon={faMale}
@@ -163,70 +77,26 @@ const DropdownMenu = ({ image }) => {
             />
             {student.name}
           </Link>
-          {/*  Profile Modal */}
-          <InfoModal
-            email={student.email}
-            phoneNumber={student.phoneNumber}
-            address={student.address}
-          />
         </li>
+        <li>
+          <hr className='dropdown-divider' />
+        </li>
+        <WishlistPopover email={auth.email} studentId={student.id} />
         <li>
           <Link
             className='dropdown-item d-flex gap-2 align-items-center'
             role='button'
             data-bs-toggle='modal'
-            data-bs-target='#wishlist'
+            data-bs-target='#accountSettings'
           >
             <FontAwesomeIcon
-              icon={faHeart}
+              icon={faImage}
               className='me-2'
               width='16'
               height='16'
             />
-            Wishlist
+            Picture
           </Link>
-          {/* Wishlist Modal */}
-          <div
-            className='modal fade'
-            id='wishlist'
-            data-bs-backdrop='static'
-            data-bs-keyboard='false'
-            tabIndex='-1'
-            aria-labelledby='wishlistLabel'
-            aria-hidden='true'
-          >
-            <div className='modal-dialog modal-dialog-centered modal-dialog-scrollable'>
-              <div className='modal-content'>
-                <div className='modal-header'>
-                  <h1 className='modal-title fs-5' id='wishlistLabel'>
-                    My Wishlist
-                  </h1>
-                  <button
-                    type='button'
-                    className='btn-close'
-                    data-bs-dismiss='modal'
-                    aria-label='Close'
-                  ></button>
-                </div>
-                <div className='modal-body'>
-                  <table className='table table-responsive'>
-                    {/* Display Wishlist */}
-                    <tbody>{displayWishlist}</tbody>
-                  </table>
-                </div>
-                <div className='modal-footer'>
-                  <button
-                    type='button'
-                    className='btn'
-                    id='btn-profile'
-                    data-bs-dismiss='modal'
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </li>
         <li>
           <Link
@@ -241,7 +111,7 @@ const DropdownMenu = ({ image }) => {
               width='16'
               height='16'
             />
-            Edit
+            Password
           </Link>
           {/* Account Settings Modal */}
           <div
