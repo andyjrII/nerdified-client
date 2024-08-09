@@ -33,8 +33,11 @@ const Courses = () => {
   }, []);
 
   useEffect(() => {
+    if (auth.email) getWishlist();
+  });
+
+  useEffect(() => {
     getCourses();
-    if (auth.accessToken) getWishlist();
   }, [currentPage, searchQuery]);
 
   const getCourses = async () => {

@@ -16,6 +16,7 @@ a {
   -o-transition: 0.3s all ease;
   transition: 0.3s all ease;
 }
+
 a,
 a:hover {
   text-decoration: none !important;
@@ -41,7 +42,7 @@ h2 {
 
 @media (max-width: 480px) {
   .quote-text.card-text {
-    font-size: 15px;
+    font-size: 18px;
   }
 
   .card-title.text-white {
@@ -53,9 +54,6 @@ h2 {
 
 .widget-content {
   padding: 1rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 }
 
 .widget-content .widget-content-left .widget-heading {
@@ -128,7 +126,7 @@ h2 {
 }
 
 /* Enrolled Courses Section */
-.card-body > p.card-text {
+.card-body > p.day-text {
   font-size: 13px;
   margin-bottom: 4px;
 }
@@ -176,7 +174,6 @@ h5.card-title.text-wrap {
 
 @media (max-width: 770px) {
   .p-3 .card-body {
-    height: 400px;
     text-align: center;
   }
   h5.card-title,
@@ -189,7 +186,7 @@ h5.card-title.text-wrap {
   h5.card-title.text-wrap {
     font-size: 0.9rem;
   }
-  p.card-text.text-white {
+  p.day-text {
     font-size: 0.7rem;
   }
   .col-md-2 img {
@@ -200,7 +197,6 @@ h5.card-title.text-wrap {
 
 @media (max-width: 400px) {
   .p-3 .card-body {
-    height: 500px;
     text-align: center;
   }
   h1.bolded {

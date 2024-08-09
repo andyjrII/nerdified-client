@@ -43,40 +43,40 @@ const Student = () => {
       <Navigation />
       <section id='student-section' className='border-top border-bottom'>
         <main id='student-main' className='mx-3 mb-3 pb-2'>
-          <div class='container text-center mt-3'>
+          <div className='container text-center mt-4'>
             <div className='row align-items-start'>
-              <div class='col'>
-                <button type='button' class='btn btn-primary'>
+              <div className='col mb-2'>
+                <button type='button' className='btn btn-primary'>
                   {student.email}{' '}
-                  <span class='badge navy'>
+                  <span className='badge navy'>
                     <FaEnvelope />
                   </span>
                 </button>
               </div>
-              <div class='col'>
-                <button type='button' class='btn btn-primary'>
+              <div className='col mb-2'>
+                <button type='button' className='btn btn-primary'>
                   {student.phoneNumber}{' '}
-                  <span class='badge navy'>
+                  <span className='badge navy'>
                     <FaPhone />
                   </span>
                 </button>
               </div>
-              <div class='col'>
-                <button type='button' class='btn btn-primary'>
+              <div className='col mb-2'>
+                <button type='button' className='btn btn-primary'>
                   {student.address}{' '}
-                  <span class='badge navy'>
+                  <span className='badge navy'>
                     <FaLocationArrow />
                   </span>
                 </button>
               </div>
-              <div class='col'>
+              <div className='col'>
                 <button
                   type='button'
-                  class='btn btn-primary'
-                  title='Account Created On'
+                  className='btn btn-primary'
+                  title='Date Joined'
                 >
                   <Moment format='MMMM D, YYYY'>{student.createdAt}</Moment>{' '}
-                  <span class='badge navy'>
+                  <span className='badge navy'>
                     <FaClock />
                   </span>
                 </button>

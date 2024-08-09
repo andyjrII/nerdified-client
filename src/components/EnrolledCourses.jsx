@@ -165,7 +165,7 @@ const EnrolledCourses = ({ email }) => {
             <h5 className='card-title text-wrap'>
               {enrollmentDetail.course.title}
             </h5>
-            <p className='card-text text-white'>
+            <p className='card-text text-white day-text'>
               Class Days: [{separatedDays(enrollmentDetail.classDays)}]
             </p>
             <p className='card-text text-white'>

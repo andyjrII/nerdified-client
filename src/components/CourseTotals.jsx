@@ -59,10 +59,10 @@ const CourseTotals = () => {
       <div className='col-md-6 col-xl-4'>
         <div className='card widget-content bg-love-kiss'>
           <div className='widget-content-wrapper text-white'>
-            <div className='widget-content-left mr-4'>
+            <div className='widget-content-left'>
               <div className='widget-heading'>My Courses</div>
             </div>
-            <div className='widget-content-right ml-4'>
+            <div className='widget-content-right'>
               <div className='widget-numbers'>
                 <span>{totalCourse}</span>
               </div>
@@ -73,10 +73,10 @@ const CourseTotals = () => {
       <div className='col-md-6 col-xl-4'>
         <div className='card widget-content bg-ripe-malin'>
           <div className='widget-content-wrapper text-white'>
-            <div className='widget-content-left mr-4'>
+            <div className='widget-content-left'>
               <div className='widget-heading'>My Wishlist</div>
             </div>
-            <div className='widget-content-right ml-4'>
+            <div className='widget-content-right'>
               <div className='widget-numbers'>
                 <span>{totalWishes}</span>
               </div>
@@ -87,10 +87,10 @@ const CourseTotals = () => {
       <div className='col-md-6 col-xl-4'>
         <div className='card widget-content bg-mean-fruit'>
           <div className='widget-content-wrapper text-white'>
-            <div className='widget-content-left mr-4'>
-              <div className='widget-heading'>My Spending</div>
+            <div className='widget-content-left'>
+              <div className='widget-heading'>Spendings</div>
             </div>
-            <div className='widget-content-right ml-3'>
+            <div className='widget-content-right'>
               <div className='widget-numbers'>
                 <span className='money'>{totalPaid}</span>
               </div>

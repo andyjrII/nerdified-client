@@ -1,7 +1,8 @@
 import Footer from '../components/Footer';
 import Navigation from '../components/navigation/Navigation';
-import PurposeImage from '../assets/images/navpages/about-purpose.jpeg';
-import ServiceImage from '../assets/images/navpages/about-service.jpeg';
+import VisionImg from '../assets/images/navpages/about-vision.jpeg';
+import ServiceImg from '../assets/images/navpages/about-service.jpeg';
+import MissionImg from '../assets/images/navpages/about-mission.jpeg';
 import '../assets/styles/navpages.css';
 
 const About = () => {
@@ -24,8 +25,8 @@ const About = () => {
               <div className='timeline-image'>
                 <img
                   className='rounded-circle img-fluid'
-                  src={PurposeImage}
-                  alt='...'
+                  src={VisionImg}
+                  alt='Vision'
                 />
               </div>
               <div className='timeline-panel'>
@@ -44,8 +45,8 @@ const About = () => {
               <div className='timeline-image'>
                 <img
                   className='rounded-circle img-fluid'
-                  src={ServiceImage}
-                  alt='...'
+                  src={MissionImg}
+                  alt='Mission'
                 />
               </div>
               <div className='timeline-panel'>
@@ -65,8 +66,8 @@ const About = () => {
               <div className='timeline-image'>
                 <img
                   className='rounded-circle img-fluid'
-                  src={PurposeImage}
-                  alt='...'
+                  src={ServiceImg}
+                  alt='Service'
                 />
               </div>
               <div className='timeline-panel'>

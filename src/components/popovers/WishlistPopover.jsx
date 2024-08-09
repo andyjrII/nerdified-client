@@ -8,18 +8,19 @@ import { GrView } from 'react-icons/gr';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
-const WishlistPopover = ({ email, studentId }) => {
+const WishlistPopover = ({ email }) => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+
   const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
-    getWishlist(studentId);
-  }, [wishlist]);
+    getWishlist();
+  }, []);
 
-  const getWishlist = async (studentId) => {
+  const getWishlist = async () => {
     try {
-      const response = await axiosPrivate.get(`wishlist/${studentId}`, {
+      const response = await axiosPrivate.get(`wishlist/email/${email}`, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
@@ -40,7 +41,7 @@ const WishlistPopover = ({ email, studentId }) => {
         }
       );
       alert('Course successfully removed!');
-      getWishlist(studentId);
+      getWishlist();
     } catch (error) {
       alert('Error removing Course');
     }
@@ -81,12 +82,14 @@ const WishlistPopover = ({ email, studentId }) => {
         placement='bottom'
         overlay={
           <Popover id='popover-wishlist' className='large-popover'>
-            <Popover.Header as='h3'>My Wishlist</Popover.Header>
-            <Popover.Body>
-              <table className='table'>
-                <tbody>{displayWishlist}</tbody>
-              </table>
-            </Popover.Body>
+            <div className='inside-popover rounded'>
+              <Popover.Header as='h3'>My Wishlist</Popover.Header>
+              <Popover.Body>
+                <table className='table'>
+                  <tbody>{displayWishlist}</tbody>
+                </table>
+              </Popover.Body>
+            </div>
           </Popover>
         }
         rootClose // This will allow the popover to close when clicking outside of it

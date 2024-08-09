@@ -340,9 +340,25 @@ li svg {
 }
 
 .large-popover {
+  position: inherit;
+  max-width: 100%; /* Customize width */
+  width: 100%;
+  padding: 20px; /* Padding around the contents */
+  background-color: transparent;
+  border-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inside-popover {
+  position: fixed;
+  top: -5px;
   max-width: 600px; /* Customize width */
   padding: 20px; /* Padding around the contents */
-  background-color: #f5f5f5; /* Ensure background color is set */
+  background-image: url('../images/logo.png');
+  background-position: center;
+  background-size: 100% 100%;
 }
 
 .large-popover .popover-body {

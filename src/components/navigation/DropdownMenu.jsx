@@ -37,6 +37,7 @@ const DropdownMenu = ({ image }) => {
         withCredentials: true,
       });
       setStudent(response?.data);
+      localStorage.setItem('student_id', student.id);
     } catch (error) {
       console.error('Error fetching Student Profile');
       navigate('/signin', { state: { from: location }, replace: true });
@@ -76,7 +77,7 @@ const DropdownMenu = ({ image }) => {
         <li>
           <hr className='dropdown-divider' />
         </li>
-        <WishlistPopover email={auth.email} studentId={student.id} />
+        <WishlistPopover email={auth.email} />
         <PicturePopover email={auth.email} />
         <PasswordPopover />
         <li>

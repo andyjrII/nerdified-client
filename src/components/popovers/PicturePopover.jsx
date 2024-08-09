@@ -13,12 +13,14 @@ const PicturePopover = ({ email }) => {
         placement='bottom'
         overlay={
           <Popover id='popover-picture' className='large-popover'>
-            <Popover.Header as='h3'>Update Picture</Popover.Header>
-            <Popover.Body>
-              <div>
-                <ImageChange email={email} />
-              </div>
-            </Popover.Body>
+            <div className='inside-popover rounded'>
+              <Popover.Header as='h3'>Update Picture</Popover.Header>
+              <Popover.Body>
+                <div>
+                  <ImageChange email={email} />
+                </div>
+              </Popover.Body>
+            </div>
           </Popover>
         }
         rootClose // This will allow the popover to close when clicking outside of it
