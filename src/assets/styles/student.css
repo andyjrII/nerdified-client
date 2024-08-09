@@ -39,13 +39,6 @@ h2 {
   font-size: 20px;
 }
 
-#student-img {
-  width: 120px;
-  height: 130px;
-  border-radius: 5px;
-  float: right;
-}
-
 @media (max-width: 480px) {
   .quote-text.card-text {
     font-size: 15px;
@@ -146,7 +139,7 @@ h2 {
   margin-top: 8px;
 }
 
-h5.card-title {
+h5.card-title.text-wrap {
   font-size: 18px;
   font-weight: bold;
 }
@@ -181,8 +174,6 @@ h5.card-title {
   display: none !important;
 }
 
-/* Media Query */
-
 @media (max-width: 770px) {
   .p-5 .card-body {
     height: 400px;
@@ -192,11 +183,14 @@ h5.card-title {
   p.card-text {
     text-align: center;
   }
-  h5.card-title {
-    font-size: 2rem;
+  .card-header.text-bg-primary {
+    font-size: 0.7rem;
   }
-  p.card-text {
-    font-size: 1.2rem;
+  h5.card-title.text-wrap {
+    font-size: 0.9rem;
+  }
+  p.card-text.text-white {
+    font-size: 0.7rem;
   }
   .col-md-2 img {
     width: 220px;
@@ -211,6 +205,22 @@ h5.card-title {
   }
   h1.bolded {
     font-size: 1.5rem;
+  }
+}
+
+/* Top Courses */
+
+@media (max-width: 770px) {
+  .card-header.text-bg-danger {
+    font-size: 0.7rem;
+  }
+}
+
+/* Newest Courses */
+
+@media (max-width: 770px) {
+  .card-header.text-bg-warning {
+    font-size: 0.7rem;
   }
 }
 

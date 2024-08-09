@@ -179,7 +179,7 @@ li svg {
 
 .navbar-dark .navbar-brand img {
   border-radius: 50%;
-  width: 90px;
+  width: 70px;
   height: 70px;
 }
 
@@ -266,8 +266,8 @@ li svg {
 }
 
 @media (max-width: 767.98px) {
-  .nerd-navbar-light .navbar-nav > .nav-item > .nav-link {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  .nerd-navbar-light .navbar-nav {
+    height: fit-content;
   }
 }
 
@@ -316,6 +316,12 @@ li svg {
 
 .nerd-navbar-light .navbar-toggler:focus {
   outline: none !important;
+}
+
+.dp {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
 }
 
 .navy {

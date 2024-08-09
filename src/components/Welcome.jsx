@@ -3,14 +3,31 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import axios from '../api/axios';
 import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
 import useAuth from '../hooks/useAuth';
+import useStudent from '../hooks/useStudent';
 import storage from '../utils/storage';
 
 const Welcome = () => {
   const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
 
-  const [imagePath, setImagePath] = useState('');
+  const { auth, setAuth } = useAuth();
+  const { student, setStudent } = useStudent(null);
   const [quote, setQuote] = useState('');
+
+  useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+
+    fetchStudent();
+    fetchQuote(); // Initial fetch
+
+    const intervalId = setInterval(() => {
+      fetchQuote(); // Fetch new quote every 10 minutes
+    }, 1800000); // 600000ms = 10 minutes
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   const fetchQuote = async () => {
     try {
@@ -21,40 +38,23 @@ const Welcome = () => {
     }
   };
 
-  const fetchImage = async () => {
+  const fetchStudent = async () => {
     try {
-      const response = await axiosPrivate.get(`students/image/${auth.email}`, {
-        responseType: 'arraybuffer',
-      });
-      const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
-      const imageUrl = URL.createObjectURL(imageBlob);
-      setImagePath(imageUrl);
+      const response = await axiosPrivate.get(`students/${auth.email}`);
+      setStudent(response?.data);
     } catch (error) {
-      console.error('Error getting Profile picture!');
+      console.error('Error:', error);
     }
   };
-
-  useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-
-    fetchImage();
-    fetchQuote(); // Initial fetch
-
-    const intervalId = setInterval(() => {
-      fetchQuote(); // Fetch new quote every 10 minutes
-    }, 1800000); // 600000ms = 10 minutes
-
-    return () => clearInterval(intervalId);
-  }, []);
 
   return (
     <div className='card'>
       <div className='card-body row'>
         <div className='col-md-10'>
-          <h5 className='card-title text-white mb-3'>Welcome Back!</h5>
+          <h4 className='card-title text-white mb-3'>
+            Welcome back{' '}
+            <span className='text-warning fs-5'>{student.name}</span>!
+          </h4>
           <div className='d-flex text-white'>
             <FaQuoteLeft />
             {quote ? (
@@ -67,9 +67,6 @@ const Welcome = () => {
             )}
             <FaQuoteRight />
           </div>
-        </div>
-        <div className='col-md-2'>
-          <img src={imagePath} id='student-img' alt='Profile' />
         </div>
       </div>
     </div>

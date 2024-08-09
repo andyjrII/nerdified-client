@@ -1,18 +1,27 @@
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { IoHomeSharp, IoBook, IoInformationCircle } from 'react-icons/io5';
-import { FaBlogger, FaUserGraduate, FaLock } from 'react-icons/fa';
+import { FaBlogger, FaLock } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faFile,
+  faImage,
+  faVideo,
+  faMusic,
+  faGamepad,
+  faTrashCan,
+} from '@fortawesome/free-solid-svg-icons';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useAuth from '../../hooks/useAuth';
 import storage from '../../utils/storage';
-import useStudent from '../../hooks/useStudent';
 import '../../assets/styles/navigation.css';
 import Logo from '../../assets/images/logo.png';
+import DPDefault from '../../assets/images/navpages/person_profile.jpg';
 
 const Navigation = () => {
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
-  const { student, setStudent } = useStudent(null);
+  const [imagePath, setImagePath] = useState('');
 
   useEffect(() => {
     const storedAuth = storage.getData('auth');
@@ -22,16 +31,23 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
-    const fetchStudent = async () => {
+    const fetchImage = async () => {
       try {
-        const response = await axiosPrivate.get(`students/${auth.email}`);
-        setStudent(response?.data);
+        const response = await axiosPrivate.get(
+          `students/image/${auth.email}`,
+          {
+            responseType: 'arraybuffer',
+          }
+        );
+        const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
+        const imageUrl = URL.createObjectURL(imageBlob);
+        setImagePath(imageUrl);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error getting Profile picture!');
       }
     };
-    if (auth.email) fetchStudent();
-  }, [auth.email, axiosPrivate]);
+    if (auth.email) fetchImage();
+  }, [auth.email]);
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark nerd-navbar-light navy'>
@@ -55,7 +71,7 @@ const Navigation = () => {
           <span className='navbar-toggler-icon'></span>
         </button>
         <div className='collapse navbar-collapse' id='navbarCollapse'>
-          <ul className='navbar-nav ms-auto py-4 py-lg-0'>
+          <ul className='navbar-nav ms-auto py-lg-0'>
             <li className='nav-item me-2'>
               <Link
                 className='nav-link text-center d-flex align-items-center'
@@ -90,30 +106,124 @@ const Navigation = () => {
                 <IoInformationCircle className='mr-2' /> About us
               </Link>
             </li>
-
-            {/*  Nav Item - Login/User Information */}
-
-            <li className='nav-item text-center'>
-              <Link
-                className='nav-link d-flex align-items-center'
-                id='userDropdown'
-                role='button'
-                to={student.name ? '/student' : '/signin'}
-              >
-                {student.name ? (
-                  <>
-                    <FaUserGraduate className='mr-2' />
-                    {student.name}
-                  </>
-                ) : (
-                  <>
-                    <FaLock className='mr-2' />
-                    Sign in
-                  </>
-                )}
-              </Link>
-            </li>
+            {!auth.email && (
+              <li className='nav-item text-center'>
+                <Link
+                  className='nav-link d-flex align-items-center'
+                  to='/signin'
+                >
+                  <FaLock className='mr-2' />
+                  Sign in
+                </Link>
+              </li>
+            )}
           </ul>
+          {auth.email && (
+            <>
+              {' '}
+              <Link
+                className='userDropdown dropdown-toggle text-white'
+                id='userDropdown'
+                data-bs-toggle='dropdown'
+                aria-expanded='false'
+              >
+                <img
+                  src={!imagePath ? DPDefault : imagePath}
+                  alt='Student'
+                  className='dp'
+                />
+              </Link>
+              <ul className='dropdown-menu dropdown-menu-dark position-static mx-0 border-0 shadow'>
+                <li>
+                  <Link
+                    className='dropdown-item d-flex gap-2 align-items-center'
+                    to='#'
+                  >
+                    <FontAwesomeIcon
+                      icon={faFile}
+                      className='me-2'
+                      width='16'
+                      height='16'
+                    />
+                    Documents
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className='dropdown-item d-flex gap-2 align-items-center'
+                    to='#'
+                  >
+                    <FontAwesomeIcon
+                      icon={faImage}
+                      className='me-2'
+                      width='16'
+                      height='16'
+                    />
+                    Photos
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className='dropdown-item d-flex gap-2 align-items-center'
+                    to='#'
+                  >
+                    <FontAwesomeIcon
+                      icon={faVideo}
+                      className='me-2'
+                      width='16'
+                      height='16'
+                    />
+                    Movies
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className='dropdown-item d-flex gap-2 align-items-center'
+                    to='#'
+                  >
+                    <FontAwesomeIcon
+                      icon={faMusic}
+                      className='me-2'
+                      width='16'
+                      height='16'
+                    />
+                    Music
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className='dropdown-item d-flex gap-2 align-items-center'
+                    to='#'
+                  >
+                    <FontAwesomeIcon
+                      icon={faGamepad}
+                      className='me-2'
+                      width='16'
+                      height='16'
+                    />
+                    Games
+                  </Link>
+                </li>
+                <li>
+                  <hr className='dropdown-divider' />
+                </li>
+                <li>
+                  <Link
+                    className='dropdown-item d-flex gap-2 align-items-center'
+                    to='#'
+                  >
+                    <FontAwesomeIcon
+                      icon={faTrashCan}
+                      className='me-2'
+                      width='16'
+                      height='16'
+                    />
+                    Trash
+                  </Link>
+                </li>
+              </ul>
+            </>
+          )}
         </div>
       </div>
     </nav>
