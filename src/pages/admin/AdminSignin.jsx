@@ -3,6 +3,7 @@ import '../../assets/styles/signin.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
+import storage from '../../utils/storage';
 import { FcLock, FcAddressBook } from 'react-icons/fc';
 
 const AdminSignin = () => {
@@ -32,7 +33,7 @@ const AdminSignin = () => {
 
     try {
       const response = await axios.post(
-        'auth/admin_signin',
+        'auth/admin/signin',
         JSON.stringify({ email, password }),
         {
           headers: { 'Content-Type': 'application/json' },
@@ -40,14 +41,10 @@ const AdminSignin = () => {
         }
       );
       const accessToken = response?.data[0]?.access_token;
-      const refreshToken = response?.data[0]?.refresh_token;
       const role = response?.data[1];
-      localStorage.setItem('ADMIN_REFRESH_TOKEN', refreshToken);
-      localStorage.setItem('ADMIN_ACCESS_TOKEN', accessToken);
-      localStorage.setItem('ADMIN_EMAIL', email);
-      localStorage.setItem('ROLE', role);
 
-      setAuth({ email, accessToken, refreshToken, role });
+      setAuth({ email, accessToken, role });
+      storage.setData('admin_auth', { email, accessToken, role });
       navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {

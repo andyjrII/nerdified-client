@@ -1,9 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
 import RequireAuth from './components/RequireAuth';
-import AdminRequireAuth from './auth/AdminRequireAuth';
+import AdminRequireAuth from './components/AdminRequireAuth';
 import PersistLogin from './components/PersistLogin';
-import AdminPersistLogin from './auth/AdminPersistLogin';
+import AdminPersistLogin from './components/AdminPersistLogin';
 import Layout from './components/Layout';
+import AdminLayout from './components/AdminLayout';
 import Home from './pages/Home';
 import Unauthorized from './pages/Unauthorized';
 import Missing from './pages/Missing';
@@ -31,43 +32,44 @@ import AllAdmins from './pages/admin/AllAdmins';
 function App() {
   return (
     <Routes>
-      <Route path='/' element={<Layout />}>
+      <Route element={<Layout />}>
         {/* public routes */}
         <Route path='/' element={<Home />} />
         <Route path='/signin' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
-        <Route path='courses' element={<Courses />} />
-        <Route path='course-details' element={<CourseDetails />} />
-        <Route path='course-enroll' element={<CourseEnrollment />} />
-        <Route path='blog' element={<Blog />} />
-        <Route path='about' element={<About />} />
-
+        <Route path='/courses' element={<Courses />} />
+        <Route path='/course-details' element={<CourseDetails />} />
+        <Route path='/course-enroll' element={<CourseEnrollment />} />
+        <Route path='/blog' element={<Blog />} />
+        <Route path='/about' element={<About />} />
         <Route path='unauthorized' element={<Unauthorized />} />
 
-        {/* User protected routes */}
+        {/* Student protected routes */}
         <Route element={<PersistLogin />}>
           <Route element={<RequireAuth />}>
             <Route path='student' element={<Student />} />
           </Route>
         </Route>
+      </Route>
 
+      <Route element={<AdminLayout />}>
         {/* Admin Public Routes */}
-        <Route path='admin_signin' element={<AdminSignin />} />
+        <Route path='admin/signin' element={<AdminSignin />} />
 
         {/* Admin Protected Routes */}
         <Route element={<AdminPersistLogin />}>
           <Route element={<AdminRequireAuth />}>
-            <Route path='admin' element={<Admin />} />
-            <Route path='admin_new_course' element={<NewCourse />} />
-            <Route path='admin_courses' element={<AllCourses />} />
-            <Route path='admin_update_course' element={<UpdateCourse />} />
-            <Route path='admin_students' element={<AllStudents />} />
-            <Route path='admin_course_payment' element={<CoursePayment />} />
-            <Route path='admin_blog_posts' element={<BlogPosts />} />
-            <Route path='admin_new_post' element={<NewPost />} />
-            <Route path='admin_update_post' element={<UpdatePost />} />
-            <Route path='admin_all' element={<AllAdmins />} />
-            <Route path='admin_new_admin' element={<CreateAdmin />} />
+            <Route path='/admin' element={<Admin />} />
+            <Route path='/admin/new_course' element={<NewCourse />} />
+            <Route path='/admin/courses' element={<AllCourses />} />
+            <Route path='/admin/update_course' element={<UpdateCourse />} />
+            <Route path='/admin/students' element={<AllStudents />} />
+            <Route path='/admin/course_payment' element={<CoursePayment />} />
+            <Route path='/admin/blog_posts' element={<BlogPosts />} />
+            <Route path='/admin/new_post' element={<NewPost />} />
+            <Route path='/admin/update_post' element={<UpdatePost />} />
+            <Route path='/admin/all' element={<AllAdmins />} />
+            <Route path='/admin/new_admin' element={<CreateAdmin />} />
           </Route>
         </Route>
 

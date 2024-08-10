@@ -2,21 +2,29 @@ import { Outlet } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAdminRefreshToken from '../hooks/useAdminRefreshToken';
 import useAuth from '../hooks/useAuth';
-import Spinners from '../components/Spinners';
+import storage from '../utils/storage';
+import Spinners from './Spinners';
 
 const AdminPersistLogin = () => {
   const [isLoading, setIsLoading] = useState(true);
   const refresh = useAdminRefreshToken();
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
 
   useEffect(() => {
+    const storedAuth = storage.getData('admin_auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+
+    let isMounted = true;
+
     const verifyRefreshToken = async () => {
       try {
         await refresh();
       } catch (err) {
         console.error(err);
       } finally {
-        setIsLoading(false);
+        isMounted && setIsLoading(false);
       }
     };
     !auth?.accessToken ? verifyRefreshToken() : setIsLoading(false);

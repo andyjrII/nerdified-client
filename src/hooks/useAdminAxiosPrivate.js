@@ -1,17 +1,25 @@
-import { useEffect } from "react";
-import useAdminRefreshToken from "./useAdminRefreshToken";
-import { axiosPrivate } from "../api/axios";
-import useAuth from "./useAuth";
+import { useEffect } from 'react';
+import useAdminRefreshToken from './useAdminRefreshToken';
+import { axiosPrivate } from '../api/axios';
+import useAuth from './useAuth';
+import storage from '../utils/storage';
 
 const useAdminAxiosPrivate = () => {
   const refresh = useAdminRefreshToken();
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
+
+  useEffect(() => {
+    const storedAuth = storage.getData('admin_auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
-        if (!config.headers["Authorization"]) {
-          config.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
+        if (!config.headers['Authorization']) {
+          config.headers['Authorization'] = `Bearer ${auth?.accessToken}`;
         }
         return config;
       },
@@ -25,7 +33,7 @@ const useAdminAxiosPrivate = () => {
         if (error?.response?.status === (401 || 403) && !prevRequest?.sent) {
           prevRequest.sent = true;
           const newAccessToken = await refresh();
-          prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
           return axiosPrivate(prevRequest);
         }
         return Promise.reject(error);

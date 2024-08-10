@@ -75,7 +75,7 @@ const Signin = () => {
                   className='img d-flex align-items-center justify-content-center'
                   id='form-image'
                 ></div>
-                <h3 className='text-center mb-0'>Student Signin</h3>
+                <h3 className='text-center mb-0'>Signin</h3>
                 <p
                   ref={errRef}
                   className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}

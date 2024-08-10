@@ -2,10 +2,18 @@ import { useEffect } from 'react';
 import useRefreshToken from './useRefreshToken';
 import { axiosPrivate } from '../api/axios';
 import useAuth from './useAuth';
+import storage from '../utils/storage';
 
 const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
+
+  useEffect(() => {
+    const storedAuth = storage.getData('auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
