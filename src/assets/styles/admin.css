@@ -58,20 +58,6 @@ button {
   overflow: visible;
 }
 
-input[type='date'].form-control {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-input[type='file']::-webkit-file-upload-button {
-  display: none;
-}
-
-input[type='file']::-moz-file-select-button {
-  display: none;
-}
-
 textarea {
   overflow: auto;
   resize: vertical;
@@ -90,31 +76,8 @@ select {
   word-wrap: normal;
 }
 
-button:not(:disabled),
-[type='button']:not(:disabled),
-[type='reset']:not(:disabled),
-[type='submit']:not(:disabled) {
-  cursor: pointer;
-}
-
-button::-moz-focus-inner,
-[type='button']::-moz-focus-inner,
-[type='reset']::-moz-focus-inner,
-[type='submit']::-moz-focus-inner {
-  padding: 0;
-  border-style: none;
-}
-
 [hidden] {
   display: none !important;
-}
-
-input-group {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  width: 100%;
 }
 
 h1,
@@ -656,6 +619,17 @@ a:focus {
 .paginationActive a {
   color: #f5f5f5;
   background-color: #ff6347;
+}
+
+.admin-layout {
+  display: flex;
+}
+
+.admin-content {
+  flex-grow: 1;
+  margin-left: 15.625rem; /* Equal to the width of the sidebar */
+  width: calc(100% - 15.625rem); /* Full width minus the sidebar width */
+  overflow-y: auto; /* Scrollable if content overflows */
 }
 
 #content-wrapper {

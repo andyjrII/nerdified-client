@@ -40,7 +40,7 @@ const AllCourses = () => {
       }
     };
     fetchCourses();
-  }, [currentPage, searchQuery, courses]);
+  }, [currentPage, searchQuery]);
 
   const pageCount = Math.ceil(totalCourses / coursesPerPage);
 
@@ -49,7 +49,7 @@ const AllCourses = () => {
       <tr key={course.id} className='bg-danger text-white'>
         <th className='bg-black'>{course.id}</th>
         <td>{course.title}</td>
-        <td>&#8358;{course.price}.00</td>
+        <td>{course.price}</td>
         <td>
           <Moment format='DD/MM/YYYY'>{course.updatedAt}</Moment>
         </td>
@@ -85,7 +85,7 @@ const AllCourses = () => {
 
   const handleEdit = async (id) => {
     localStorage.setItem('EDIT_COURSE_ID', id);
-    navigate('/admin_update_course');
+    navigate('/admin/courses/update');
   };
 
   const handleDelete = async (id) => {
@@ -98,60 +98,55 @@ const AllCourses = () => {
   };
 
   return (
-    <div id='wrapper'>
-      {/* Sidebar */}
-      <AdminSidebar />
-      <main className='col-md-9 ms-sm-auto col-lg-10 px-md-4'>
-        <div className='pt-3 pb-2 mb-3 border-bottom'>
-          <h1 className='text-center'>Courses</h1>
-        </div>
+    <div className='container-fluid'>
+      <div className='pt-3 pb-2 mb-3 border-bottom'>
+        <h1 className='text-center'>Courses</h1>
+      </div>
 
-        {/* Search filter for Courses */}
-        <div className='p-3 pb-md-4 mx-auto row'>
-          <div className='col-sm-8 mb-4'>
-            <input
-              type='text'
-              className='form-control bg-dark text-white'
-              placeholder='Search for Course...'
-              aria-label='Search'
-              onChange={handleSearchChange}
-              value={searchQuery}
-            />
-          </div>
-        </div>
-
-        {/* List of all Courses */}
-        <table className='table'>
-          <thead>
-            <tr className='bg-black text-white'>
-              <th scope='col'>Id</th>
-              <th scope='col'>Title</th>
-              <th scope='col'>Level</th>
-              <th scope='col'>Price</th>
-              <th scope='col'>Deadline</th>
-              <th scope='col'></th>
-              <th scope='col'></th>
-            </tr>
-          </thead>
-          {/* Display Courses */}
-          <tbody>{displayCourses}</tbody>
-        </table>
-
-        {/* Pagination */}
-        <div className='pt-5'>
-          <ReactPaginate
-            previousLabel={'Previous'}
-            nextLabel={'Next'}
-            pageCount={pageCount}
-            onPageChange={changePage}
-            containerClassName={'paginationBttns'}
-            previousLinkClassName={'previousBttn'}
-            nextLinkClassName={'nextBttn'}
-            disabledClassName={'paginationDisabled'}
-            activeClassName={'paginationActive'}
+      {/* Search filter for Courses */}
+      <div className='p-3 pb-md-4 mx-auto row'>
+        <div className='col-md-12 mb-3'>
+          <input
+            type='text'
+            className='form-control bg-dark text-white'
+            placeholder='Search for Course...'
+            aria-label='Search'
+            onChange={handleSearchChange}
+            value={searchQuery}
           />
         </div>
-      </main>
+      </div>
+
+      {/* List of all Courses */}
+      <table className='table'>
+        <thead>
+          <tr className='bg-black text-white'>
+            <th scope='col'>Id</th>
+            <th scope='col'>Title</th>
+            <th scope='col'>Price</th>
+            <th scope='col'>Updated</th>
+            <th scope='col'></th>
+            <th scope='col'></th>
+          </tr>
+        </thead>
+        {/* Display Courses */}
+        <tbody>{displayCourses}</tbody>
+      </table>
+
+      {/* Pagination */}
+      <div className='pt-5'>
+        <ReactPaginate
+          previousLabel={'Previous'}
+          nextLabel={'Next'}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={'paginationBttns'}
+          previousLinkClassName={'previousBttn'}
+          nextLinkClassName={'nextBttn'}
+          disabledClassName={'paginationDisabled'}
+          activeClassName={'paginationActive'}
+        />
+      </div>
     </div>
   );
 };

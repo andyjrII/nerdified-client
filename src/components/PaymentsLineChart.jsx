@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import useAdminAxiosPrivate from "../../hooks/useAdminAxiosPrivate";
-import "chart.js/auto";
-import { Line } from "react-chartjs-2";
+import { useState, useEffect } from 'react';
+import useAdminAxiosPrivate from '../hooks/useAdminAxiosPrivate';
+import 'chart.js/auto';
+import { Line } from 'react-chartjs-2';
 
 const PaymentsLineChart = () => {
   const axiosPrivate = useAdminAxiosPrivate();
@@ -11,13 +11,13 @@ const PaymentsLineChart = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await axiosPrivate.get("admin/payments_month", {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true
+        const response = await axiosPrivate.get('admin/payments_month', {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
         });
         setData(response?.data);
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     };
 
@@ -31,12 +31,12 @@ const PaymentsLineChart = () => {
     labels: months,
     datasets: [
       {
-        label: "Sum of Paid Amount",
+        label: 'Total Payments Per Month',
         data: amounts,
-        fill: false,
-        borderColor: "rgba(75,192,192,1)"
-      }
-    ]
+        fill: true,
+        borderColor: 'rgba(0,2,50,1)',
+      },
+    ],
   };
 
   return <Line data={chartData} options={{}} />;

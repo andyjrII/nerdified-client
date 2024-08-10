@@ -52,9 +52,6 @@ function App() {
       </Route>
 
       <Route element={<AdminLayout />}>
-        {/* Admin Public Routes */}
-        <Route path='admin/signin' element={<AdminSignin />} />
-
         {/* Admin Protected Routes */}
         <Route element={<AdminPersistLogin />}>
           <Route element={<AdminRequireAuth />}>
@@ -71,12 +68,16 @@ function App() {
             <Route path='/admin/posts/update' element={<UpdatePost />} />
           </Route>
         </Route>
-
-        <Route path='/unauthorized' element={<Unauthorized />} />
-
-        {/* catch all */}
-        <Route path='*' element={<Missing />} />
       </Route>
+
+      {/* Admin Public Routes */}
+      <Route path='admin/signin' element={<AdminSignin />} />
+
+      {/* Unauthorized */}
+      <Route path='/unauthorized' element={<Unauthorized />} />
+
+      {/* catch all */}
+      <Route path='*' element={<Missing />} />
     </Routes>
   );
 }

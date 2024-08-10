@@ -3,8 +3,7 @@ import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import '../../assets/styles/admin.css';
 import { FaBlog, FaUserGraduate } from 'react-icons/fa';
 import { IoSchool } from 'react-icons/io5';
-import PaymentsPieChart from '../../components/charts/PaymentsPiechart';
-import PaymentsLineChart from '../../components/charts/PaymentsLineChart';
+import PaymentsLineChart from '../../components/PaymentsLineChart';
 
 const Admin = () => {
   const axiosPrivate = useAdminAxiosPrivate();
@@ -111,31 +110,15 @@ const Admin = () => {
 
         <div className='row'>
           {/* Line Chart */}
-          <div className='col-xl-8 col-lg-7'>
+          <div className='col-xl-12 col-lg-12'>
             <div className='card shadow mb-4 chart-area'>
               <div className='card-header py-3 d-flex flex-row align-items-center justify-content-between'>
                 <h6 className='m-0 font-weight-bold text-primary'>
                   Earnings Overview
                 </h6>
               </div>
-              {/* Card Body */}
-              <div className='card-body pb-5'>
+              <div className='card-body pb-5 w-100'>
                 <PaymentsLineChart />
-              </div>
-            </div>
-          </div>
-
-          {/* Pie Chart */}
-          <div className='col-xl-4 col-lg-5'>
-            <div className='card shadow mb-4 chart-area'>
-              <div className='card-header py-3 d-flex flex-row align-items-center justify-content-between'>
-                <h6 className='m-0 font-weight-bold text-primary'>
-                  Revenue Sources
-                </h6>
-              </div>
-              {/* Card Body */}
-              <div className='card-body p-2'>
-                <PaymentsPieChart />
               </div>
             </div>
           </div>

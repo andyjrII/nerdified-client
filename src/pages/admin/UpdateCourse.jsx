@@ -1,7 +1,5 @@
-import AdminSidebar from '../../components/navigation/AdminSidebar';
 import { useRef, useState, useEffect } from 'react';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
-import '../../assets/styles/admin.css';
 import axios from '../../api/axios';
 
 const UpdateCourse = () => {
@@ -10,7 +8,6 @@ const UpdateCourse = () => {
 
   const courseId = localStorage.getItem('EDIT_COURSE_ID');
   const [title, setTitle] = useState(undefined);
-  const [description, setDescription] = useState();
   const [price, setPrice] = useState();
   const [course, setCourse] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -23,11 +20,7 @@ const UpdateCourse = () => {
 
   useEffect(() => {
     setErrMsg('');
-  }, [title, description, price, courseId, selectedFile]);
-
-  const handleTextarea = (e) => {
-    setDescription(e.target.value);
-  };
+  }, [title, price, courseId, selectedFile]);
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -48,7 +41,7 @@ const UpdateCourse = () => {
     try {
       const response = await axiosPrivate.patch(
         `courses/update/${courseId}`,
-        JSON.stringify({ title, description, price }),
+        JSON.stringify({ title, price }),
         {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
@@ -76,7 +69,7 @@ const UpdateCourse = () => {
     const formData = new FormData();
     formData.append('file', selectedFile);
     try {
-      await axios.patch(`courses/upload/${id}`, formData, {
+      await axiosPrivate.patch(`courses/upload/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
         responseType: 'arraybuffer', // Specify that the response should be treated as binary data
@@ -88,96 +81,79 @@ const UpdateCourse = () => {
   };
 
   return (
-    <div id='wrapper'>
-      <AdminSidebar />
-      <main className='col-md-9 ms-sm-auto col-lg-10 px-md-4'>
-        <div className='pt-3 pb-2 mb-3 border-bottom'>
-          <h1 className='text-center'>Update Course</h1>
-        </div>
+    <div className='container-fluid'>
+      <div className='pt-3 pb-2 mb-3 border-bottom'>
+        <h1 className='text-center'>Update Course</h1>
+      </div>
 
-        <div className='p-3 pb-md-4 mx-auto row'>
-          {/* Form for updating course */}
-          <p ref={errRef} className={errMsg ? 'errmsg' : 'offscreen'}>
-            {errMsg}
-          </p>
-          <form onSubmit={handleSubmit}>
-            <div className='row g-3'>
-              <div className='col-sm-7'>
-                <div className='input-group mb-2'>
-                  <span
-                    className='input-group-text bg-dark text-white'
-                    id='course-title'
-                  >
-                    Title
-                  </span>
-                  <input
-                    type='text'
-                    className='form-control bg-dark text-white'
-                    placeholder={course.title}
-                    aria-label='Course Title'
-                    onChange={(e) => setTitle(e.target.value)}
-                    value={title}
-                  />
-                </div>
-              </div>
-
+      <div className='p-3 pb-md-4 mx-auto row'>
+        {/* Form for updating course */}
+        <p ref={errRef} className={errMsg ? 'errmsg' : 'offscreen'}>
+          {errMsg}
+        </p>
+        <form onSubmit={handleSubmit}>
+          <div className='row g-3'>
+            <div className='col-md-12 mb-2'>
               <div className='input-group'>
-                <span className='input-group-text bg-dark text-white'>
-                  Description
+                <span
+                  className='input-group-text bg-dark text-white'
+                  id='course-title'
+                >
+                  Title
                 </span>
-                <textarea
+                <input
+                  type='text'
                   className='form-control bg-dark text-white'
-                  aria-label='Description'
-                  value={description}
-                  onChange={handleTextarea}
-                  defaultValue={course.description}
+                  placeholder={course.title}
+                  aria-label='Course Title'
+                  onChange={(e) => setTitle(e.target.value)}
+                  value={title}
                 />
               </div>
+            </div>
 
-              <div className='col-sm-3'>
-                <div className='input-group mb-2'>
-                  <span className='input-group-text bg-dark text-white'>
-                    &#8358;
-                  </span>
-                  <input
-                    type='number'
-                    className='form-control bg-dark text-white'
-                    aria-label='Price (to the nearest Naira)'
-                    placeholder={course.price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    value={price}
-                  />
-                  <span className='input-group-text bg-dark text-white'>
-                    .00
-                  </span>
-                </div>
-              </div>
-
-              <div className='col-sm-5'>
-                <div className='input-group mb-2'>
-                  <span
-                    className='input-group-text bg-dark text-white'
-                    id='file'
-                  >
-                    Course Outline
-                  </span>
-                  <input
-                    type='file'
-                    className='form-control bg-dark text-white'
-                    id='file'
-                    onChange={handleFileChange}
-                  />
-                </div>
-              </div>
-              <div className='text-center'>
-                <button className='btn bg-danger text-white btn-lg w-50'>
-                  Submit
-                </button>
+            <div className='col-md-6 mb-2'>
+              <div className='input-group'>
+                <span className='input-group-text bg-dark text-white'>
+                  &#8358;
+                </span>
+                <input
+                  type='number'
+                  className='form-control bg-dark text-white'
+                  aria-label='Price (to the nearest Naira)'
+                  placeholder={course.price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  value={price}
+                />
+                <span className='input-group-text bg-dark text-white'>.00</span>
               </div>
             </div>
-          </form>
-        </div>
-      </main>
+
+            <div className='col-md-6 mb-2'>
+              <div className='input-group'>
+                <span
+                  className='input-group-text bg-dark text-white'
+                  for='file'
+                >
+                  Course Outline
+                </span>
+                <input
+                  type='file'
+                  className='form-control bg-dark text-white'
+                  id='file-upload'
+                  onChange={handleFileChange}
+                />
+              </div>
+            </div>
+
+            <div className='text-center mt-3'>
+              <button className='btn bg-danger text-white btn-lg p-2 w-50'>
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
