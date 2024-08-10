@@ -12,10 +12,10 @@ import {
   IoCall,
   IoBook,
   IoHome,
-  IoMap,
+  IoLocation,
 } from 'react-icons/io5';
-import '../assets/styles/footer.css';
-import Logo from '../assets/images/logo.png';
+import '../../assets/styles/footer.css';
+import Logo from '../../assets/images/logo.png';
 
 const Footer = () => {
   return (
@@ -72,7 +72,7 @@ const Footer = () => {
           <h6 className='mb-3'>CONTACT US</h6>
           <p>
             <Link className='text-white d-flex align-items-center'>
-              <IoMap className='social-icon mr-2' />
+              <IoLocation className='social-icon mr-2' />
               <span> Efab Estate, Lokogoma, Abuja</span>
             </Link>
           </p>

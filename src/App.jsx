@@ -42,7 +42,6 @@ function App() {
         <Route path='/courses/payment' element={<CourseEnrollment />} />
         <Route path='/blog' element={<Blog />} />
         <Route path='/about' element={<About />} />
-        <Route path='unauthorized' element={<Unauthorized />} />
 
         {/* Student protected routes */}
         <Route element={<PersistLogin />}>
@@ -72,6 +71,8 @@ function App() {
             <Route path='/admin/posts/update' element={<UpdatePost />} />
           </Route>
         </Route>
+
+        <Route path='/unauthorized' element={<Unauthorized />} />
 
         {/* catch all */}
         <Route path='*' element={<Missing />} />

@@ -168,17 +168,17 @@ const EnrolledCourses = ({ email }) => {
             <p className='card-text text-white day-text'>
               Class Days: [{separatedDays(enrollmentDetail.classDays)}]
             </p>
-            <p className='card-text text-white'>
+            <p className='card-text text-white day-text'>
               Time:{' '}
               {enrollmentDetail.preferredTime.charAt(0) +
                 enrollmentDetail.preferredTime.slice(1).toLowerCase()}
             </p>
-            <p className='card-text text-white'>
+            <p className='card-text text-white day-text day-text'>
               Mode of Learning:{' '}
               {enrollmentDetail.mode.charAt(0) +
                 enrollmentDetail.mode.slice(1).toLowerCase()}
             </p>
-            <p className='card-text text-white'>
+            <p className='card-text text-white day-text'>
               Class Status:{' '}
               {enrollmentDetail.status.charAt(0) +
                 enrollmentDetail.status.slice(1).toLowerCase()}

@@ -15,6 +15,8 @@ import { IoSchool } from 'react-icons/io5';
 import useAdminLogout from '../../hooks/useAdminLogout';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import useAdmin from '../../hooks/useAdmin';
+import useAuth from '../../hooks/useAuth';
+import storage from '../../utils/storage';
 
 const AdminSidebar = () => {
   const axiosPrivate = useAdminAxiosPrivate();
@@ -22,15 +24,20 @@ const AdminSidebar = () => {
   const location = useLocation();
   const logout = useAdminLogout();
 
-  const email = localStorage.getItem('ADMIN_EMAIL');
-  const role = localStorage.getItem('ROLE');
+  const { auth, setAuth } = useAuth();
+  const { admin, setAdmin } = useAdmin(null);
 
-  const { admin, setAdmin } = useAdmin();
+  useEffect(() => {
+    const storedAuth = storage.getData('admin_auth');
+    if (storedAuth) {
+      setAuth(storedAuth);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const response = await axiosPrivate.get(`admin/${email}`);
+        const response = await axiosPrivate.get(`admin/${auth.email}`);
         setAdmin(response?.data);
       } catch (error) {
         console.error('Error:', error);
@@ -146,7 +153,7 @@ const AdminSidebar = () => {
       <hr className='sidebar-divider bg-white' />
 
       {/* Nav Item - Admins */}
-      {role === 'SUPER' && (
+      {auth.role === 'SUPER' && (
         <>
           <li className='nav-item'>
             <Link

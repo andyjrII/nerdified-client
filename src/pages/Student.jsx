@@ -10,7 +10,8 @@ import EnrolledCourses from '../components/EnrolledCourses';
 import NewestCourses from '../components/NewestCourses';
 import MostEnrolled from '../components/MostEnrolled';
 import CourseTotals from '../components/CourseTotals';
-import { FaClock, FaEnvelope, FaLocationArrow, FaPhone } from 'react-icons/fa';
+import { FaClock, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { IoLocation } from 'react-icons/io5';
 
 const Student = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -61,7 +62,7 @@ const Student = () => {
               <button type='button' className='btn btn-primary'>
                 {student.address}{' '}
                 <span className='badge navy'>
-                  <FaLocationArrow />
+                  <IoLocation />
                 </span>
               </button>
             </div>
