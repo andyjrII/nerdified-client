@@ -38,8 +38,8 @@ function App() {
         <Route path='/signin' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/courses' element={<Courses />} />
-        <Route path='/course-details' element={<CourseDetails />} />
-        <Route path='/course-enroll' element={<CourseEnrollment />} />
+        <Route path='/courses/course' element={<CourseDetails />} />
+        <Route path='/courses/payment' element={<CourseEnrollment />} />
         <Route path='/blog' element={<Blog />} />
         <Route path='/about' element={<About />} />
         <Route path='unauthorized' element={<Unauthorized />} />
@@ -60,16 +60,16 @@ function App() {
         <Route element={<AdminPersistLogin />}>
           <Route element={<AdminRequireAuth />}>
             <Route path='/admin' element={<Admin />} />
-            <Route path='/admin/new_course' element={<NewCourse />} />
+            <Route path='/admins' element={<AllAdmins />} />
+            <Route path='/admins/new' element={<CreateAdmin />} />
             <Route path='/admin/courses' element={<AllCourses />} />
-            <Route path='/admin/update_course' element={<UpdateCourse />} />
+            <Route path='/admin/courses/new' element={<NewCourse />} />
+            <Route path='/admin/courses/payment' element={<CoursePayment />} />
+            <Route path='/admin/courses/update' element={<UpdateCourse />} />
             <Route path='/admin/students' element={<AllStudents />} />
-            <Route path='/admin/course_payment' element={<CoursePayment />} />
-            <Route path='/admin/blog_posts' element={<BlogPosts />} />
-            <Route path='/admin/new_post' element={<NewPost />} />
-            <Route path='/admin/update_post' element={<UpdatePost />} />
-            <Route path='/admin/all' element={<AllAdmins />} />
-            <Route path='/admin/new_admin' element={<CreateAdmin />} />
+            <Route path='/admin/posts' element={<BlogPosts />} />
+            <Route path='/admin/posts/new' element={<NewPost />} />
+            <Route path='/admin/posts/update' element={<UpdatePost />} />
           </Route>
         </Route>
 

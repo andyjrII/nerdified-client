@@ -1,5 +1,3 @@
-import Navigation from '../components/navigation/Navigation';
-import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
@@ -146,7 +144,7 @@ const Courses = () => {
             </ul>
             <div className='justify-content-center d-flex'>
               <Link
-                to='/course-details'
+                to='/courses/course'
                 role='button'
                 className='w-50 btn btn-lg'
                 id='check-btn'
@@ -173,7 +171,6 @@ const Courses = () => {
 
   return (
     <main>
-      <Navigation />
       <header className='py-3 bg-light border-bottom mb-4 header-bg'>
         <div className='container'>
           <div className='text-center my-3'>
@@ -219,7 +216,6 @@ const Courses = () => {
           activeClassName={'paginationActive'}
         />
       </div>
-      <Footer />
     </main>
   );
 };

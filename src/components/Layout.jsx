@@ -1,11 +1,17 @@
-import { Outlet } from "react-router-dom"
+import { Outlet } from 'react-router-dom';
+import Navigation from './navigation/Navigation';
+import Footer from './Footer';
 
 const Layout = () => {
-    return (
-        <main className="App">
-            <Outlet />
-        </main>
-    )
-}
+  return (
+    <>
+      <Navigation />
+      <main className='App'>
+        <Outlet />
+      </main>
+      <Footer />
+    </>
+  );
+};
 
-export default Layout
+export default Layout;

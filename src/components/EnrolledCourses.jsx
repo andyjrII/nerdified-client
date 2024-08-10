@@ -79,7 +79,7 @@ const EnrolledCourses = ({ email }) => {
         withCredentials: true,
       });
       localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
-      navigate('/course-details');
+      navigate('/courses/course');
     } catch (error) {
       console.error('Error fetching Course');
     }

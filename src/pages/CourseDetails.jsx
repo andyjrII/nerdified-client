@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import Navigation from '../components/navigation/Navigation';
-import Footer from '../components/Footer';
 import '../assets/styles/navpages.css';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useAuth from '../hooks/useAuth';
@@ -102,8 +100,7 @@ const CourseDetails = () => {
   return (
     <>
       {course ? (
-        <>
-          <Navigation />
+        <main>
           <header className='py-3 bg-light border-bottom mb-4 header-bg'>
             <div className='container'>
               <div className='text-center my-3'>
@@ -171,7 +168,7 @@ const CourseDetails = () => {
                           </button>
                         ) : (
                           <Link
-                            to='/course-enroll'
+                            to='/courses/payment'
                             className='btn btn-lg w-50'
                             id='check-btn'
                           >
@@ -206,11 +203,10 @@ const CourseDetails = () => {
               <Reviews courseId={courseId} />
             </div>
           </div>
-        </>
+        </main>
       ) : (
         <Missing />
       )}
-      <Footer />
     </>
   );
 };

@@ -64,84 +64,81 @@ const Signin = () => {
   };
 
   return (
-    <>
-      <Navigation />
-      <section className='signin-section pb-5'>
-        <div className='container'>
-          <div className='row justify-content-center'>
-            <div className='col-md-6 col-lg-4'>
-              <div className='login-wrap py-4'>
-                <div
-                  className='img d-flex align-items-center justify-content-center'
-                  id='form-image'
-                ></div>
-                <h3 className='text-center mb-0'>Signin</h3>
-                <p
-                  ref={errRef}
-                  className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
-                >
-                  {errMsg}
-                </p>
-                <form
-                  className='login-form rounded shadow-lg'
-                  onSubmit={handleSubmit}
-                >
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span>
-                        <FcAddressBook />
-                      </span>
-                    </div>
-                    <input
-                      type='email'
-                      className='form-control'
-                      placeholder='Email'
-                      onChange={(e) => setEmail(e.target.value)}
-                      value={email}
-                      ref={emailRef}
-                      autoComplete='off'
-                      required
-                    />
+    <section className='signin-section pb-5'>
+      <div className='container'>
+        <div className='row justify-content-center'>
+          <div className='col-md-6 col-lg-4'>
+            <div className='login-wrap py-4'>
+              <div
+                className='img d-flex align-items-center justify-content-center'
+                id='form-image'
+              ></div>
+              <h3 className='text-center mb-0'>Signin</h3>
+              <p
+                ref={errRef}
+                className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
+              >
+                {errMsg}
+              </p>
+              <form
+                className='login-form rounded shadow-lg'
+                onSubmit={handleSubmit}
+              >
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcAddressBook />
+                    </span>
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span>
-                        <FcLock />
-                      </span>
-                    </div>
-                    <input
-                      type='password'
-                      className='form-control'
-                      placeholder='Password'
-                      onChange={(e) => setPassword(e.target.value)}
-                      value={password}
-                      required
-                    />
-                  </div>
-                  <div className='form-group d-md-flex'>
-                    <div className='w-100 text-md-right p-3'>
-                      <Link to='#'>Forgot Password</Link>
-                    </div>
-                  </div>
-                  <div className='form-group'>
-                    <button
-                      type='submit'
-                      className='btn form-control btn-primary rounded px-3'
-                    >
-                      Sign in
-                    </button>
-                  </div>
-                </form>
-                <div className='w-100 text-center mt-4 text'>
-                  <p className='mb-0'>Don't have an account?</p>
-                  <Link to='/signup'>Sign Up</Link>
+                  <input
+                    type='email'
+                    className='form-control'
+                    placeholder='Email'
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    ref={emailRef}
+                    autoComplete='off'
+                    required
+                  />
                 </div>
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcLock />
+                    </span>
+                  </div>
+                  <input
+                    type='password'
+                    className='form-control'
+                    placeholder='Password'
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    required
+                  />
+                </div>
+                <div className='form-group d-md-flex'>
+                  <div className='w-100 text-md-right p-3'>
+                    <Link to='#'>Forgot Password</Link>
+                  </div>
+                </div>
+                <div className='form-group'>
+                  <button
+                    type='submit'
+                    className='btn form-control btn-primary rounded px-3'
+                  >
+                    Sign in
+                  </button>
+                </div>
+              </form>
+              <div className='w-100 text-center mt-4 text'>
+                <p className='mb-0'>Don't have an account?</p>
+                <Link to='/signup'>Sign Up</Link>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 

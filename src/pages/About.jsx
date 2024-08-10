@@ -1,5 +1,3 @@
-import Footer from '../components/Footer';
-import Navigation from '../components/navigation/Navigation';
 import VisionImg from '../assets/images/navpages/about-vision.jpeg';
 import ServiceImg from '../assets/images/navpages/about-service.jpeg';
 import MissionImg from '../assets/images/navpages/about-mission.jpeg';
@@ -7,8 +5,7 @@ import '../assets/styles/navpages.css';
 
 const About = () => {
   return (
-    <>
-      <Navigation />
+    <main>
       <header className='py-3 border-bottom header-bg'>
         <div className='container'>
           <div className='text-center my-3'>
@@ -95,8 +92,7 @@ const About = () => {
           </ul>
         </div>
       </section>
-      <Footer />
-    </>
+    </main>
   );
 };
 

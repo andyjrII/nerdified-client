@@ -1,5 +1,3 @@
-import Footer from '../components/Footer';
-import Navigation from '../components/navigation/Navigation';
 import { Link } from 'react-router-dom';
 import '../assets/styles/navpages.css';
 import { useState, useEffect } from 'react';
@@ -114,8 +112,7 @@ const Blog = () => {
   };
 
   return (
-    <>
-      <Navigation />
+    <main>
       <header className='py-3 bg-light border-bottom mb-4 header-bg'>
         <div className='container'>
           <div className='text-center my-3'>
@@ -207,8 +204,7 @@ const Blog = () => {
           </nav>
         </div>
       </div>
-      <Footer />
-    </>
+    </main>
   );
 };
 

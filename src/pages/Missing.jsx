@@ -1,11 +1,9 @@
-import Navigation from "../components/navigation/Navigation";
-import MissingBg from "../assets/images/bg/missing-bg.png";
-import "../assets/styles/navpages.css";
+import MissingBg from '../assets/images/bg/missing-bg.png';
+import '../assets/styles/navpages.css';
 
 const Missing = () => {
   return (
-    <>
-      <Navigation />
+    <main>
       <header className='py-3 bg-light border-bottom mb-4 header-bg'>
         <div className='container'>
           <div className='text-center my-3'>
@@ -16,9 +14,9 @@ const Missing = () => {
         </div>
       </header>
       <section className='text-center container section-missing'>
-        <img src={MissingBg} alt='' height='368px' width='800px' />
+        <img src={MissingBg} alt='Error 404' height='368px' width='800px' />
       </section>
-    </>
+    </main>
   );
 };
 

@@ -1,13 +1,13 @@
-import { useNavigate } from "react-router-dom";
-import "../assets/styles/unauthorized.css";
-import Hacker from "../assets/images/bg/unauthorized-bg.png";
+import { useNavigate } from 'react-router-dom';
+import '../assets/styles/unauthorized.css';
+import Hacker from '../assets/images/bg/unauthorized-bg.png';
 
 function Unauthorized() {
   const navigate = useNavigate();
   const goBack = () => navigate(-1);
 
   return (
-    <>
+    <main>
       <header className='py-3 bg-light border-bottom mb-4 header-bg'>
         <div className='container'>
           <div className='text-center my-3'>
@@ -26,7 +26,7 @@ function Unauthorized() {
           </button>
         </div>
       </section>
-    </>
+    </main>
   );
 }
 

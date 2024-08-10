@@ -17,7 +17,6 @@ import axios from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import storage from '../utils/storage';
-import Navigation from '../components/navigation/Navigation';
 
 const NAME_REGEX = /[A-z-]{3,20}$/;
 const PHONE_REGEX = /[0-9]{11}$/;
@@ -137,296 +136,287 @@ const Signup = () => {
   };
 
   return (
-    <>
-      <Navigation />
-      <section className='signin-section'>
-        <div className='container'>
-          <div className='row justify-content-center'>
-            <div className='col-md-6 col-lg-4'>
-              <div className='login-wrap py-4'>
-                <div
-                  className='img d-flex align-items-center justify-content-center'
-                  id='form-image'
-                ></div>
-                <h3 className='text-center mb-0'>Student Registration</h3>
-                <p
-                  ref={errRef}
-                  className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
-                >
-                  {errMsg}
-                </p>
-                <form
-                  className='login-form rounded shadow-lg'
-                  onSubmit={handleSubmit}
-                >
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span>
-                        <FcBusinessman />
-                      </span>
-                    </div>
-                    <input
-                      type='text'
-                      className='form-control'
-                      placeholder='Names'
-                      onChange={(e) => setName(e.target.value)}
-                      value={name}
-                      autoComplete='off'
-                      required
-                      onFocus={() => setNameFocus(true)}
-                      onBlur={() => setNameFocus(false)}
-                    />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
-                      <span className={validName ? 'valid' : 'hide'}>
-                        <FontAwesomeIcon icon={faCheck} />
-                      </span>
-                      <span className={validName || !name ? 'hide' : 'invalid'}>
-                        <FontAwesomeIcon icon={faTimes} />
-                      </span>
-                    </div>
-                    <p
-                      className={
-                        nameFocus && name && !validName
-                          ? 'instructions'
-                          : 'offscreen'
-                      }
-                    >
-                      <FontAwesomeIcon icon={faInfoCircle} />
-                      Last Name followed by Other Names e.g. Andy James
-                    </p>
+    <section className='signin-section'>
+      <div className='container'>
+        <div className='row justify-content-center'>
+          <div className='col-md-6 col-lg-4'>
+            <div className='login-wrap py-4'>
+              <div
+                className='img d-flex align-items-center justify-content-center'
+                id='form-image'
+              ></div>
+              <h3 className='text-center mb-0'>Student Registration</h3>
+              <p
+                ref={errRef}
+                className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
+              >
+                {errMsg}
+              </p>
+              <form
+                className='login-form rounded shadow-lg'
+                onSubmit={handleSubmit}
+              >
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcBusinessman />
+                    </span>
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span>
-                        <FcAddressBook />
-                      </span>
-                    </div>
-                    <input
-                      type='email'
-                      className='form-control'
-                      placeholder='Email'
-                      onChange={(e) => setEmail(e.target.value)}
-                      value={email}
-                      autoComplete='off'
-                      required
-                      onFocus={() => setEmailFocus(true)}
-                      onBlur={() => setEmailFocus(false)}
-                    />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
-                      <span className={validEmail ? 'valid' : 'hide'}>
-                        <FontAwesomeIcon icon={faCheck} />
-                      </span>
-                      <span
-                        className={validEmail || !email ? 'hide' : 'invalid'}
-                      >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </span>
-                    </div>
-                    <p
-                      className={
-                        emailFocus && email && !validEmail
-                          ? 'instructions'
-                          : 'offscreen'
-                      }
-                    >
-                      <FontAwesomeIcon icon={faInfoCircle} />
-                      Enter a valid Email address e.g. andyjames@gmail.com
-                    </p>
+                  <input
+                    type='text'
+                    className='form-control'
+                    placeholder='Names'
+                    onChange={(e) => setName(e.target.value)}
+                    value={name}
+                    autoComplete='off'
+                    required
+                    onFocus={() => setNameFocus(true)}
+                    onBlur={() => setNameFocus(false)}
+                  />
+                  <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <span className={validName ? 'valid' : 'hide'}>
+                      <FontAwesomeIcon icon={faCheck} />
+                    </span>
+                    <span className={validName || !name ? 'hide' : 'invalid'}>
+                      <FontAwesomeIcon icon={faTimes} />
+                    </span>
                   </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span>
-                        <FcLock />
-                      </span>
-                    </div>
-                    <input
-                      type='password'
-                      className='form-control'
-                      placeholder='Password'
-                      onChange={(e) => setPassword(e.target.value)}
-                      value={password}
-                      required
-                      onFocus={() => setPasswordFocus(true)}
-                      onBlur={() => setPasswordFocus(false)}
-                    />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        className={validPassword ? 'valid' : 'hide'}
-                      />
-                      <FontAwesomeIcon
-                        icon={faTimes}
-                        className={
-                          validPassword || !password ? 'hide' : 'invalid'
-                        }
-                      />
-                    </div>
-                    <p
-                      className={
-                        passwordFocus && !validPassword
-                          ? 'instructions'
-                          : 'offscreen'
-                      }
-                    >
-                      <FontAwesomeIcon icon={faInfoCircle} />
-                      8 to 24 characters.
-                      <br />
-                      Must include uppercase and lowercase letters, Link number
-                      and Link special character.
-                      <br />
-                      Allowed special characters: <span>!</span> <span>@</span>
-                      <span>#</span> <span>$</span> <span>%</span>
-                    </p>
-                  </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span>
-                        <FcLock />
-                      </span>
-                    </div>
-                    <input
-                      type='password'
-                      className='form-control'
-                      placeholder='Confirm Password'
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      value={confirmPassword}
-                      required
-                      onFocus={() => setConfirmFocus(true)}
-                      onBlur={() => setConfirmFocus(false)}
-                    />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        className={
-                          validConfirm && confirmPassword ? 'valid' : 'hide'
-                        }
-                      />
-                      <FontAwesomeIcon
-                        icon={faTimes}
-                        className={
-                          validConfirm || !confirmPassword ? 'hide' : 'invalid'
-                        }
-                      />
-                    </div>
-                    <p
-                      className={
-                        confirmFocus && !validConfirm
-                          ? 'instructions'
-                          : 'offscreen'
-                      }
-                    >
-                      <FontAwesomeIcon icon={faInfoCircle} />
-                      Must match the first password input field.
-                    </p>
-                  </div>
-
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span>
-                        <FcHome />
-                      </span>
-                    </div>
-                    <input
-                      type='text'
-                      className='form-control'
-                      placeholder='Address'
-                      onChange={(e) => setAddress(e.target.value)}
-                      value={address}
-                      autoComplete='off'
-                      required
-                      onFocus={() => setAddressFocus(true)}
-                      onBlur={() => setAddressFocus(false)}
-                    />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
-                      <span className={validAddress ? 'valid' : 'hide'}>
-                        <FontAwesomeIcon icon={faCheck} />
-                      </span>
-                      <span
-                        className={
-                          validAddress || !address ? 'hide' : 'invalid'
-                        }
-                      >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </span>
-                    </div>
-                    <p
-                      className={
-                        addressFocus && address && !validAddress
-                          ? 'instructions'
-                          : 'offscreen'
-                      }
-                    >
-                      <FontAwesomeIcon icon={faInfoCircle} />
-                      Enter a valid Addres - City, State & Country.
-                    </p>
-                  </div>
-                  <div className='form-group'>
-                    <div className='icon d-flex align-items-center justify-content-center'>
-                      <span>
-                        <FcPhone />
-                      </span>
-                    </div>
-                    <input
-                      className='form-control'
-                      placeholder='Phone Number'
-                      value={phone}
-                      autoComplete='off'
-                      type='tel'
-                      onChange={(e) => setPhone(e.target.value)}
-                      onFocus={() => setPhoneFocus(true)}
-                      onBlur={() => setPhoneFocus(false)}
-                      required
-                    />
-                    <div className='valid-icon d-flex align-items-center justify-content-center'>
-                      <span className={validPhone ? 'valid' : 'hide'}>
-                        <FontAwesomeIcon icon={faCheck} />
-                      </span>
-                      <span
-                        className={validPhone || !phone ? 'hide' : 'invalid'}
-                      >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </span>
-                    </div>
-                    <p
-                      className={
-                        phoneFocus && phone && !validPhone
-                          ? 'instructions'
-                          : 'offscreen'
-                      }
-                    >
-                      <FontAwesomeIcon icon={faInfoCircle} />
-                      Enter a valid Phone Number.
-                    </p>
-                  </div>
-                  <div className='form-group w-100 py-3'>
-                    <button
-                      className='btn form-control btn-primary rounded px-3'
-                      type='submit'
-                      disabled={
-                        !validName ||
-                        !validPhone ||
-                        !validEmail ||
-                        !validPassword ||
-                        !validConfirm ||
-                        !validAddress
-                          ? true
-                          : false
-                      }
-                    >
-                      Submit Form
-                    </button>
-                  </div>
-                </form>
-                <div className='w-100 text-center mt-2 text'>
-                  <p className='mb-0'>Already have an account?</p>
-                  <Link to='/signin'>Sign In</Link>
+                  <p
+                    className={
+                      nameFocus && name && !validName
+                        ? 'instructions'
+                        : 'offscreen'
+                    }
+                  >
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    Last Name followed by Other Names e.g. Andy James
+                  </p>
                 </div>
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcAddressBook />
+                    </span>
+                  </div>
+                  <input
+                    type='email'
+                    className='form-control'
+                    placeholder='Email'
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    autoComplete='off'
+                    required
+                    onFocus={() => setEmailFocus(true)}
+                    onBlur={() => setEmailFocus(false)}
+                  />
+                  <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <span className={validEmail ? 'valid' : 'hide'}>
+                      <FontAwesomeIcon icon={faCheck} />
+                    </span>
+                    <span className={validEmail || !email ? 'hide' : 'invalid'}>
+                      <FontAwesomeIcon icon={faTimes} />
+                    </span>
+                  </div>
+                  <p
+                    className={
+                      emailFocus && email && !validEmail
+                        ? 'instructions'
+                        : 'offscreen'
+                    }
+                  >
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    Enter a valid Email address e.g. andyjames@gmail.com
+                  </p>
+                </div>
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcLock />
+                    </span>
+                  </div>
+                  <input
+                    type='password'
+                    className='form-control'
+                    placeholder='Password'
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    required
+                    onFocus={() => setPasswordFocus(true)}
+                    onBlur={() => setPasswordFocus(false)}
+                  />
+                  <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <FontAwesomeIcon
+                      icon={faCheck}
+                      className={validPassword ? 'valid' : 'hide'}
+                    />
+                    <FontAwesomeIcon
+                      icon={faTimes}
+                      className={
+                        validPassword || !password ? 'hide' : 'invalid'
+                      }
+                    />
+                  </div>
+                  <p
+                    className={
+                      passwordFocus && !validPassword
+                        ? 'instructions'
+                        : 'offscreen'
+                    }
+                  >
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    8 to 24 characters.
+                    <br />
+                    Must include uppercase and lowercase letters, Link number
+                    and Link special character.
+                    <br />
+                    Allowed special characters: <span>!</span> <span>@</span>
+                    <span>#</span> <span>$</span> <span>%</span>
+                  </p>
+                </div>
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcLock />
+                    </span>
+                  </div>
+                  <input
+                    type='password'
+                    className='form-control'
+                    placeholder='Confirm Password'
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={confirmPassword}
+                    required
+                    onFocus={() => setConfirmFocus(true)}
+                    onBlur={() => setConfirmFocus(false)}
+                  />
+                  <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <FontAwesomeIcon
+                      icon={faCheck}
+                      className={
+                        validConfirm && confirmPassword ? 'valid' : 'hide'
+                      }
+                    />
+                    <FontAwesomeIcon
+                      icon={faTimes}
+                      className={
+                        validConfirm || !confirmPassword ? 'hide' : 'invalid'
+                      }
+                    />
+                  </div>
+                  <p
+                    className={
+                      confirmFocus && !validConfirm
+                        ? 'instructions'
+                        : 'offscreen'
+                    }
+                  >
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    Must match the first password input field.
+                  </p>
+                </div>
+
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcHome />
+                    </span>
+                  </div>
+                  <input
+                    type='text'
+                    className='form-control'
+                    placeholder='Address'
+                    onChange={(e) => setAddress(e.target.value)}
+                    value={address}
+                    autoComplete='off'
+                    required
+                    onFocus={() => setAddressFocus(true)}
+                    onBlur={() => setAddressFocus(false)}
+                  />
+                  <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <span className={validAddress ? 'valid' : 'hide'}>
+                      <FontAwesomeIcon icon={faCheck} />
+                    </span>
+                    <span
+                      className={validAddress || !address ? 'hide' : 'invalid'}
+                    >
+                      <FontAwesomeIcon icon={faTimes} />
+                    </span>
+                  </div>
+                  <p
+                    className={
+                      addressFocus && address && !validAddress
+                        ? 'instructions'
+                        : 'offscreen'
+                    }
+                  >
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    Enter a valid Addres - City, State & Country.
+                  </p>
+                </div>
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcPhone />
+                    </span>
+                  </div>
+                  <input
+                    className='form-control'
+                    placeholder='Phone Number'
+                    value={phone}
+                    autoComplete='off'
+                    type='tel'
+                    onChange={(e) => setPhone(e.target.value)}
+                    onFocus={() => setPhoneFocus(true)}
+                    onBlur={() => setPhoneFocus(false)}
+                    required
+                  />
+                  <div className='valid-icon d-flex align-items-center justify-content-center'>
+                    <span className={validPhone ? 'valid' : 'hide'}>
+                      <FontAwesomeIcon icon={faCheck} />
+                    </span>
+                    <span className={validPhone || !phone ? 'hide' : 'invalid'}>
+                      <FontAwesomeIcon icon={faTimes} />
+                    </span>
+                  </div>
+                  <p
+                    className={
+                      phoneFocus && phone && !validPhone
+                        ? 'instructions'
+                        : 'offscreen'
+                    }
+                  >
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    Enter a valid Phone Number.
+                  </p>
+                </div>
+                <div className='form-group w-100 py-3'>
+                  <button
+                    className='btn form-control btn-primary rounded px-3'
+                    type='submit'
+                    disabled={
+                      !validName ||
+                      !validPhone ||
+                      !validEmail ||
+                      !validPassword ||
+                      !validConfirm ||
+                      !validAddress
+                        ? true
+                        : false
+                    }
+                  >
+                    Submit Form
+                  </button>
+                </div>
+              </form>
+              <div className='w-100 text-center mt-2 text'>
+                <p className='mb-0'>Already have an account?</p>
+                <Link to='/signin'>Sign In</Link>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 

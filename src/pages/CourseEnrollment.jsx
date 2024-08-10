@@ -11,8 +11,6 @@ import storage from '../utils/storage';
 import { unformatCurrency } from '../utils/unformatCurrency';
 import PaystackPop from '@paystack/inline-js';
 import Missing from './Missing';
-import Navigation from '../components/navigation/Navigation';
-import Footer from '../components/Footer';
 
 const publicKey = 'pk_test_244916c0bd11624711bdab398418c05413687296';
 
@@ -110,8 +108,7 @@ const CourseEnrollment = () => {
   return (
     <>
       {course ? (
-        <>
-          <Navigation />
+        <main>
           <header className='py-3 bg-light border-bottom mb-4 header-bg'>
             <div className='container'>
               <div className='text-center my-3'>
@@ -130,7 +127,7 @@ const CourseEnrollment = () => {
                     className='img d-flex align-items-center justify-content-center'
                     id='form-image'
                   ></div>
-                  <h3 className='text-center mb-0'>Enroll for a Course</h3>
+                  <h3 className='text-center mb-0'>PAYMENT</h3>
                   <p
                     ref={errRef}
                     className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
@@ -378,11 +375,10 @@ const CourseEnrollment = () => {
               </div>
             </div>
           </div>
-        </>
+        </main>
       ) : (
         <Missing />
       )}
-      <Footer />
     </>
   );
 };
