@@ -3,15 +3,13 @@ import '../assets/styles/signin.css';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from '../api/axios';
 import useAuth from '../hooks/useAuth';
-import storage from '../utils/storage';
 import { FcLock, FcAddressBook } from 'react-icons/fc';
-import Navigation from '../components/navigation/Navigation';
+import db from '../utils/localBase';
 
 const Signin = () => {
-  const { setAuth } = useAuth();
+  const { setAuth } = useAuth(); // Ensure useAuth provides setAuth
 
   const navigate = useNavigate();
-
   const errRef = useRef();
   const emailRef = useRef();
 
@@ -33,23 +31,28 @@ const Signin = () => {
     try {
       const response = await axios.post(
         'auth/signin',
-        JSON.stringify({ email, password }),
+        { email, password },
         {
           headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
+          withCredentials: true, // <-- Add this line
         }
       );
 
       const accessToken = response?.data.access_token;
+      await db
+        .collection('auth_student')
+        .doc(email)
+        .set({ email, accessToken });
 
-      setAuth({ email, accessToken });
-      storage.setData('auth', { email, accessToken });
+      setAuth({ email, accessToken }); // Set the auth context
 
       const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
       if (course) navigate(-1);
       alert('Sign in Successful!');
       navigate('/student', { replace: true });
     } catch (err) {
+      // Error handling
+      console.error('Sign-in error:', err); // Log error for debugging
       if (!err?.response) {
         setErrMsg('No Server Response');
       } else if (err.response?.status === 400) {

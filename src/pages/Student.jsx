@@ -1,9 +1,6 @@
 import '../assets/styles/student.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import useAuth from '../hooks/useAuth';
-import useStudent from '../hooks/useStudent';
-import storage from '../utils/storage';
 import Moment from 'react-moment';
 import Welcome from '../components/Welcome';
 import EnrolledCourses from '../components/EnrolledCourses';
@@ -12,93 +9,120 @@ import MostEnrolled from '../components/MostEnrolled';
 import CourseTotals from '../components/CourseTotals';
 import { FaClock, FaEnvelope, FaPhone } from 'react-icons/fa';
 import { IoLocation } from 'react-icons/io5';
+import db from '../utils/localBase';
+import Spinners from '../components/Spinners';
 
 const Student = () => {
   const axiosPrivate = useAxiosPrivate();
-
-  const { auth, setAuth } = useAuth();
-  const { student, setStudent } = useStudent(null);
+  const [email, setEmail] = useState('');
+  const [student, setStudent] = useState();
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
+    const initialize = async () => {
+      try {
+        await fetchEmail(); // Fetch and set email
+        if (email) {
+          await fetchStudent(); // Fetch student data using the email
+        }
+      } catch (error) {
+        console.log('Error during initialization:', error);
+      }
+    };
 
-    fetchStudent();
-  }, []);
+    initialize();
+  }, [email]);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_student').get();
+    setEmail(data[0].email);
+  };
 
   const fetchStudent = async () => {
+    if (!email) {
+      console.error('Email is not set, cannot fetch student.');
+      return;
+    }
     try {
-      const response = await axiosPrivate.get(`students/${auth.email}`);
-      setStudent(response?.data);
+      const response = await axiosPrivate.get(`students/${email}`);
+      const studentData = response?.data;
+      // Store in Localbase
+      await db.collection('student').doc(email).set(studentData);
+      setStudent(studentData);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Failed to fetch student data from server.');
+
+      // Fallback: Fetch from Localbase if server fails
+      const localStudent = await db.collection('student').doc(email).get();
+      setStudent(localStudent);
     }
   };
 
   return (
     <section id='student-section' className='border-top border-bottom'>
-      <main id='student-main' className='mx-3 mb-3 pb-2'>
-        <div className='container text-center mt-4'>
-          <div className='row align-items-start'>
-            <div className='col mb-2'>
-              <button type='button' className='btn btn-primary'>
-                {student.email}{' '}
-                <span className='badge navy'>
-                  <FaEnvelope />
-                </span>
-              </button>
-            </div>
-            <div className='col mb-2'>
-              <button type='button' className='btn btn-primary'>
-                {student.phoneNumber}{' '}
-                <span className='badge navy'>
-                  <FaPhone />
-                </span>
-              </button>
-            </div>
-            <div className='col mb-2'>
-              <button type='button' className='btn btn-primary'>
-                {student.address}{' '}
-                <span className='badge navy'>
-                  <IoLocation />
-                </span>
-              </button>
-            </div>
-            <div className='col'>
-              <button
-                type='button'
-                className='btn btn-primary'
-                title='Date Joined'
-              >
-                <Moment format='MMMM D, YYYY'>{student.createdAt}</Moment>{' '}
-                <span className='badge navy'>
-                  <FaClock />
-                </span>
-              </button>
+      {student?.email ? (
+        <main id='student-main' className='mx-3 mb-3 pb-2'>
+          <div className='container text-center mt-4'>
+            <div className='row align-items-start'>
+              <div className='col mb-2'>
+                <button type='button' className='btn btn-primary'>
+                  {student.email}{' '}
+                  <span className='badge navy'>
+                    <FaEnvelope />
+                  </span>
+                </button>
+              </div>
+              <div className='col mb-2'>
+                <button type='button' className='btn btn-primary'>
+                  {student.phoneNumber}{' '}
+                  <span className='badge navy'>
+                    <FaPhone />
+                  </span>
+                </button>
+              </div>
+              <div className='col mb-2'>
+                <button type='button' className='btn btn-primary'>
+                  {student.address}{' '}
+                  <span className='badge navy'>
+                    <IoLocation />
+                  </span>
+                </button>
+              </div>
+              <div className='col'>
+                <button
+                  type='button'
+                  className='btn btn-primary'
+                  title='Date Joined'
+                >
+                  <Moment format='MMMM D, YYYY'>{student.createdAt}</Moment>{' '}
+                  <span className='badge navy'>
+                    <FaClock />
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className='p-3 mx-5'>
-          <Welcome name={student.name} />
-        </div>
+          <div className='p-3 mx-5'>
+            <Welcome name={student.name} />
+          </div>
 
-        <CourseTotals />
+          <CourseTotals />
 
-        <div className='p-3 m-3 shadow rounded'>
-          <EnrolledCourses email={student.email} />
-        </div>
+          <div className='p-3 m-3 shadow rounded'>
+            <EnrolledCourses />
+          </div>
 
-        <div className='p-3 m-3 shadow rounded'>
-          <MostEnrolled />
-        </div>
+          <div className='p-3 m-3 shadow rounded'>
+            <MostEnrolled />
+          </div>
 
-        <div className='p-3 m-3 shadow rounded'>
-          <NewestCourses />
-        </div>
-      </main>
+          <div className='p-3 m-3 shadow rounded'>
+            <NewestCourses />
+          </div>
+        </main>
+      ) : (
+        <Spinners />
+      )}
     </section>
   );
 };

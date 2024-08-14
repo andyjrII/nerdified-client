@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import useAuth from '../hooks/useAuth';
-import storage from '../utils/storage';
+import db from '../utils/localBase';
 import Moment from 'react-moment';
 import ReactPaginate from 'react-paginate';
 import '../assets/styles/navpages.css';
@@ -12,7 +11,7 @@ import StarRating from '../components/StarRating';
 
 const Courses = () => {
   const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
+  const [email, setEmail] = useState('');
 
   const [courses, setCourses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,47 +23,45 @@ const Courses = () => {
   const coursesPerPage = 20;
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-  }, []);
+    const initialize = async () => {
+      try {
+        await fetchEmail(); // Fetch and set email
+        if (email) {
+          await getWishlist(); // Fetch student data using the email
+        }
+      } catch (error) {
+        console.log('Error during initialization:', error);
+      }
+    };
+
+    initialize();
+  }, [email]);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_student').get();
+    setEmail(data[0].email);
+  };
 
   useEffect(() => {
-    if (auth.email) getWishlist();
-  });
-
-  useEffect(() => {
-    getCourses();
-  }, [currentPage, searchQuery]);
-
-  const getCourses = async () => {
-    try {
-      const response = await axiosPrivate.get(
-        `courses/${currentPage}`,
-        {
+    const getCourses = async () => {
+      try {
+        const response = await axiosPrivate.get(`courses/${currentPage}`, {
           params: {
             search: searchQuery,
           },
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        }
-      );
-      setTotalCourses(response.data.totalCourses);
-      setCourses(response.data.courses);
-    } catch (error) {
-      console.error('Error fetching Courses!');
-    }
-  };
+        });
+        setTotalCourses(response.data.totalCourses);
+        setCourses(response.data.courses);
+      } catch (error) {
+        console.error('Error fetching Courses!');
+      }
+    };
+    getCourses();
+  }, [currentPage, searchQuery]);
 
   const getWishlist = async () => {
     try {
-      const response = await axiosPrivate.get(`wishlist/email/${auth.email}`, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
+      const response = await axiosPrivate.get(`wishlist/email/${email}`);
       const wishlistSet = new Set(response.data.map((item) => item.courseId));
       setWishlist(wishlistSet);
     } catch (error) {
@@ -73,11 +70,11 @@ const Courses = () => {
   };
 
   const handleWishlistToggle = async (courseId) => {
-    if (auth) {
+    if (email) {
       try {
         if (wishlist.has(courseId)) {
           await axiosPrivate.delete('/wishlist/remove', {
-            data: { email: auth.email, courseId },
+            data: { email, courseId },
           });
           setWishlist((prev) => {
             const newSet = new Set(prev);
@@ -87,7 +84,7 @@ const Courses = () => {
         } else {
           await axiosPrivate.post(
             '/wishlist/add',
-            { email: auth.email, courseId },
+            { email, courseId },
             {
               headers: { 'Content-Type': 'application/json' },
               withCredentials: true,

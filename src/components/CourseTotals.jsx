@@ -1,30 +1,39 @@
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import useAuth from '../hooks/useAuth';
-import storage from '../utils/storage';
+import db from '../utils/localBase';
 
 const CourseTotals = () => {
   const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
-
+  const [email, setEmail] = useState('');
   const [totalCourse, setTotalCourse] = useState(0);
   const [totalWishes, setTotalWishes] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
+    const initialize = async () => {
+      try {
+        await fetchEmail(); // Fetch and set email
+        if (email) {
+          await getTotalCourses();
+          await getTotalWishItems();
+          await getPaidAmountTotals();
+        }
+      } catch (error) {
+        console.log('Error during initialization:');
+      }
+    };
 
-    getTotalCourses();
-    getTotalWishItems();
-    getPaidAmountTotals();
-  }, []);
+    initialize();
+  }, [email]);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_student').get();
+    setEmail(data[0].email);
+  };
 
   const getTotalCourses = async () => {
     try {
-      const response = await axiosPrivate.get(`students/total/${auth.email}`);
+      const response = await axiosPrivate.get(`students/total/${email}`);
       setTotalCourse(response?.data);
     } catch (error) {
       console.error('Error getting total number of Courses');
@@ -33,7 +42,7 @@ const CourseTotals = () => {
 
   const getTotalWishItems = async () => {
     try {
-      const response = await axiosPrivate.get(`wishlist/total/${auth.email}`, {
+      const response = await axiosPrivate.get(`wishlist/total/${email}`, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
@@ -45,9 +54,7 @@ const CourseTotals = () => {
 
   const getPaidAmountTotals = async () => {
     try {
-      const response = await axiosPrivate.get(
-        `students/total-paid/${auth.email}`
-      );
+      const response = await axiosPrivate.get(`students/total-paid/${email}`);
       setTotalPaid(response?.data);
     } catch (error) {
       console.error('Error getting total amount paid for Courses');

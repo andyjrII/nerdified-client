@@ -1,25 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useRefreshToken from './useRefreshToken';
 import { axiosPrivate } from '../api/axios';
-import useAuth from './useAuth';
-import storage from '../utils/storage';
+import db from '../utils/localBase';
 
 const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
-  const { auth, setAuth } = useAuth();
+  const [token, setToken] = useState();
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
+    const fetchToken = async () => {
+      const data = await db.collection('auth_student').get();
+      setToken(data[0].accessToken);
+    };
+
+    fetchToken();
   }, []);
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
         if (!config.headers['Authorization']) {
-          config.headers['Authorization'] = `Bearer ${auth?.accessToken}`;
+          config.headers['Authorization'] = `Bearer ${token}`;
         }
         return config;
       },
@@ -44,7 +45,7 @@ const useAxiosPrivate = () => {
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [auth, refresh]);
+  }, [token, refresh]);
 
   return axiosPrivate;
 };

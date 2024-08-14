@@ -7,16 +7,34 @@ import { FaHeart } from 'react-icons/fa';
 import { GrView } from 'react-icons/gr';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import db from '../../utils/localBase';
 
-const WishlistPopover = ({ email }) => {
+const WishlistPopover = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
 
   const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
-    getWishlist();
-  }, []);
+    const initialize = async () => {
+      try {
+        await fetchEmail(); // Fetch and set email
+        if (email) {
+          await getWishlist();
+        }
+      } catch (error) {
+        console.log('Error during initialization:', error);
+      }
+    };
+
+    initialize();
+  }, [email]);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_student').get();
+    setEmail(data[0].email);
+  };
 
   const getWishlist = async () => {
     try {
@@ -32,14 +50,9 @@ const WishlistPopover = ({ email }) => {
 
   const handleRemove = async (email, courseId) => {
     try {
-      await axiosPrivate.delete(
-        'wishlist/remove',
-        { data: { email, courseId } },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        }
-      );
+      await axiosPrivate.delete('wishlist/remove', {
+        data: { email, courseId },
+      });
       alert('Course successfully removed!');
       getWishlist();
     } catch (error) {

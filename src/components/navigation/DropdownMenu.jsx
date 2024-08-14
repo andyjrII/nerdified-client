@@ -1,52 +1,76 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMale, faSignOut } from '@fortawesome/free-solid-svg-icons';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import useAuth from '../../hooks/useAuth';
-import storage from '../../utils/storage';
 import useStudent from '../../hooks/useStudent';
 import useLogout from '../../hooks/useLogout';
 import DPDefault from '../../assets/images/navpages/person_profile.jpg';
 import WishlistPopover from '../popovers/WishlistPopover';
 import PicturePopover from '../popovers/PicturePopover';
 import PasswordPopover from '../popovers/PasswordPopover';
+import db from '../../utils/localBase';
 
-const DropdownMenu = ({ image }) => {
+const DropdownMenu = () => {
   const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
   const { student, setStudent } = useStudent();
+  const [email, setEmail] = useState('');
+  const [image, setImage] = useState('');
 
   const logout = useLogout();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
+    const initializeData = async () => {
+      try {
+        const data = await db.collection('auth_student').get();
+        if (data.length > 0) {
+          setEmail(data[0].email);
+        }
+      } catch (error) {
+        console.error('Error fetching email from localBase:', error);
+      }
+    };
 
-    fetchStudent();
+    initializeData();
   }, []);
 
-  const fetchStudent = async () => {
+  useEffect(() => {
+    if (email) {
+      const fetchStudent = async () => {
+        try {
+          const response = await axiosPrivate.get(`students/${email}`);
+          setStudent(response?.data);
+          fetchImage(email); // Fetch image after student data is set
+        } catch (error) {
+          console.error('Error fetching Student Profile:', error);
+        }
+      };
+
+      fetchStudent();
+    }
+  }, [email, axiosPrivate, setStudent]);
+
+  const fetchImage = async (email) => {
     try {
-      const response = await axiosPrivate.get(`students/${auth.email}`, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
+      const response = await axiosPrivate.get(`students/image/${email}`, {
+        responseType: 'arraybuffer',
       });
-      setStudent(response?.data);
-      localStorage.setItem('student_id', student.id);
+      const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setImage(imageUrl);
     } catch (error) {
-      console.error('Error fetching Student Profile');
-      navigate('/signin', { state: { from: location }, replace: true });
+      console.error('Error getting Profile picture!', error);
     }
   };
 
   const signOut = async () => {
-    await logout();
-    navigate('/');
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    }
   };
 
   return (
@@ -71,14 +95,14 @@ const DropdownMenu = ({ image }) => {
               width='16'
               height='16'
             />
-            {student.name}
+            {student.name || 'Student Name'}
           </Link>
         </li>
         <li>
           <hr className='dropdown-divider' />
         </li>
-        <WishlistPopover email={auth.email} />
-        <PicturePopover email={auth.email} />
+        <WishlistPopover />
+        <PicturePopover email={email} />
         <PasswordPopover />
         <li>
           <hr className='dropdown-divider' />

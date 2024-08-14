@@ -3,15 +3,34 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import Moment from 'react-moment';
 import StarRating from '../components/StarRating';
 import '../assets/styles/reviews.css';
+import db from '../utils/localBase';
 
 const Reviews = ({ courseId }) => {
   const axiosPrivate = useAxiosPrivate();
-  const email = localStorage.getItem('STUDENT_EMAIL');
-  const accessToken = localStorage.getItem('ACCESS_TOKEN');
-
+  const [email, setEmail] = useState('');
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
   const [imageUrls, setImageUrls] = useState([]);
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail(); // Fetch and set email
+        if (email) {
+          await fetchReviews();
+        }
+      } catch (error) {
+        console.log('Error during initialization:', error);
+      }
+    };
+
+    initialize();
+  }, [email]);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_student').get();
+    setEmail(data[0].email);
+  };
 
   const fetchReviews = async () => {
     try {
@@ -24,12 +43,8 @@ const Reviews = ({ courseId }) => {
     }
   };
 
-  useEffect(() => {
-    fetchReviews();
-  }, []);
-
   const handleReviewSubmit = async () => {
-    if (!accessToken || !email) {
+    if (!email) {
       alert('You must be signed in to submit a review');
       return;
     }

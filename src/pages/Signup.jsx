@@ -15,8 +15,8 @@ import {
 } from 'react-icons/fc';
 import axios from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
+import db from '../utils/localBase';
 import useAuth from '../hooks/useAuth';
-import storage from '../utils/storage';
 
 const NAME_REGEX = /[A-z-]{3,20}$/;
 const PHONE_REGEX = /[0-9]{11}$/;
@@ -25,10 +25,8 @@ const PASSWORD_REGEX =
   /^(?=.*[Link-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const Signup = () => {
-  const { setAuth } = useAuth();
-
   const navigate = useNavigate();
-
+  const { setAuth } = useAuth();
   const errRef = useRef();
 
   const [name, setName] = useState('');
@@ -117,11 +115,15 @@ const Signup = () => {
           withCredentials: true,
         }
       );
-      const accessToken = response?.data?.access_token;
+      const accessToken = response?.data.access_token;
+      await db
+        .collection('auth_student')
+        .doc(email)
+        .set({ email, accessToken });
 
       setAuth({ email, accessToken });
-      storage.setData('auth', { email, accessToken });
 
+      alert('Registration Successful!');
       navigate('/student', { replace: true });
     } catch (err) {
       if (!err?.response) {

@@ -1,20 +1,34 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import storage from '../utils/storage';
+import db from '../utils/localBase';
 
 const RequireAuth = () => {
-  const { auth, setAuth } = useAuth();
   const location = useLocation();
+  const [token, setToken] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
+    const fetchToken = async () => {
+      try {
+        const data = await db.collection('auth_student').get();
+        if (data.length > 0) {
+          setToken(data[0].accessToken);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchToken();
   }, []);
 
-  return auth.accessToken ? (
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return token ? (
     <Outlet />
   ) : (
     <Navigate to='/signin' state={{ from: location }} replace />

@@ -6,11 +6,12 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import db from '../utils/localBase';
 
-const EnrolledCourses = ({ email }) => {
+const EnrolledCourses = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
-
+  const [email, setEmail] = useState('');
   const [enrollmentDetails, setEnrollmentDetails] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
@@ -24,6 +25,35 @@ const EnrolledCourses = ({ email }) => {
   };
 
   useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail(); // Fetch and set email
+        if (email) {
+          await getEnrolledCourses(); // Fetch student data using the email
+        }
+      } catch (error) {
+        console.log('Error during initialization:', error);
+      }
+    };
+
+    initialize();
+  }, [email]);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_student').get();
+    setEmail(data[0].email);
+  };
+
+  const getEnrolledCourses = async () => {
+    try {
+      const response = await axiosPrivate.get(`students/enrolled/${email}`);
+      setEnrollmentDetails(response?.data);
+    } catch (error) {
+      console.error('Error fetching Courses');
+    }
+  };
+
+  useEffect(() => {
     const handleResize = () => {
       setSlidesToShow(getSlidesToShow(window.innerWidth));
     };
@@ -32,22 +62,6 @@ const EnrolledCourses = ({ email }) => {
     handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  useEffect(() => {
-    const getEnrolledCourses = async () => {
-      try {
-        const response = await axiosPrivate.get(`students/enrolled/${email}`, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
-        });
-        setEnrollmentDetails(response?.data);
-      } catch (error) {
-        console.error('Error fetching Courses');
-      }
-    };
-
-    getEnrolledCourses();
-  }, [axiosPrivate, email]);
 
   const separatedDays = (days) => {
     if (Array.isArray(days)) {
@@ -74,10 +88,7 @@ const EnrolledCourses = ({ email }) => {
 
   const getCourse = async (id) => {
     try {
-      const response = await axiosPrivate.get(`courses/course/${id}`, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
+      const response = await axiosPrivate.get(`courses/course/${id}`);
       localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
       navigate('/courses/course');
     } catch (error) {
@@ -166,22 +177,31 @@ const EnrolledCourses = ({ email }) => {
               {enrollmentDetail.course.title}
             </h5>
             <p className='card-text text-white day-text'>
-              Class Days: [{separatedDays(enrollmentDetail.classDays)}]
+              Class Days:{' '}
+              <span className='text-warning'>
+                {separatedDays(enrollmentDetail.classDays)}
+              </span>
             </p>
             <p className='card-text text-white day-text'>
               Time:{' '}
-              {enrollmentDetail.preferredTime.charAt(0) +
-                enrollmentDetail.preferredTime.slice(1).toLowerCase()}
+              <span className='text-warning'>
+                {enrollmentDetail.preferredTime.charAt(0) +
+                  enrollmentDetail.preferredTime.slice(1).toLowerCase()}
+              </span>
             </p>
             <p className='card-text text-white day-text day-text'>
               Mode of Learning:{' '}
-              {enrollmentDetail.mode.charAt(0) +
-                enrollmentDetail.mode.slice(1).toLowerCase()}
+              <span className='text-warning'>
+                {enrollmentDetail.mode.charAt(0) +
+                  enrollmentDetail.mode.slice(1).toLowerCase()}
+              </span>
             </p>
             <p className='card-text text-white day-text'>
               Class Status:{' '}
-              {enrollmentDetail.status.charAt(0) +
-                enrollmentDetail.status.slice(1).toLowerCase()}
+              <span className='text-warning'>
+                {enrollmentDetail.status.charAt(0) +
+                  enrollmentDetail.status.slice(1).toLowerCase()}
+              </span>
             </p>
             <button
               className='btn btn-lg btn-enrolled'

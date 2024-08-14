@@ -1,44 +1,17 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { IoHomeSharp, IoBook, IoInformationCircle } from 'react-icons/io5';
 import { FaBlogger, FaLock } from 'react-icons/fa';
-import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import useAuth from '../../hooks/useAuth';
-import storage from '../../utils/storage';
 import '../../assets/styles/navigation.css';
 import Logo from '../../assets/images/logo.png';
 import DropdownMenu from './DropdownMenu';
+import useAuth from '../../hooks/useAuth';
 
 const Navigation = () => {
-  const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
-  const [imagePath, setImagePath] = useState('');
+  const { auth, loading } = useAuth();
 
-  useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchImage = async () => {
-      try {
-        const response = await axiosPrivate.get(
-          `students/image/${auth.email}`,
-          {
-            responseType: 'arraybuffer',
-          }
-        );
-        const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
-        const imageUrl = URL.createObjectURL(imageBlob);
-        setImagePath(imageUrl);
-      } catch (error) {
-        console.error('Error getting Profile picture!');
-      }
-    };
-    if (auth.email) fetchImage();
-  }, [auth.email]);
+  if (loading) {
+    return null; // Or a loading spinner if desired
+  }
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark nerd-navbar-light navy'>
@@ -109,7 +82,7 @@ const Navigation = () => {
               </li>
             )}
           </ul>
-          {auth.email && <DropdownMenu image={imagePath} />}
+          {auth.email && <DropdownMenu />}
         </div>
       </div>
     </nav>

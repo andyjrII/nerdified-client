@@ -1,31 +1,19 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import useAuth from './useAuth';
-import storage from '../utils/storage';
-import useStudent from './useStudent';
+import db from '../utils/localBase';
 
 const useLogout = () => {
   const { auth, setAuth } = useAuth();
-  const { setStudent } = useStudent();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-  }, []);
-
   const logout = async () => {
-    const email = auth.email;
     try {
       await axios.post(
         'auth/signout',
+        {},
         {
-          params: {
-            email,
-          },
+          params: { email: auth.email },
         },
         {
           headers: { 'Content-Type': 'application/json' },
@@ -35,9 +23,15 @@ const useLogout = () => {
     } catch (err) {
       console.error(err);
     }
+
+    // Clear auth data
+    setAuth({ email: null, accessToken: null });
+
+    // Clear local storage and delete data from the database
     localStorage.clear();
-    setAuth({});
-    setStudent({});
+    await db.collection('auth_student').delete();
+    await db.collection('student').delete();
+
     navigate('/', { replace: true });
   };
 

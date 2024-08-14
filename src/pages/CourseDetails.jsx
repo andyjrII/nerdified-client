@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../assets/styles/navpages.css';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import useAuth from '../hooks/useAuth';
-import storage from '../utils/storage';
+import db from '../utils/localBase';
 import Moment from 'react-moment';
 import { FaClock, FaMoneyBill, FaStar, FaHeart } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -13,7 +12,7 @@ import PDFViewer from '../components/PDFViewer';
 
 const CourseDetails = () => {
   const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
+  const [email, setEmail] = useState('');
 
   const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
   if (course) {
@@ -26,18 +25,25 @@ const CourseDetails = () => {
   const [isInWishlist, setIsInWishlist] = useState(false);
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-  }, []);
+    const initialize = async () => {
+      try {
+        await fetchEmail(); // Fetch and set email
+        if (email) {
+          await isCourseEnrolled();
+          await checkIfInWishlist();
+        }
+      } catch (error) {
+        console.log('Error during initialization:', error);
+      }
+    };
 
-  useEffect(() => {
-    if (auth.accessToken) {
-      isCourseEnrolled();
-      checkIfInWishlist();
-    }
-  }, [courseId]);
+    initialize();
+  }, [email, courseId]);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_student').get();
+    setEmail(data[0].email);
+  };
 
   const isCourseEnrolled = async () => {
     try {
@@ -56,7 +62,7 @@ const CourseDetails = () => {
 
   const checkIfInWishlist = async () => {
     try {
-      const response = await axiosPrivate.get(`wishlist/email/${auth.email}`, {
+      const response = await axiosPrivate.get(`wishlist/email/${email}`, {
         headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       });
@@ -68,18 +74,18 @@ const CourseDetails = () => {
   };
 
   const handleWishlistToggle = async () => {
-    if (auth) {
+    if (email) {
       try {
         if (isInWishlist) {
           await axiosPrivate.delete('/wishlist/remove', {
-            data: { email: auth.email, courseId },
+            data: { email, courseId },
           });
           setIsInWishlist(false);
         } else {
           await axiosPrivate.post(
             '/wishlist/add',
             JSON.stringify({
-              email: auth.email,
+              email,
               courseId,
             }),
             {
@@ -156,7 +162,7 @@ const CourseDetails = () => {
                       </li>
                     </ul>
                     <div className='pt-0 d-flex justify-content-center'>
-                      {auth ? (
+                      {email ? (
                         courseEnrolled ? (
                           <button
                             type='button'

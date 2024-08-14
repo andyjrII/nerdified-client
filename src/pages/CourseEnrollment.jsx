@@ -6,18 +6,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FcGlobe, FcCalendar } from 'react-icons/fc';
 import { FaClock } from 'react-icons/fa';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import useAuth from '../hooks/useAuth';
-import storage from '../utils/storage';
 import { unformatCurrency } from '../utils/unformatCurrency';
 import PaystackPop from '@paystack/inline-js';
 import Missing from './Missing';
+import db from '../utils/localBase';
 
 const publicKey = 'pk_test_244916c0bd11624711bdab398418c05413687296';
 
 const CourseEnrollment = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
-  const { auth, setAuth } = useAuth();
+  const [email, setEmail] = useState('');
 
   const errRef = useRef();
 
@@ -38,10 +37,18 @@ const CourseEnrollment = () => {
   const reference = localStorage.getItem('PAYMENT_REFERENCE');
 
   useEffect(() => {
-    const storedAuth = storage.getData('auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
+    const initializeData = async () => {
+      try {
+        const data = await db.collection('auth_student').get();
+        if (data.length > 0) {
+          setEmail(data[0].email);
+        }
+      } catch (error) {
+        console.error('Error fetching email from localBase:', error);
+      }
+    };
+
+    initializeData();
   }, []);
 
   useEffect(() => {
@@ -65,7 +72,7 @@ const CourseEnrollment = () => {
       await axiosPrivate.post(
         `students/enroll`,
         JSON.stringify({
-          email: auth.email,
+          email,
           courseId,
           amount,
           reference,
@@ -87,7 +94,7 @@ const CourseEnrollment = () => {
     const paystack = new PaystackPop();
     paystack.newTransaction({
       key: publicKey,
-      email: auth.email,
+      email,
       amount: amount * 100,
       metadata: {
         'Course Title': courseTitle,
