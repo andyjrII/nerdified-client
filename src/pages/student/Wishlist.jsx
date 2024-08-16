@@ -1,19 +1,18 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FaHeart } from 'react-icons/fa';
 import { GrView } from 'react-icons/gr';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import db from '../../utils/localBase';
+import Moment from 'react-moment';
+import { formatCurrency } from '../../utils/formatCurrency';
+import StarRating from '../../components/StarRating';
+import StudentInfo from '../../components/StudentInfo';
 
-const WishlistPopover = () => {
+const Wishlist = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
-
   const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
@@ -69,19 +68,25 @@ const WishlistPopover = () => {
     <tr key={wish.id} className='text-white'>
       <td>{wish.course.title}</td>
       <td>
+        <StarRating rating={wish.course.averageRating} />
+      </td>
+      <td className='col-price'>{formatCurrency(wish.course.price)}</td>
+      <td>
+        <Moment format='MMMM D, YYYY'>{wish.createdAt}</Moment>
+      </td>
+      <td>
         <GrView
           role='button'
           tabIndex='0'
           title='View Course'
           onClick={() => handleCourseView(wish.course)}
+          className='wish-icons wish-view'
         />
-      </td>
-      <td>
         <FaHeart
           role='button'
           tabIndex='0'
           title='Remove from Wishlist'
-          className='text-danger'
+          className='wish-icons wish-remove'
           onClick={() => handleRemove(email, wish.courseId)}
         />
       </td>
@@ -89,36 +94,33 @@ const WishlistPopover = () => {
   ));
 
   return (
-    <li>
-      <OverlayTrigger
-        trigger='click'
-        placement='bottom'
-        overlay={
-          <Popover id='popover-wishlist' className='large-popover'>
-            <div className='inside-popover rounded'>
-              <Popover.Header as='h3'>My Wishlist</Popover.Header>
-              <Popover.Body>
-                <table className='table'>
-                  <tbody>{displayWishlist}</tbody>
-                </table>
-              </Popover.Body>
-            </div>
-          </Popover>
-        }
-        rootClose // This will allow the popover to close when clicking outside of it
-      >
-        <Link className='dropdown-item d-flex gap-2 align-items-center'>
-          <FontAwesomeIcon
-            icon={faHeart}
-            className='me-2'
-            width='16'
-            height='16'
-          />
-          Wishlist
-        </Link>
-      </OverlayTrigger>
-    </li>
+    <section id='student-section' className='border-top border-bottom'>
+      <main id='student-main' className='mx-3 mb-3 pb-2'>
+        <StudentInfo />
+
+        <div className='text-center mt-5'>
+          <p className='h1'>
+            <span className='badge bg-danger'>Wishlist</span>
+          </p>
+        </div>
+
+        <div id='wishlist-div'>
+          <table className='table'>
+            <thead>
+              <tr className='bg-black text-white'>
+                <th>Course Title</th>
+                <th>Rating</th>
+                <th className='col-price'>Price</th>
+                <th>Date Added</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>{displayWishlist}</tbody>
+          </table>
+        </div>
+      </main>
+    </section>
   );
 };
 
-export default WishlistPopover;
+export default Wishlist;

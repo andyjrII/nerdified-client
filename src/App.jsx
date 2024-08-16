@@ -9,7 +9,8 @@ import Home from './pages/Home';
 import Unauthorized from './pages/Unauthorized';
 import Missing from './pages/Missing';
 import Courses from './pages/Courses';
-import Student from './pages/Student';
+import Student from './pages/student/Student';
+import Wishlist from './pages/student/Wishlist';
 import CourseDetails from './pages/CourseDetails';
 import CourseEnrollment from './pages/CourseEnrollment';
 import Admin from './pages/admin/Admin';
@@ -53,6 +54,7 @@ function App() {
               <Route element={<PersistLogin />}>
                 <Route element={<RequireAuth />}>
                   <Route path='student' element={<Student />} />
+                  <Route path='student/wishlist' element={<Wishlist />} />
                 </Route>
               </Route>
             </Route>

@@ -34,6 +34,13 @@ h2 {
   width: 95%;
 }
 
+@media (max-width: 480px) {
+  .col-student.col {
+    width: 100%;
+    display: block;
+  }
+}
+
 /* Welcome Section */
 
 .quote-text {
@@ -217,5 +224,68 @@ h5.card-title.text-wrap {
 @media (max-width: 770px) {
   .card-header.text-bg-warning {
     font-size: 0.7rem;
+  }
+}
+
+/* Wishlist */
+
+#wishlist-div {
+  margin: 20px 0px 0px 20px;
+}
+
+.table {
+  width: 90%;
+  margin: auto;
+}
+
+.wish-view {
+  color: #ffffff;
+  margin-right: 10px;
+}
+
+.wish-view:hover {
+  border-color: #ff6347;
+  color: #ff6347;
+}
+
+.wish-remove {
+  color: #ff0000;
+}
+
+.wish-remove:hover {
+  border-color: #f5f5f5;
+  color: #f5f5f5;
+}
+
+.wish-icons {
+  height: 30px;
+  width: 30px;
+  border-style: solid;
+  padding: 5px;
+  border-width: 1px;
+  border-radius: 50%;
+}
+
+@media (max-width: 400px) {
+  #wishlist-div {
+    margin: 20px 0;
+  }
+  .table {
+    width: 100%;
+  }
+  .wish-view {
+    margin-right: 0;
+  }
+  .wish-remove {
+    margin-top: 7px;
+  }
+  .wish-icons {
+    height: 20px;
+    width: 20px;
+    border-style: none;
+    padding: 0;
+  }
+  .col-price {
+    display: none;
   }
 }
