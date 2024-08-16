@@ -682,12 +682,8 @@ label.btn {
 /* Settings */
 
 @media (max-width: 480px) {
-  .row .col-auto {
-    width: 100%;
-    display: block;
-    margin: 0 10px 20px 0;
-  }
   .student-wrap {
-    width: 100%;
+    width: 90%;
+    margin-right: 10px;
   }
 }

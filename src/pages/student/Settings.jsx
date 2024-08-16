@@ -13,11 +13,11 @@ const Settings = () => {
             <span className='badge bg-danger'>Settings</span>
           </p>
         </div>
-        <div className='row justify-content-center mt-4'>
-          <div className='col-auto'>
+        <div className='mt-4'>
+          <div className='row justify-content-center'>
             <ImageChange />
           </div>
-          <div className='col-auto'>
+          <div className='row justify-content-center mt-4'>
             <PasswordChange />
           </div>
         </div>

@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FcLock } from 'react-icons/fc';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
+import Swal from 'sweetalert2';
 
 const PASSWORD_REGEX =
   /^(?=.*[Link-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -63,15 +64,33 @@ const PasswordChange = () => {
         }
       );
       setStudent(response?.data);
-      window.alert('Password changed successfully!');
+      Swal.fire({
+        icon: 'success',
+        title: 'Password Changed',
+        text: 'Your password has been changed successfully!',
+        confirmButtonText: 'OK',
+      });
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response');
+      } else if (err.response?.status === 400) {
+        setErrMsg('Invalide Credentials');
+      } else if (err.response?.status === 401) {
+        setErrMsg('Unauthorized');
       } else if (err.response?.status === 403) {
         setErrMsg('Invalid Password');
       } else {
         setErrMsg('Update Failed');
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errMsg || 'Something went wrong!',
+        confirmButtonText: 'OK',
+      });
       errRef.current.focus();
     }
   };
@@ -178,7 +197,7 @@ const PasswordChange = () => {
 
         <div className='mt-2'>
           <button
-            className='btn btn-primary rounded w-100 py-3'
+            className='btn btn-primary rounded w-100 py-2'
             type='submit'
             disabled={!validNewPassword || !validConfirm ? true : false}
           >

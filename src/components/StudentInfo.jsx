@@ -51,7 +51,7 @@ const StudentInfo = () => {
   return (
     <>
       <div className='container text-center mt-4'>
-        <div className='row align-items-start info-row'>
+        <div className='row align-items-start info-row mx-auto justify-content-center'>
           <div className='col-auto mb-2'>
             <button type='button' className='btn btn-primary p-3'>
               {student.email || <Spinners />}{' '}

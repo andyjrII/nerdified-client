@@ -55,7 +55,7 @@ const DropdownMenu = () => {
 
       fetchStudent();
     }
-  }, [email, axiosPrivate, setStudent]);
+  });
 
   const fetchImage = async (email) => {
     try {

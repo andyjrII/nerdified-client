@@ -17,6 +17,7 @@ import axios from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
 import db from '../utils/localBase';
 import useAuth from '../hooks/useAuth';
+import Swal from 'sweetalert2';
 
 const NAME_REGEX = /[A-z-]{3,20}$/;
 const PHONE_REGEX = /[0-9]{11}$/;
@@ -120,10 +121,13 @@ const Signup = () => {
         .collection('auth_student')
         .doc(email)
         .set({ email, accessToken });
-
       setAuth({ email, accessToken });
-
-      alert('Registration Successful!');
+      Swal.fire({
+        icon: 'success',
+        title: 'Signup Success',
+        text: 'You have successfully signed up!',
+        confirmButtonText: 'OK',
+      });
       navigate('/student', { replace: true });
     } catch (err) {
       if (!err?.response) {
@@ -133,6 +137,12 @@ const Signup = () => {
       } else {
         setErrMsg('Registraton Failed');
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errMsg || 'Something went wrong!',
+        confirmButtonText: 'OK',
+      });
       errRef.current.focus();
     }
   };

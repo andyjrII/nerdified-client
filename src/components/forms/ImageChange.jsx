@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FcImageFile } from 'react-icons/fc';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import db from '../../utils/localBase';
+import Swal from 'sweetalert2';
 
 const ImageChange = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -54,11 +55,21 @@ const ImageChange = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
-      alert(`Image successfully updated!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Image Changed',
+        text: 'Your image has been changed successfully!',
+        confirmButtonText: 'OK',
+      });
       fetchImage();
       setSelectedImage(null);
     } catch (err) {
-      alert('Error changing Profile Picture');
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: err || 'Something went wrong!',
+        confirmButtonText: 'OK',
+      });
     }
   };
 
@@ -86,7 +97,7 @@ const ImageChange = () => {
           </div>
         </div>
         <div className='mt-2'>
-          <button className='btn btn-primary rounded w-100 py-3'>
+          <button className='btn btn-primary rounded w-100 py-2'>
             Submit Image
           </button>
         </div>

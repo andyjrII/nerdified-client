@@ -5,6 +5,7 @@ import axios from '../api/axios';
 import useAuth from '../hooks/useAuth';
 import { FcLock, FcAddressBook } from 'react-icons/fc';
 import db from '../utils/localBase';
+import Swal from 'sweetalert2';
 
 const Signin = () => {
   const { setAuth } = useAuth(); // Ensure useAuth provides setAuth
@@ -48,7 +49,12 @@ const Signin = () => {
 
       const course = JSON.parse(localStorage.getItem('NERDVILLE_COURSE'));
       if (course) navigate(-1);
-      alert('Sign in Successful!');
+      Swal.fire({
+        icon: 'success',
+        title: 'Signin Success',
+        text: 'You have successfully signed in!',
+        confirmButtonText: 'OK',
+      });
       navigate('/student', { replace: true });
     } catch (err) {
       // Error handling
@@ -62,6 +68,12 @@ const Signin = () => {
       } else {
         setErrMsg('Signin Failed');
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errMsg || 'Something went wrong!',
+        confirmButtonText: 'OK',
+      });
       errRef.current.focus();
     }
   };
