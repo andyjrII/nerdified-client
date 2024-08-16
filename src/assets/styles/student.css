@@ -1,5 +1,5 @@
 p {
-  color: #020b14;
+  color: #000232;
   font-weight: 300;
 }
 
@@ -43,17 +43,40 @@ h2 {
 
 /* Welcome Section */
 
+.welcome-div {
+  margin: 10px 20px;
+  padding: 10px;
+}
+
 .quote-text {
   font-size: 16px;
 }
 
 @media (max-width: 480px) {
+  .welcome-div {
+    margin: 10px 10px 10px -5px;
+    width: 100%;
+  }
+  .welcome-card {
+    width: 100%;
+    margin: 0;
+  }
   .quote-text.card-text {
     font-size: 18px;
   }
-
   .card-title.text-white {
     font-size: 18px;
+  }
+  .info-row .col-auto {
+    width: 100%;
+    display: block;
+    margin-bottom: 15px; /* Adjust spacing as needed */
+  }
+  .info-row .col-auto button {
+    width: 95%;
+  }
+  .info-row .col-auto button span {
+    margin-left: 5px;
   }
 }
 
@@ -133,6 +156,7 @@ h2 {
 }
 
 /* Enrolled Courses Section */
+
 .card-body > p.day-text {
   font-size: 13px;
   margin-bottom: 4px;
@@ -230,7 +254,7 @@ h5.card-title.text-wrap {
 /* Wishlist */
 
 #wishlist-div {
-  margin: 20px 0px 0px 20px;
+  margin: 10px 0px 0px 20px;
 }
 
 .table {
@@ -266,9 +290,9 @@ h5.card-title.text-wrap {
   border-radius: 50%;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   #wishlist-div {
-    margin: 20px 0;
+    margin: 20px 10px 20px 0;
   }
   .table {
     width: 100%;

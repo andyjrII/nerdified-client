@@ -19,16 +19,14 @@ const Wishlist = () => {
     const initialize = async () => {
       try {
         await fetchEmail(); // Fetch and set email
-        if (email) {
-          await getWishlist();
-        }
+        if (email) await getWishlist();
       } catch (error) {
         console.log('Error during initialization:', error);
       }
     };
 
     initialize();
-  }, [email]);
+  });
 
   const fetchEmail = async () => {
     const data = await db.collection('auth_student').get();
@@ -98,7 +96,7 @@ const Wishlist = () => {
       <main id='student-main' className='mx-3 mb-3 pb-2'>
         <StudentInfo />
 
-        <div className='text-center mt-5'>
+        <div className='text-center'>
           <p className='h1'>
             <span className='badge bg-danger'>Wishlist</span>
           </p>

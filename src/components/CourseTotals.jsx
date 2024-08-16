@@ -63,7 +63,7 @@ const CourseTotals = () => {
 
   return (
     <div className='row mx-5 mb-4'>
-      <div className='col-md-6 col-xl-4'>
+      <div className='col-md-4 col-xl-4'>
         <div className='card widget-content bg-love-kiss'>
           <div className='widget-content-wrapper text-white'>
             <div className='widget-content-left'>
@@ -77,7 +77,7 @@ const CourseTotals = () => {
           </div>
         </div>
       </div>
-      <div className='col-md-6 col-xl-4'>
+      <div className='col-md-4 col-xl-4'>
         <div className='card widget-content bg-ripe-malin'>
           <div className='widget-content-wrapper text-white'>
             <div className='widget-content-left'>
@@ -91,7 +91,7 @@ const CourseTotals = () => {
           </div>
         </div>
       </div>
-      <div className='col-md-6 col-xl-4'>
+      <div className='col-md-4 col-xl-4'>
         <div className='card widget-content bg-mean-fruit'>
           <div className='widget-content-wrapper text-white'>
             <div className='widget-content-left'>

@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect } from 'react';
-import '../../assets/styles/signin.css';
 import {
   faCheck,
   faTimes,
@@ -79,6 +78,7 @@ const PasswordChange = () => {
 
   return (
     <div className='student-wrap py-4'>
+      <h3 className='text-center text-light'>Password Change</h3>
       <p
         ref={errRef}
         className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
@@ -178,7 +178,7 @@ const PasswordChange = () => {
 
         <div className='mt-2'>
           <button
-            className='btn btn-primary rounded w-100'
+            className='btn btn-primary rounded w-100 py-3'
             type='submit'
             disabled={!validNewPassword || !validConfirm ? true : false}
           >

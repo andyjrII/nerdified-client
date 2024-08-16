@@ -1,6 +1,7 @@
 import VisionImg from '../assets/images/navpages/about-vision.jpeg';
 import ServiceImg from '../assets/images/navpages/about-service.jpeg';
 import MissionImg from '../assets/images/navpages/about-mission.jpeg';
+import FinalImg from '../assets/images/features/feature-1.jpeg';
 import '../assets/styles/navpages.css';
 
 const About = () => {
@@ -15,7 +16,7 @@ const About = () => {
           </div>
         </div>
       </header>
-      <section className='p-5' id='about'>
+      <section id='about'>
         <div className='container'>
           <ul className='timeline'>
             <li>
@@ -81,12 +82,12 @@ const About = () => {
               </div>
             </li>
             <li className='timeline-inverted'>
-              <div className='timeline-image bg-black'>
-                <div className='timeline-heading'>
-                  <h3 className='subheading' id='tag'>
-                    Educate. Empower. Nerdify
-                  </h3>
-                </div>
+              <div className='timeline-image'>
+                <img
+                  className='rounded-circle img-fluid'
+                  src={FinalImg}
+                  alt='Logo'
+                />
               </div>
             </li>
           </ul>

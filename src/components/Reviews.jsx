@@ -110,7 +110,7 @@ const Reviews = ({ courseId }) => {
                   key={index}
                   src={url}
                   alt={review.student.name}
-                  className='review-student-image mr-2'
+                  className='review-student-image align-self-center mr-2'
                 />
               ))}
               <div className=' align-self-center'>
@@ -150,7 +150,7 @@ const Reviews = ({ courseId }) => {
             setNewReview({ ...newReview, comment: e.target.value })
           }
           placeholder='Write your review here'
-          rows='4'
+          rows='5'
           required
         ></textarea>
         <button

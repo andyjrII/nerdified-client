@@ -51,35 +51,35 @@ const StudentInfo = () => {
   return (
     <>
       <div className='container text-center mt-4'>
-        <div className='row align-items-start'>
-          <div className='col mb-2'>
-            <button type='button' className='btn btn-primary'>
+        <div className='row align-items-start info-row'>
+          <div className='col-auto mb-2'>
+            <button type='button' className='btn btn-primary p-3'>
               {student.email || <Spinners />}{' '}
               <span className='badge navy'>
                 <FaEnvelope />
               </span>
             </button>
           </div>
-          <div className='col mb-2'>
-            <button type='button' className='btn btn-primary'>
+          <div className='col-auto mb-2'>
+            <button type='button' className='btn btn-primary p-3'>
               {student.phoneNumber || <Spinners />}{' '}
               <span className='badge navy'>
                 <FaPhone />
               </span>
             </button>
           </div>
-          <div className='col mb-2'>
-            <button type='button' className='btn btn-primary'>
+          <div className='col-auto mb-2'>
+            <button type='button' className='btn btn-primary p-3'>
               {student.address || <Spinners />}{' '}
               <span className='badge navy'>
                 <IoLocation />
               </span>
             </button>
           </div>
-          <div className='col'>
+          <div className='col-auto'>
             <button
               type='button'
-              className='btn btn-primary'
+              className='btn btn-primary p-3'
               title='Date Joined'
             >
               <Moment format='MMMM D, YYYY'>
@@ -92,9 +92,9 @@ const StudentInfo = () => {
           </div>
         </div>
       </div>
-      <div className='p-3 mx-5'>
+      <div className='welcome-div'>
         <Welcome name={student.name} />
-      </div>{' '}
+      </div>
     </>
   );
 };

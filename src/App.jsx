@@ -11,6 +11,7 @@ import Missing from './pages/Missing';
 import Courses from './pages/Courses';
 import Student from './pages/student/Student';
 import Wishlist from './pages/student/Wishlist';
+import Settings from './pages/student/Settings';
 import CourseDetails from './pages/CourseDetails';
 import CourseEnrollment from './pages/CourseEnrollment';
 import Admin from './pages/admin/Admin';
@@ -55,6 +56,7 @@ function App() {
                 <Route element={<RequireAuth />}>
                   <Route path='student' element={<Student />} />
                   <Route path='student/wishlist' element={<Wishlist />} />
+                  <Route path='student/picture' element={<Settings />} />
                 </Route>
               </Route>
             </Route>

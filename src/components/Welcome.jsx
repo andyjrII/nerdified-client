@@ -23,7 +23,7 @@ const Welcome = ({ name }) => {
   };
 
   return (
-    <div className='card'>
+    <div className='card welcome-card'>
       <div className='card-body navy rounded'>
         <h2 className='card-title text-white mb-3'>Welcome back!</h2>
         <div className='d-flex text-white'>

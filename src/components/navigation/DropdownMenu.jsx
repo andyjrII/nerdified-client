@@ -1,13 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faMale, faSignOut } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHeart,
+  faGear,
+  faMale,
+  faSignOut,
+} from '@fortawesome/free-solid-svg-icons';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
 import useLogout from '../../hooks/useLogout';
 import DPDefault from '../../assets/images/navpages/person_profile.jpg';
-import PicturePopover from '../popovers/PicturePopover';
-import PasswordPopover from '../popovers/PasswordPopover';
 import db from '../../utils/localBase';
 
 const DropdownMenu = () => {
@@ -118,8 +121,20 @@ const DropdownMenu = () => {
             Wishlist
           </Link>
         </li>
-        <PicturePopover email={email} />
-        <PasswordPopover />
+        <li>
+          <Link
+            className='dropdown-item d-flex gap-2 align-items-center'
+            to='/student/picture'
+          >
+            <FontAwesomeIcon
+              icon={faGear}
+              className='me-2'
+              width='16'
+              height='16'
+            />
+            Settings
+          </Link>
+        </li>
         <li>
           <hr className='dropdown-divider' />
         </li>

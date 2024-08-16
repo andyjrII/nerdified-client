@@ -1,17 +1,31 @@
 import { useState, useEffect } from 'react';
-import '../../assets/styles/signin.css';
 import { FcImageFile } from 'react-icons/fc';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import db from '../../utils/localBase';
 
-const ImageChange = ({ email }) => {
+const ImageChange = () => {
   const axiosPrivate = useAxiosPrivate();
-
+  const [fileName, setFileName] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePath, setImagePath] = useState('');
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
-    fetchImage();
-  }, [selectedImage]);
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+        if (email) await fetchImage();
+      } catch (error) {
+        console.log('Error during initialization:', error);
+      }
+    };
+    initialize();
+  }, [email, selectedImage]);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_student').get();
+    setEmail(data[0].email);
+  };
 
   const fetchImage = async () => {
     try {
@@ -28,6 +42,7 @@ const ImageChange = ({ email }) => {
 
   const handleImageChange = (e) => {
     setSelectedImage(e.target.files[0]);
+    setFileName(e.target.files[0].name);
   };
 
   const handleImageSubmit = async (e) => {
@@ -49,24 +64,29 @@ const ImageChange = ({ email }) => {
 
   return (
     <div className='student-wrap py-4'>
+      <h3 className='text-center mb-3 text-light'>Picture Change</h3>
       <img src={imagePath} alt='Student' className='img-fluid' />
       <form className='login-form rounded' onSubmit={handleImageSubmit}>
         <div className='form-group'>
-          <div className='icon d-flex align-items-center justify-content-center'>
-            <span>
-              <FcImageFile />
-            </span>
+          <div className='custom-file-input'>
+            <input
+              type='file'
+              id='file-input'
+              className='file-input'
+              accept='image/*'
+              onChange={handleImageChange}
+              required
+            />
+            <label htmlFor='file-input' className='custom-file-label'>
+              <div className='d-flex align-items-center justify-content-center'>
+                <FcImageFile id='image-icon' />
+              </div>
+              {fileName || 'Choose an image'}
+            </label>
           </div>
-          <input
-            type='file'
-            className='form-control'
-            accept='image/*'
-            onChange={handleImageChange}
-            required
-          />
         </div>
         <div className='mt-2'>
-          <button className='btn btn-primary rounded w-100'>
+          <button className='btn btn-primary rounded w-100 py-3'>
             Submit Image
           </button>
         </div>

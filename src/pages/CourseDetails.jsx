@@ -38,7 +38,7 @@ const CourseDetails = () => {
     };
 
     initialize();
-  }, [email, courseId]);
+  });
 
   const fetchEmail = async () => {
     const data = await db.collection('auth_student').get();

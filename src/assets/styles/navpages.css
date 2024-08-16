@@ -152,7 +152,9 @@ div span {
   background-attachment: fixed;
   background-position: center;
   background-size: cover;
+  padding: 30px;
 }
+
 .page-section {
   padding: 2rem 0;
 }
@@ -353,17 +355,24 @@ timeline > li .timeline-panel:after {
   margin-top: 15%;
 }
 
-@media (max-width: 360px) {
+@media (max-width: 480px) {
+  #about {
+    padding: 20px 0 50px 10px;
+  }
+  .timeline .timeline-body {
+    width: 100%;
+  }
   .subheading {
     font-size: 18px;
   }
-
+  .timeline > li .timeline-image {
+    left: -10px;
+  }
   .timeline .timeline-body {
-    background-color: rgba(000, 000, 000, 0.4);
+    background-color: rgba(000, 000, 000, 0.6);
     padding: 5px;
     border-radius: 5px;
   }
-
   .timeline .timeline-body > p {
     font-size: 15px;
   }
