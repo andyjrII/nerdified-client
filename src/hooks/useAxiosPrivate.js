@@ -1,16 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import useRefreshToken from './useRefreshToken';
 import { axiosPrivate } from '../api/axios';
 import db from '../utils/localBase';
+import useLogout from '../hooks/useLogout';
 
 const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
-  const [token, setToken] = useState();
+  const logout = useLogout();
+  const [token, setToken] = useState('');
+  const retryCountRef = useRef(0); // Use a ref to persist retry count across renders
 
   useEffect(() => {
     const fetchToken = async () => {
       const data = await db.collection('auth_student').get();
-      setToken(data[0].accessToken);
+      if (data.length > 0) {
+        setToken(data[0].accessToken);
+      }
     };
 
     fetchToken();
@@ -31,12 +36,32 @@ const useAxiosPrivate = () => {
       (response) => response,
       async (error) => {
         const prevRequest = error?.config;
-        if (error?.response?.status === 403 && !prevRequest?.sent) {
-          prevRequest.sent = true;
-          const newAccessToken = await refresh();
-          prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-          return axiosPrivate(prevRequest);
+        const maxRetries = 5;
+
+        if (
+          (error?.response?.status === 403 ||
+            error?.response?.status === 401) &&
+          !prevRequest?.sent
+        ) {
+          if (retryCountRef.current < maxRetries) {
+            prevRequest.sent = true;
+            retryCountRef.current += 1;
+            console.log('Retry attempt:', retryCountRef.current);
+            try {
+              const newAccessToken = await refresh();
+              prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+              return axiosPrivate(prevRequest);
+            } catch (err) {
+              console.error('Error refreshing token:', err);
+            }
+          }
+
+          if (retryCountRef.current >= maxRetries) {
+            await logout();
+            return Promise.reject(error);
+          }
         }
+
         return Promise.reject(error);
       }
     );
@@ -45,7 +70,7 @@ const useAxiosPrivate = () => {
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [token, refresh]);
+  }, [token, refresh, logout]);
 
   return axiosPrivate;
 };

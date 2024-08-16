@@ -7,8 +7,8 @@ const Welcome = ({ name }) => {
   useEffect(() => {
     fetchQuote(); // Initial fetch
     const intervalId = setInterval(() => {
-      fetchQuote(); // Fetch new quote every 10 minutes
-    }, 1800000); // 600000ms = 10 minutes
+      fetchQuote();
+    }, 1800000); // 30 minutes
 
     return () => clearInterval(intervalId);
   }, []);

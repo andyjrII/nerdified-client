@@ -44,6 +44,10 @@ const DropdownMenu = () => {
           fetchImage(email); // Fetch image after student data is set
         } catch (error) {
           console.error('Error fetching Student Profile:', error);
+          // Fallback: Fetch from Localbase if server fails
+          const localStudent = await db.collection('student').doc(email).get();
+          setStudent(localStudent);
+          fetchImage(email); // Fetch image after student data is set
         }
       };
 
