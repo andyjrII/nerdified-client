@@ -10,6 +10,7 @@ import { unformatCurrency } from '../utils/unformatCurrency';
 import PaystackPop from '@paystack/inline-js';
 import Missing from './Missing';
 import db from '../utils/localBase';
+import Swal from 'sweetalert2';
 
 const publicKey = 'pk_test_244916c0bd11624711bdab398418c05413687296';
 
@@ -88,7 +89,12 @@ const CourseEnrollment = () => {
         }
       );
     } catch (error) {
-      alert('Error occurred');
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error || 'Something went wrong!',
+        confirmButtonText: 'OK',
+      });
     }
   };
 
@@ -107,10 +113,22 @@ const CourseEnrollment = () => {
           ' payment complete! Thanks for enrolling with us! Check out our Other Courses!!';
         localStorage.setItem('PAYMENT_REFERENCE', response.reference);
         await savePaymentInfo();
-        alert(message);
+        Swal.fire({
+          icon: 'success',
+          title: 'Payment Success',
+          text: message,
+          confirmButtonText: 'OK',
+        });
         navigate('/courses', { replace: true });
       },
-      onClose: () => alert("Wait! You need this course, don't go!!!!"),
+      onClose: () => {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Wait',
+          text: "You need this Course! Don't go!!",
+          confirmButtonText: 'OK',
+        });
+      },
     });
   };
 

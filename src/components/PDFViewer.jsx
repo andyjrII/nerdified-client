@@ -62,7 +62,7 @@ const PDFViewer = () => {
   }, [pdfData]);
 
   return (
-    <div className='col-md-9 payment-head rounded mb-4'>
+    <div className='payment-head rounded mb-4'>
       <div className='my-4'>
         <div ref={pdfViewerRef} className='viewer-container'>
           {pdfData && (

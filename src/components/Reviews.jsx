@@ -4,6 +4,7 @@ import Moment from 'react-moment';
 import StarRating from '../components/StarRating';
 import '../assets/styles/reviews.css';
 import db from '../utils/localBase';
+import Swal from 'sweetalert2';
 
 const Reviews = ({ courseId }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -39,17 +40,27 @@ const Reviews = ({ courseId }) => {
       await fetchImages(emails);
       setReviews(response.data);
     } catch (error) {
-      alert('Error fetching reviews');
+      console.log('Error fetching reviews');
     }
   };
 
   const handleReviewSubmit = async () => {
     if (!email) {
-      alert('You must be signed in to submit a review');
+      Swal.fire({
+        icon: 'info',
+        title: 'Oops...',
+        text: 'You must be signed in first to make a review!',
+        confirmButtonText: 'OK',
+      });
       return;
     }
     if (newReview.rating === 0) {
-      alert('Please select a star rating');
+      Swal.fire({
+        icon: 'info',
+        title: 'Star Rating',
+        text: 'Please select a star rating!',
+        confirmButtonText: 'OK',
+      });
       return;
     }
 
@@ -67,7 +78,12 @@ const Reviews = ({ courseId }) => {
       const response = fetchReviews();
       setReviews(response.data);
     } catch (error) {
-      alert('Error submitting review');
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Error submitting review!',
+        confirmButtonText: 'OK',
+      });
     }
   };
 
@@ -91,14 +107,14 @@ const Reviews = ({ courseId }) => {
       );
       setImageUrls(images);
     } catch (error) {
-      alert('Error getting images');
+      console.log('Error getting images');
       return [];
     }
   };
 
   return (
-    <div className='reviews-container mt-3'>
-      <p className='h2 mb-4'>
+    <div className='reviews-container mt-2'>
+      <p className='h2'>
         <span className='badge bg-danger'>Reviews</span>
       </p>
       {reviews ? (
@@ -150,7 +166,7 @@ const Reviews = ({ courseId }) => {
             setNewReview({ ...newReview, comment: e.target.value })
           }
           placeholder='Write your review here'
-          rows='5'
+          rows='4'
           required
         ></textarea>
         <button

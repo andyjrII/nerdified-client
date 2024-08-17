@@ -118,7 +118,7 @@ const CourseDetails = () => {
         icon: 'info',
         title: 'Oops...',
         text: 'You must be signed in first!',
-        confirmButtonText: 'Cancel',
+        confirmButtonText: 'Ok',
       });
     }
   };
@@ -142,7 +142,9 @@ const CourseDetails = () => {
             <div className='row'>
               {/* PDF Viewer */}
               <PDFViewer />
-              <div className='col-md-3'>
+            </div>
+            <div className='row'>
+              <div className='col-md-3 mt-3'>
                 <div className='rounded-4 shadow'>
                   <div className='modal-body p-3'>
                     <div className='payment-head rounded py-2'>
@@ -224,9 +226,9 @@ const CourseDetails = () => {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className='row'>
-              <Reviews courseId={id} />
+              <div className='col-md-9 mt-3'>
+                <Reviews courseId={id} />
+              </div>
             </div>
           </div>
         </main>

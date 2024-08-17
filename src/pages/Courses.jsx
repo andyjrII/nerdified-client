@@ -113,7 +113,7 @@ const Courses = () => {
         icon: 'info',
         title: 'Oops...',
         text: 'You must be signed in first!',
-        confirmButtonText: 'Cancel',
+        confirmButtonText: 'Ok',
       });
     }
   };
