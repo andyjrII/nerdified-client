@@ -1,30 +1,20 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import axios from '../api/axios';
-import useAuth from './useAuth';
-import storage from '../utils/storage';
-import useAdmin from './useAdmin';
+import useAdminAuth from './useAdminAuth';
+import db from '../utils/localBase';
 
 const useAdminLogout = () => {
-  const { auth, setAuth } = useAuth();
-  const { setAdmin } = useAdmin();
+  const { auth, setAuth } = useAdminAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedAuth = storage.getData('admin_auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-  }, []);
-
   const logout = async () => {
-    const email = auth.email;
     try {
       await axios.post(
         'auth/admin/signout',
+        {},
         {
           params: {
-            email,
+            email: auth.email,
           },
         },
         {
@@ -35,9 +25,13 @@ const useAdminLogout = () => {
     } catch (err) {
       console.error(err);
     }
+
+    setAuth({ email: null, accessToken: null });
+
     localStorage.clear();
-    setAuth({});
-    setAdmin({});
+    await db.collection('auth_admin').delete();
+    await db.collection('admin').delete();
+
     navigate('/admin/signin', { replace: true });
   };
 

@@ -1,5 +1,5 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import {
   FaBlog,
   FaUserAlt,
@@ -15,40 +15,45 @@ import { IoSchool } from 'react-icons/io5';
 import useAdminLogout from '../../hooks/useAdminLogout';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import useAdmin from '../../hooks/useAdmin';
-import useAuth from '../../hooks/useAuth';
-import storage from '../../utils/storage';
+import db from '../../utils/localBase';
 
 const AdminSidebar = () => {
   const axiosPrivate = useAdminAxiosPrivate();
+  const { admin, setAdmin } = useAdmin();
   const navigate = useNavigate();
-  const location = useLocation();
   const logout = useAdminLogout();
-
-  const { auth, setAuth } = useAuth();
-  const { admin, setAdmin } = useAdmin(null);
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
-    const storedAuth = storage.getData('admin_auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchAdmin = async () => {
+    const initializeData = async () => {
       try {
-        const response = await axiosPrivate.get(`admin/${auth.email}`);
-        setAdmin(response?.data);
+        await fetchEmail();
+        if (email) {
+          await fetchAdmin();
+        }
       } catch (error) {
-        console.error('Error:', error);
-        navigate('/admin/signin', {
-          state: { from: location },
-          replace: true,
-        });
+        console.error('Error fetching email from localBase:', error);
       }
     };
-    fetchAdmin();
+
+    initializeData();
   }, []);
+
+  const fetchEmail = async () => {
+    const data = await db.collection('auth_admin').get();
+    setEmail(data[0].email);
+  };
+
+  const fetchAdmin = async () => {
+    try {
+      const response = await axiosPrivate.get(`admin/${email}`);
+      setAdmin(response?.data);
+    } catch (error) {
+      console.error('Error:', error);
+      const localAdmin = await db.collection('admin').doc(email).get();
+      setAdmin(localAdmin);
+    }
+  };
 
   const signOut = async () => {
     await logout();
@@ -153,7 +158,7 @@ const AdminSidebar = () => {
       <hr className='sidebar-divider bg-white' />
 
       {/* Nav Item - Admins */}
-      {auth.role === 'SUPER' && (
+      {admin.role === 'SUPER' && (
         <>
           <li className='nav-item'>
             <Link

@@ -26,9 +26,7 @@ const PersistLogin = () => {
     fetchTokenAndVerify();
   }, [refresh]);
 
-  if (isLoading) {
-    return <Spinners />;
-  }
+  if (isLoading) return <Spinners />;
 
   return <Outlet />;
 };

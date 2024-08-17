@@ -1,9 +1,9 @@
-import useAuth from './useAuth';
+import useAdminAuth from './useAdminAuth';
 import { axiosPrivate } from '../api/axios';
 import db from '../utils/localBase';
 
 const useRefreshToken = () => {
-  const { setAuth } = useAuth();
+  const { setAuth } = useAdminAuth();
 
   const refresh = async () => {
     try {
@@ -22,7 +22,6 @@ const useRefreshToken = () => {
         };
       });
 
-      // Fetch the existing auth_student record from Localbase
       const authData = await db.collection('auth_student').get();
 
       if (authData.length > 0) {

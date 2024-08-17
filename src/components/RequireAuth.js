@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import db from '../utils/localBase';
+import Spinners from './Spinners';
 
 const RequireAuth = () => {
   const location = useLocation();
@@ -24,9 +25,7 @@ const RequireAuth = () => {
     fetchToken();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <Spinners />;
 
   return token ? (
     <Outlet />

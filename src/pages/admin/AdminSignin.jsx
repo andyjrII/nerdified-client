@@ -3,8 +3,9 @@ import '../../assets/styles/signin.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import useAuth from '../../hooks/useAuth';
-import storage from '../../utils/storage';
 import { FcLock, FcAddressBook } from 'react-icons/fc';
+import db from '../../utils/localBase';
+import Swal from 'sweetalert2';
 
 const AdminSignin = () => {
   const { setAuth } = useAuth();
@@ -42,9 +43,17 @@ const AdminSignin = () => {
       );
       const accessToken = response?.data[0]?.access_token;
       const role = response?.data[1];
-
+      await db
+        .collection('auth_admin')
+        .doc(email)
+        .set({ email, accessToken, role });
       setAuth({ email, accessToken, role });
-      storage.setData('admin_auth', { email, accessToken, role });
+      Swal.fire({
+        icon: 'success',
+        title: 'Signin Success',
+        text: 'You have successfully signed in!',
+        confirmButtonText: 'OK',
+      });
       navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {
@@ -56,6 +65,12 @@ const AdminSignin = () => {
       } else {
         setErrMsg('Signin Failed');
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errMsg || 'Signin Failed!',
+        confirmButtonText: 'OK',
+      });
       errRef.current.focus();
     }
   };

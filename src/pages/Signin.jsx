@@ -57,7 +57,6 @@ const Signin = () => {
       });
       navigate('/student', { replace: true });
     } catch (err) {
-      // Error handling
       console.error('Sign-in error:', err); // Log error for debugging
       if (!err?.response) {
         setErrMsg('No Server Response');

@@ -1,17 +1,20 @@
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import axios from '../../api/axios';
+import Swal from 'sweetalert2';
 
 const UpdateCourse = () => {
   const axiosPrivate = useAdminAxiosPrivate();
-  const errRef = useRef();
+  const navigate = useNavigate();
 
+  const errRef = useRef();
   const courseId = localStorage.getItem('EDIT_COURSE_ID');
   const [title, setTitle] = useState(undefined);
   const [price, setPrice] = useState();
   const [course, setCourse] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [fileName, setFileName] = useState('');
   const [errMsg, setErrMsg] = useState();
 
   useEffect(() => {
@@ -24,12 +27,24 @@ const UpdateCourse = () => {
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
+    try {
+      setFileName(e.target.files[0].name);
+    } catch (error) {
+      console.log('No file selected');
+    }
   };
 
   const getCourse = async () => {
     try {
       const response = await axios.get(`courses/course/${courseId}`);
-      if (!response.data) alert('Course does not exist');
+      if (!response.data) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Course does not exist!',
+          confirmButtonText: 'OK',
+        });
+      }
       setCourse(response?.data);
     } catch (err) {
       setErrMsg('Error Occured!');
@@ -49,18 +64,29 @@ const UpdateCourse = () => {
       );
       if (selectedFile) await fileUpload(response?.data.id);
       setCourse(response?.data);
-      alert(`${course.title} successfully updated!`);
-      setErrMsg('');
+      Swal.fire({
+        icon: 'success',
+        title: 'Update Success',
+        text: `${course.title} updated successfully`,
+        confirmButtonText: 'OK',
+      });
+      navigate(`/admin/courses`);
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response');
       } else if (err.response?.status === 400) {
         setErrMsg('Course with title already exists');
-      } else if (err.response?.status === 403) {
+      } else if (err.response?.status === 401) {
         setErrMsg('Unauthorized');
       } else {
         setErrMsg('Update Failed');
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errMsg,
+        confirmButtonText: 'OK',
+      });
       errRef.current.focus();
     }
   };
@@ -130,19 +156,19 @@ const UpdateCourse = () => {
             </div>
 
             <div className='col-md-6 mb-2'>
-              <div className='input-group'>
-                <span
-                  className='input-group-text bg-dark text-white'
-                  for='file'
-                >
-                  Course Outline
-                </span>
+              <div className='input-group custom-file-input bg-dark'>
                 <input
                   type='file'
-                  className='form-control bg-dark text-white'
+                  className='bg-dark text-white file-upload'
                   id='file-upload'
                   onChange={handleFileChange}
                 />
+                <span
+                  htmlFor='file-upload'
+                  className='bg-dark text-light custom-file-label'
+                >
+                  {fileName || 'Choose a file'}
+                </span>
               </div>
             </div>
 

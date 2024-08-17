@@ -77,10 +77,7 @@ function App() {
                     path='/admin/courses/payment'
                     element={<CoursePayment />}
                   />
-                  <Route
-                    path='/admin/courses/update'
-                    element={<UpdateCourse />}
-                  />
+                  <Route path='/admin/courses/:id' element={<UpdateCourse />} />
                   <Route path='/admin/students' element={<AllStudents />} />
                   <Route path='/admin/posts' element={<BlogPosts />} />
                   <Route path='/admin/posts/new' element={<NewPost />} />

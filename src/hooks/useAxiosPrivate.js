@@ -38,15 +38,10 @@ const useAxiosPrivate = () => {
         const prevRequest = error?.config;
         const maxRetries = 5;
 
-        if (
-          (error?.response?.status === 403 ||
-            error?.response?.status === 401) &&
-          !prevRequest?.sent
-        ) {
+        if (error?.response?.status === (403 || 401) && !prevRequest?.sent) {
           if (retryCountRef.current < maxRetries) {
             prevRequest.sent = true;
             retryCountRef.current += 1;
-            console.log('Retry attempt:', retryCountRef.current);
             try {
               const newAccessToken = await refresh();
               prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;

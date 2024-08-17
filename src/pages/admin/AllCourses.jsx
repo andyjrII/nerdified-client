@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminSidebar from '../../components/navigation/AdminSidebar';
 import { FaTrashAlt, FaEdit } from 'react-icons/fa';
 import Moment from 'react-moment';
 import '../../assets/styles/admin.css';
 import ReactPaginate from 'react-paginate';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
+import Swal from 'sweetalert2';
 
 const AllCourses = () => {
   const axiosPrivate = useAdminAxiosPrivate();
@@ -40,7 +40,7 @@ const AllCourses = () => {
       }
     };
     fetchCourses();
-  }, [currentPage, searchQuery]);
+  }, [courses, currentPage, searchQuery]);
 
   const pageCount = Math.ceil(totalCourses / coursesPerPage);
 
@@ -85,15 +85,25 @@ const AllCourses = () => {
 
   const handleEdit = async (id) => {
     localStorage.setItem('EDIT_COURSE_ID', id);
-    navigate('/admin/courses/update');
+    navigate(`/admin/courses/${id}`);
   };
 
   const handleDelete = async (id) => {
     try {
       const response = await axiosPrivate.delete(`courses/${id}`);
-      alert(`${response?.data.title} successfully deleted!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Delete Success',
+        text: `${response?.data.title} deleted successfully`,
+        confirmButtonText: 'OK',
+      });
     } catch (error) {
-      console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Error deleting course!',
+        confirmButtonText: 'OK',
+      });
     }
   };
 

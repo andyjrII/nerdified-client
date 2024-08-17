@@ -88,13 +88,23 @@ const CourseEnrollment = () => {
           withCredentials: true,
         }
       );
-    } catch (error) {
+    } catch (err) {
+      if (!err?.response) {
+        setErrMsg('No Server Response');
+      } else if (err.response?.status === 400) {
+        setErrMsg('Missing Credentials');
+      } else if (err.response?.status === 401) {
+        setErrMsg('Unauthorized');
+      } else {
+        setErrMsg('Enrollment Failed');
+      }
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error || 'Something went wrong!',
+        text: errMsg || 'Something went wrong!',
         confirmButtonText: 'OK',
       });
+      errRef.current.focus();
     }
   };
 

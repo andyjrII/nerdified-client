@@ -1,25 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import useAdminRefreshToken from './useAdminRefreshToken';
 import { axiosPrivate } from '../api/axios';
-import useAuth from './useAuth';
-import storage from '../utils/storage';
+import db from '../utils/localBase';
+import useAdminLogout from './useAdminLogout';
 
 const useAdminAxiosPrivate = () => {
   const refresh = useAdminRefreshToken();
-  const { auth, setAuth } = useAuth();
+  const logout = useAdminLogout();
+  const [token, setToken] = useState('');
+  const retryCountRef = useRef(0);
 
   useEffect(() => {
-    const storedAuth = storage.getData('admin_auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
+    const fetchToken = async () => {
+      const data = await db.collection('auth_admin').get();
+      if (data.length > 0) {
+        setToken(data[0].accessToken);
+      }
+    };
+
+    fetchToken();
   }, []);
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
         if (!config.headers['Authorization']) {
-          config.headers['Authorization'] = `Bearer ${auth?.accessToken}`;
+          config.headers['Authorization'] = `Bearer ${token}`;
         }
         return config;
       },
@@ -30,12 +36,27 @@ const useAdminAxiosPrivate = () => {
       (response) => response,
       async (error) => {
         const prevRequest = error?.config;
+        const maxRetries = 5;
+
         if (error?.response?.status === (401 || 403) && !prevRequest?.sent) {
-          prevRequest.sent = true;
-          const newAccessToken = await refresh();
-          prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-          return axiosPrivate(prevRequest);
+          if (retryCountRef.current < maxRetries) {
+            prevRequest.sent = true;
+            retryCountRef.current += 1;
+            try {
+              const newAccessToken = await refresh();
+              prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+              return axiosPrivate(prevRequest);
+            } catch (err) {
+              console.error('Error refreshing token:', err);
+            }
+          }
+
+          if (retryCountRef.current >= maxRetries) {
+            await logout();
+            return Promise.reject(error);
+          }
         }
+
         return Promise.reject(error);
       }
     );
@@ -44,7 +65,7 @@ const useAdminAxiosPrivate = () => {
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [auth, refresh]);
+  }, [token, refresh, logout]);
 
   return axiosPrivate;
 };
