@@ -1,19 +1,21 @@
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import '../../assets/styles/admin.css';
+import Swal from 'sweetalert2';
 
 const UpdatePost = () => {
   const axiosPrivate = useAdminAxiosPrivate();
   const errRef = useRef();
-
+  const navigate = useNavigate();
   const postId = localStorage.getItem('EDIT_POST_ID');
   const [post, setPost] = useState('');
   const [title, setTitle] = useState(undefined);
   const [datePosted, setDatePosted] = useState(undefined);
   const [postUrl, setPostUrl] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const [fileName, setFileName] = useState('');
   const [errMsg, setErrMsg] = useState('');
 
   useEffect(() => {
@@ -26,6 +28,11 @@ const UpdatePost = () => {
 
   const handleImageChange = (e) => {
     setSelectedImage(e.target.files[0]);
+    try {
+      setFileName(e.target.files[0].name);
+    } catch (error) {
+      console.log('No file selected');
+    }
   };
 
   const getPost = async () => {
@@ -51,18 +58,31 @@ const UpdatePost = () => {
       );
       if (selectedImage) await imageUpload(response?.data.id);
       setPost(response?.data);
-      alert(`${post.title} successfully updated!`);
-      setErrMsg('');
+      Swal.fire({
+        icon: 'success',
+        title: 'Update Success',
+        text: `${post.title} updated successfully`,
+        confirmButtonText: 'OK',
+      });
+      navigate(`/admin/posts`);
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response');
       } else if (err.response?.status === 400) {
-        setErrMsg('Missing Credentials');
-      } else if (err.response?.status === 403) {
+        setErrMsg('Post with title already exists');
+      } else if (err.response?.status === 401) {
         setErrMsg('Unauthorized');
+      } else if (err.response?.status === 500) {
+        setErrMsg('Server error');
       } else {
         setErrMsg('Update Failed');
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errMsg || 'Update Failed!',
+        confirmButtonText: 'OK',
+      });
       errRef.current.focus();
     }
   };
@@ -95,7 +115,7 @@ const UpdatePost = () => {
         </p>
         <form onSubmit={handleSubmit}>
           <div className='row g-3'>
-            <div className='col-md-7 mb-2'>
+            <div className='col-md-8 mb-2'>
               <div className='input-group'>
                 <span className='input-group-text bg-dark text-white'>
                   Title
@@ -111,7 +131,7 @@ const UpdatePost = () => {
               </div>
             </div>
 
-            <div className='col-md-5 mb-2'>
+            <div className='col-md-4 mb-2'>
               <div className='input-group'>
                 <span className='input-group-text bg-dark text-white'>
                   Post Date
@@ -126,7 +146,7 @@ const UpdatePost = () => {
               </div>
             </div>
 
-            <div className='col-md-7 mb-2'>
+            <div className='col-md-8 mb-2'>
               <div className='input-group'>
                 <span className='input-group-text bg-dark text-white'>
                   Post URL
@@ -142,26 +162,27 @@ const UpdatePost = () => {
               </div>
             </div>
 
-            <div className='col-md-5 mb-2'>
-              <div className='input-group'>
-                <span
-                  className='input-group-text bg-dark text-white'
-                  id='image'
-                >
-                  Upload Image
-                </span>
+            <div className='col-md-4 mb-2'>
+              <div className='input-group custom-file-input bg-dark'>
                 <input
                   type='file'
-                  className='form-control bg-dark text-white'
-                  id='image-upload'
-                  accept='image/*'
+                  className='bg-dark text-white file-upload'
+                  id='file-upload'
                   onChange={handleImageChange}
+                  accept='image/*'
                 />
+                <span
+                  htmlFor='file-upload'
+                  className='bg-dark text-light custom-file-label'
+                >
+                  {fileName || 'Choose an image'}
+                </span>
               </div>
             </div>
           </div>
+
           <div className='text-center mt-3'>
-            <button className='btn bg-danger text-white btn-lg w-50 p-2'>
+            <button className='btn bg-danger text-white btn-lg w-25 p-2'>
               Submit
             </button>
           </div>

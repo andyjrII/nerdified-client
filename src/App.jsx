@@ -81,7 +81,7 @@ function App() {
                   <Route path='/admin/students' element={<AllStudents />} />
                   <Route path='/admin/posts' element={<BlogPosts />} />
                   <Route path='/admin/posts/new' element={<NewPost />} />
-                  <Route path='/admin/posts/update' element={<UpdatePost />} />
+                  <Route path='/admin/posts/:id' element={<UpdatePost />} />
                 </Route>
               </Route>
             </Route>

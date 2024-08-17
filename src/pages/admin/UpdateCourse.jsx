@@ -84,7 +84,7 @@ const UpdateCourse = () => {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: errMsg,
+        text: errMsg || 'Update Failed!',
         confirmButtonText: 'OK',
       });
       errRef.current.focus();
@@ -173,7 +173,7 @@ const UpdateCourse = () => {
             </div>
 
             <div className='text-center mt-3'>
-              <button className='btn bg-danger text-white btn-lg p-2 w-50'>
+              <button className='btn bg-danger text-white btn-lg p-2 w-25'>
                 Submit
               </button>
             </div>

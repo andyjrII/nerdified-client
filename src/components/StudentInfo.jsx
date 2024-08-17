@@ -35,13 +35,10 @@ const StudentInfo = () => {
     try {
       const response = await axiosPrivate.get(`students/${email}`);
       const studentData = response?.data;
-      // Store in Localbase
       await db.collection('student').doc(email).set(studentData);
       setStudent(studentData);
     } catch (error) {
       console.error('Failed to fetch student data from server.');
-
-      // Fallback: Fetch from Localbase if server fails
       const localStudent = await db.collection('student').doc(email).get();
       setStudent(localStudent);
     }
@@ -50,7 +47,7 @@ const StudentInfo = () => {
   return (
     <>
       <div className='container text-center mt-4'>
-        <div className='row align-items-start info-row mx-auto justify-content-center'>
+        <div className='row info-row mx-auto justify-content-center'>
           <div className='col-auto mb-2'>
             <button type='button' className='btn btn-primary p-3'>
               {student.email}{' '}
@@ -89,8 +86,10 @@ const StudentInfo = () => {
           </div>
         </div>
       </div>
-      <div className='welcome-div'>
-        <Welcome name={student.name} />
+      <div className='row justify-content-center mx-auto align-content-center'>
+        <div className='welcome-div'>
+          <Welcome name={student.name} />
+        </div>
       </div>
     </>
   );

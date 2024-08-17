@@ -4,6 +4,7 @@ import Moment from 'react-moment';
 import '../../assets/styles/admin.css';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import ReactPaginate from 'react-paginate';
+import Swal from 'sweetalert2';
 
 const AllStudents = () => {
   const axios = useAdminAxiosPrivate();
@@ -13,7 +14,6 @@ const AllStudents = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [level, setLevel] = useState();
 
   const studentsPerPage = 20;
 
@@ -25,7 +25,6 @@ const AllStudents = () => {
           {
             params: {
               search: searchQuery,
-              academicLevel: level,
             },
           },
           {
@@ -40,7 +39,7 @@ const AllStudents = () => {
       }
     };
     fetchStudents();
-  }, [currentPage, searchQuery, level]);
+  }, [currentPage, searchQuery, students]);
 
   const pageCount = Math.ceil(totalStudents / studentsPerPage);
 
@@ -79,9 +78,20 @@ const AllStudents = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`students/${id}`);
-      alert(`${response?.data.name} was successfully deleted!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Delete Success',
+        text: `${response?.data.name} deleted successfully`,
+        confirmButtonText: 'OK',
+      });
     } catch (error) {
       console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Delete Failed!',
+        confirmButtonText: 'OK',
+      });
     }
   };
 
@@ -126,20 +136,18 @@ const AllStudents = () => {
       </div>
 
       {/* Pagination */}
-      <div className='bd-example-snippet bd-code-snippet'>
-        <div className='bd-example'>
-          <ReactPaginate
-            previousLabel={'Previous'}
-            nextLabel={'Next'}
-            pageCount={pageCount}
-            onPageChange={changePage}
-            containerClassName={'paginationBttns'}
-            previousLinkClassName={'previousBttn'}
-            nextLinkClassName={'nextBttn'}
-            disabledClassName={'paginationDisabled'}
-            activeClassName={'paginationActive'}
-          />
-        </div>
+      <div className='mt-5'>
+        <ReactPaginate
+          previousLabel={'Previous'}
+          nextLabel={'Next'}
+          pageCount={pageCount}
+          onPageChange={changePage}
+          containerClassName={'paginationBttns'}
+          previousLinkClassName={'previousBttn'}
+          nextLinkClassName={'nextBttn'}
+          disabledClassName={'paginationDisabled'}
+          activeClassName={'paginationActive'}
+        />
       </div>
     </div>
   );

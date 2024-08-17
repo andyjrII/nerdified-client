@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
+import Swal from 'sweetalert2';
+
 const NewCourse = () => {
   const errRef = useRef();
 
@@ -8,7 +10,7 @@ const NewCourse = () => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [fileName, setFileName] = useState('');
   const [errMsg, setErrMsg] = useState('');
 
   useEffect(() => {
@@ -17,6 +19,11 @@ const NewCourse = () => {
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
+    try {
+      setFileName(e.target.files[0].name);
+    } catch (error) {
+      console.log('No file selected');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -31,7 +38,12 @@ const NewCourse = () => {
         }
       );
       await fileUpload(response?.data.id);
-      alert(`${title} successfully created!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Course Created',
+        text: `${title} created successfully`,
+        confirmButtonText: 'OK',
+      });
       setTitle('');
       setPrice(0);
     } catch (err) {
@@ -40,6 +52,12 @@ const NewCourse = () => {
       } else if (err.response?.status === 401) {
         setErrMsg('Unauthorized');
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errMsg || 'Creation Failed!',
+        confirmButtonText: 'OK',
+      });
       errRef.current.focus();
     }
   };
@@ -105,21 +123,24 @@ const NewCourse = () => {
             </div>
 
             <div className='col-sm-11'>
-              <div className='input-group mb-2'>
-                <span className='input-group-text bg-dark text-white' id='file'>
-                  Course Details
-                </span>
+              <div className='input-group custom-file-input bg-dark mb-2'>
                 <input
                   type='file'
-                  className='form-control bg-dark text-white'
-                  id='file'
+                  className='file-upload bg-dark text-white'
+                  id='file-upload'
                   onChange={handleFileChange}
                   required
                 />
+                <span
+                  htmlFor='file-upload'
+                  className='bg-dark text-light custom-file-label'
+                >
+                  {fileName || 'Choose a file'}
+                </span>
               </div>
             </div>
             <div className='text-center'>
-              <button className='btn bg-danger text-white btn-lg w-50'>
+              <button className='btn bg-danger text-white btn-lg w-25'>
                 Submit
               </button>
             </div>

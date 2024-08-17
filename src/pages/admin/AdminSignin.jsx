@@ -61,7 +61,7 @@ const AdminSignin = () => {
       } else if (err.response?.status === 400) {
         setErrMsg('Missing Email or Password');
       } else if (err.response?.status === 401) {
-        setErrMsg('Unauthorized');
+        setErrMsg('Incorrect Password or Email!');
       } else {
         setErrMsg('Signin Failed');
       }

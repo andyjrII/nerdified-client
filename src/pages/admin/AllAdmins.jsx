@@ -2,22 +2,30 @@ import { useState, useEffect } from 'react';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import { FaTrashAlt } from 'react-icons/fa';
 import ReactPaginate from 'react-paginate';
-import useAuth from '../../hooks/useAuth';
-import storage from '../../utils/storage';
+import db from '../../utils/localBase';
+import Swal from 'sweetalert2';
 
 const AllAdmins = () => {
   const axiosPrivate = useAdminAxiosPrivate();
-
-  const { auth, setAuth } = useAuth();
+  const [role, setRole] = useState('');
 
   useEffect(() => {
-    const storedAuth = storage.getData('admin_auth');
-    if (storedAuth) {
-      setAuth(storedAuth);
-    }
+    const initializeData = async () => {
+      try {
+        await fetchRole();
+        console.log(role);
+      } catch (error) {
+        console.error('Error fetching role from localBase:', error);
+      }
+    };
+
+    initializeData();
   }, []);
 
-  const role = auth.role;
+  const fetchRole = async () => {
+    const data = await db.collection('auth_admin').get();
+    setRole(data[0].role);
+  };
 
   const [admins, setAdmins] = useState([]);
   const [totalAdmins, setTotalAdmins] = useState();
@@ -82,8 +90,20 @@ const AllAdmins = () => {
         },
       });
       alert(`${response?.data.name} successfully deleted!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Delete Success',
+        text: `${response.data.name} deleted successfully`,
+        confirmButtonText: 'OK',
+      });
     } catch (error) {
       console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Delete Failed!',
+        confirmButtonText: 'OK',
+      });
     }
   };
 

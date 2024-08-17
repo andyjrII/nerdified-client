@@ -30,6 +30,7 @@ const AdminSidebar = () => {
         await fetchEmail();
         if (email) {
           await fetchAdmin();
+          console.log(admin.name, admin.role);
         }
       } catch (error) {
         console.error('Error fetching email from localBase:', error);

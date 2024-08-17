@@ -4,6 +4,7 @@ import { FaTrashAlt, FaEdit } from 'react-icons/fa';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import ReactPaginate from 'react-paginate';
 import Moment from 'react-moment';
+import Swal from 'sweetalert2';
 
 const BlogPosts = () => {
   const axiosPrivate = useAdminAxiosPrivate();
@@ -81,15 +82,26 @@ const BlogPosts = () => {
 
   const handleEdit = async (id) => {
     localStorage.setItem('EDIT_POST_ID', id);
-    navigate('/admin/posts/update');
+    navigate(`/admin/posts/${id}`);
   };
 
   const handleDelete = async (id) => {
     try {
       const response = await axiosPrivate.delete(`blog/${id}`);
-      alert(`${response?.data.title} successfully deleted!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Post Deleted',
+        text: `${response.data.title} deleted successfully`,
+        confirmButtonText: 'OK',
+      });
     } catch (error) {
       console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Delete Failed!',
+        confirmButtonText: 'OK',
+      });
     }
   };
 

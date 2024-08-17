@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
-import '../../assets/styles/admin.css';
+import Swal from 'sweetalert2';
 
 const NewPost = () => {
   const axiosPrivate = useAdminAxiosPrivate();
@@ -10,7 +10,7 @@ const NewPost = () => {
   const [postUrl, setPostUrl] = useState('');
   const [datePosted, setDatePosted] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const [fileName, setFileName] = useState('');
   const [errMsg, setErrMsg] = useState('');
 
   useEffect(() => {
@@ -19,6 +19,11 @@ const NewPost = () => {
 
   const handleImageChange = (e) => {
     setSelectedImage(e.target.files[0]);
+    try {
+      setFileName(e.target.files[0].name);
+    } catch (error) {
+      console.log('No file selected');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -33,7 +38,12 @@ const NewPost = () => {
         }
       );
       await imageUpload(response?.data.id);
-      alert(`${title} with URL ${postUrl} successfully created!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Post Created',
+        text: `${title} created successfully`,
+        confirmButtonText: 'OK',
+      });
       setTitle('');
       setPostUrl('');
     } catch (err) {
@@ -41,11 +51,17 @@ const NewPost = () => {
         setErrMsg('No Server Response');
       } else if (err.response?.status === 400) {
         setErrMsg('Missing Credentials');
-      } else if (err.response?.status === 403) {
+      } else if (err.response?.status === 401) {
         setErrMsg('Unauthorized');
       } else {
         setErrMsg('Post Creation Failed');
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: errMsg || 'Creation Failed!',
+        confirmButtonText: 'OK',
+      });
       errRef.current.focus();
     }
   };
@@ -71,10 +87,10 @@ const NewPost = () => {
       </div>
 
       <div className='p-3 pb-md-4 mx-auto row'>
-        {/* Form for creating a new post */}
         <p ref={errRef} className={errMsg ? 'errmsg' : 'offscreen'}>
           {errMsg}
         </p>
+
         <form onSubmit={handleSubmit}>
           <div className='row g-3'>
             <div className='col-md-7 mb-2'>
@@ -92,21 +108,21 @@ const NewPost = () => {
             </div>
 
             <div className='col-md-5 mb-2'>
-              <div className='input-group'>
-                <span
-                  className='input-group-text bg-dark text-white'
-                  id='image'
-                >
-                  Post Image
-                </span>
+              <div className='input-group custom-file-input bg-dark mb-2'>
                 <input
                   type='file'
-                  className='form-control bg-dark text-white'
-                  id='image'
-                  accept='image/*'
+                  className='file-upload bg-dark text-white'
+                  id='file-upload'
                   onChange={handleImageChange}
+                  accept='image/*'
                   required
                 />
+                <span
+                  htmlFor='file-upload'
+                  className='bg-dark text-light custom-file-label'
+                >
+                  {fileName || 'Choose a file'}
+                </span>
               </div>
             </div>
 
@@ -118,7 +134,7 @@ const NewPost = () => {
                   onChange={(e) => setPostUrl(e.target.value)}
                   value={postUrl}
                   required
-                  placeholder='www.post-url.com'
+                  placeholder='www.posturl.com'
                 />
               </div>
             </div>
