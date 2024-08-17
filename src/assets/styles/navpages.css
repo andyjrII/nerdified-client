@@ -23,11 +23,11 @@
 
 /* Course Details */
 .course-title {
-  font-size: 20px;
+  font-size: 16px;
 }
 
-.course-description {
-  font-size: 12px;
+.course-time {
+  font-size: 14px;
 }
 
 .modal-dialog {

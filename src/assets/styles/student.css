@@ -27,7 +27,10 @@ h2 {
 }
 
 #student-section {
-  background-color: #f5f5f5;
+  background-image: url('../images/bg/grey\ background\ with\ shadow.jpg');
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 #student-main {

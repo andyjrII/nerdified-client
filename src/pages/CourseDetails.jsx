@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import '../assets/styles/navpages.css';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import db from '../utils/localBase';
 import Moment from 'react-moment';
 import { FaClock, FaMoneyBill, FaStar, FaHeart } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
 import Missing from './Missing';
 import StarRating from '../components/StarRating';
 import Reviews from '../components/Reviews';
 import PDFViewer from '../components/PDFViewer';
+import Swal from 'sweetalert2';
 
 const CourseDetails = () => {
+  let { id } = useParams();
   const axiosPrivate = useAxiosPrivate();
   const [email, setEmail] = useState('');
 
@@ -19,6 +21,7 @@ const CourseDetails = () => {
     var courseId = course.id;
     var courseTitle = course.title;
   }
+  id = courseId;
 
   const [courseEnrolled, setCourseEnrolled] = useState(null);
 
@@ -48,7 +51,7 @@ const CourseDetails = () => {
   const isCourseEnrolled = async () => {
     try {
       const response = await axiosPrivate.get(
-        `students/course_enrolled/${courseId}`,
+        `students/course_enrolled/${id}`,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true,
@@ -67,7 +70,7 @@ const CourseDetails = () => {
         withCredentials: true,
       });
       const wishlistSet = new Set(response.data.map((item) => item.courseId));
-      setIsInWishlist(wishlistSet.has(courseId));
+      setIsInWishlist(wishlistSet.has(id));
     } catch (error) {
       console.log('Error fetching Wishlist!');
     }
@@ -78,7 +81,13 @@ const CourseDetails = () => {
       try {
         if (isInWishlist) {
           await axiosPrivate.delete('/wishlist/remove', {
-            data: { email, courseId },
+            data: { email, courseId: id },
+          });
+          Swal.fire({
+            icon: 'success',
+            title: 'Course Removed',
+            text: 'Course has been successfully removed from wishlist!',
+            confirmButtonText: 'OK',
           });
           setIsInWishlist(false);
         } else {
@@ -86,20 +95,31 @@ const CourseDetails = () => {
             '/wishlist/add',
             JSON.stringify({
               email,
-              courseId,
+              courseid: id,
             }),
             {
               headers: { 'Content-Type': 'application/json' },
               withCredentials: true,
             }
           );
+          Swal.fire({
+            icon: 'success',
+            title: 'Course Added',
+            text: 'Course has been successfully added to wishlist!',
+            confirmButtonText: 'OK',
+          });
           setIsInWishlist(true);
         }
       } catch (error) {
         console.log('Error toggling Wishlist!');
       }
     } else {
-      alert('You must Sign to add Course to Wishlist.');
+      Swal.fire({
+        icon: 'info',
+        title: 'Oops...',
+        text: 'You must be signed in first!',
+        confirmButtonText: 'Cancel',
+      });
     }
   };
 
@@ -174,7 +194,7 @@ const CourseDetails = () => {
                           </button>
                         ) : (
                           <Link
-                            to='/courses/payment'
+                            to={`/courses/${id}/payment`}
                             className='btn btn-lg w-50'
                             id='check-btn'
                           >
@@ -206,7 +226,7 @@ const CourseDetails = () => {
               </div>
             </div>
             <div className='row'>
-              <Reviews courseId={courseId} />
+              <Reviews courseId={id} />
             </div>
           </div>
         </main>

@@ -71,7 +71,7 @@ const Signin = () => {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: errMsg || 'Something went wrong!',
+        text: errMsg || 'Signin Failed!',
         confirmButtonText: 'OK',
       });
       errRef.current.focus();

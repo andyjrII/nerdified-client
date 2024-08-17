@@ -90,7 +90,7 @@ const EnrolledCourses = () => {
     try {
       const response = await axiosPrivate.get(`courses/course/${id}`);
       localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(response?.data));
-      navigate('/courses/course');
+      navigate(`/courses/${id}`);
     } catch (error) {
       console.error('Error fetching Course');
     }

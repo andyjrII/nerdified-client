@@ -8,6 +8,7 @@ import Moment from 'react-moment';
 import { formatCurrency } from '../../utils/formatCurrency';
 import StarRating from '../../components/StarRating';
 import StudentInfo from '../../components/StudentInfo';
+import Swal from 'sweetalert2';
 
 const Wishlist = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -50,16 +51,26 @@ const Wishlist = () => {
       await axiosPrivate.delete('wishlist/remove', {
         data: { email, courseId },
       });
-      alert('Course successfully removed!');
+      Swal.fire({
+        icon: 'success',
+        title: 'Course Removed',
+        text: 'Course has been successfully removed from wishlist!',
+        confirmButtonText: 'OK',
+      });
       getWishlist();
     } catch (error) {
-      alert('Error removing Course');
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Error removing course from wishlist!',
+        confirmButtonText: 'Try again',
+      });
     }
   };
 
   const handleCourseView = (course) => {
     localStorage.setItem('NERDVILLE_COURSE', JSON.stringify(course));
-    navigate('/courses/course');
+    navigate(`/courses/${course.id}`);
   };
 
   const displayWishlist = wishlist.map((wish) => (

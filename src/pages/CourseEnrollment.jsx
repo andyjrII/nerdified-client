@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../assets/styles/signin.css';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,6 +14,7 @@ import db from '../utils/localBase';
 const publicKey = 'pk_test_244916c0bd11624711bdab398418c05413687296';
 
 const CourseEnrollment = () => {
+  let { id } = useParams();
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -33,6 +34,7 @@ const CourseEnrollment = () => {
     var amount = unformatCurrency(course.price);
     var courseTitle = course.title;
   }
+  id = courseId;
 
   const reference = localStorage.getItem('PAYMENT_REFERENCE');
 
@@ -73,7 +75,7 @@ const CourseEnrollment = () => {
         `students/enroll`,
         JSON.stringify({
           email,
-          courseId,
+          courseId: id,
           amount,
           reference,
           classDays: selectedDays,
@@ -134,14 +136,16 @@ const CourseEnrollment = () => {
                     className='img d-flex align-items-center justify-content-center'
                     id='form-image'
                   ></div>
+
                   <h3 className='text-center mb-0'>PAYMENT</h3>
+
                   <p
                     ref={errRef}
                     className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
                   >
                     {errMsg}
                   </p>
-                  s
+
                   <div className='form-group'>
                     {/* Checkbox for Number of Sessions Per Week*/}
                     <div className='mb-2 text-white d-flex'>
@@ -251,6 +255,7 @@ const CourseEnrollment = () => {
                     </p>
                   </div>
                   <hr className='bg-primary m-3' />
+
                   {/* Radio Button for Preferrable time of the day */}
                   <div className='form-group'>
                     <div className='mb-2 text-white d-flex'>
@@ -316,7 +321,9 @@ const CourseEnrollment = () => {
                       classes
                     </p>
                   </div>
+
                   <hr className='bg-primary m-3' />
+
                   {/* Radio button for Mode of learning */}
                   <div className='form-group mt-2'>
                     <div className='mb-2 text-white d-flex'>
@@ -366,6 +373,7 @@ const CourseEnrollment = () => {
                       Onsite venue is at Lokogoma, Abuja, Nigeria.
                     </p>
                   </div>
+
                   <div className='form-group w-100 py-3'>
                     <button
                       type='button'

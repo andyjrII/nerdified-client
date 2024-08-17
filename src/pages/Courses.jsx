@@ -8,6 +8,7 @@ import '../assets/styles/navpages.css';
 import { motion } from 'framer-motion';
 import { FaHeart } from 'react-icons/fa';
 import StarRating from '../components/StarRating';
+import Swal from 'sweetalert2';
 
 const Courses = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -76,6 +77,12 @@ const Courses = () => {
           await axiosPrivate.delete('/wishlist/remove', {
             data: { email, courseId },
           });
+          Swal.fire({
+            icon: 'success',
+            title: 'Course Removed',
+            text: 'Course has been successfully removed from wishlist!',
+            confirmButtonText: 'OK',
+          });
           setWishlist((prev) => {
             const newSet = new Set(prev);
             newSet.delete(courseId);
@@ -90,13 +97,24 @@ const Courses = () => {
               withCredentials: true,
             }
           );
+          Swal.fire({
+            icon: 'success',
+            title: 'Course Added',
+            text: 'Course has been successfully added to wishlist!',
+            confirmButtonText: 'OK',
+          });
           setWishlist((prev) => new Set(prev).add(courseId));
         }
       } catch (error) {
         console.error('Error toggling wishlist:', error);
       }
     } else {
-      alert('You must be signed in first to be able to add Course to Wishlist');
+      Swal.fire({
+        icon: 'info',
+        title: 'Oops...',
+        text: 'You must be signed in first!',
+        confirmButtonText: 'Cancel',
+      });
     }
   };
 
@@ -127,8 +145,8 @@ const Courses = () => {
             </h4>
           </div>
           <div className='card-body'>
-            <ul className='list-unstyled mt-1 mb-3 justify-content-center'>
-              <li className='mb-2'>
+            <ul className='list-unstyled mb-2 justify-content-center'>
+              <li className='mb-2 course-time'>
                 Updated:{' '}
                 <small className='text-muted fw-light'>
                   <Moment format='MMMM D, YYYY'>{course.updatedAt}</Moment>
@@ -141,7 +159,7 @@ const Courses = () => {
             </ul>
             <div className='justify-content-center d-flex'>
               <Link
-                to='/courses/course'
+                to={`/courses/${course.id}`}
                 role='button'
                 className='w-50 btn btn-lg'
                 id='check-btn'

@@ -6,7 +6,6 @@ import { FaClock, FaEnvelope, FaPhone } from 'react-icons/fa';
 import { IoLocation } from 'react-icons/io5';
 import db from '../utils/localBase';
 import Welcome from './Welcome';
-import Spinners from './Spinners';
 
 const StudentInfo = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -54,7 +53,7 @@ const StudentInfo = () => {
         <div className='row align-items-start info-row mx-auto justify-content-center'>
           <div className='col-auto mb-2'>
             <button type='button' className='btn btn-primary p-3'>
-              {student.email || <Spinners />}{' '}
+              {student.email}{' '}
               <span className='badge navy'>
                 <FaEnvelope />
               </span>
@@ -62,7 +61,7 @@ const StudentInfo = () => {
           </div>
           <div className='col-auto mb-2'>
             <button type='button' className='btn btn-primary p-3'>
-              {student.phoneNumber || <Spinners />}{' '}
+              {student.phoneNumber}{' '}
               <span className='badge navy'>
                 <FaPhone />
               </span>
@@ -70,7 +69,7 @@ const StudentInfo = () => {
           </div>
           <div className='col-auto mb-2'>
             <button type='button' className='btn btn-primary p-3'>
-              {student.address || <Spinners />}{' '}
+              {student.address}{' '}
               <span className='badge navy'>
                 <IoLocation />
               </span>
@@ -82,9 +81,7 @@ const StudentInfo = () => {
               className='btn btn-primary p-3'
               title='Date Joined'
             >
-              <Moment format='MMMM D, YYYY'>
-                {student.createdAt || <Spinners />}
-              </Moment>{' '}
+              <Moment format='MMMM D, YYYY'>{student.createdAt}</Moment>{' '}
               <span className='badge navy'>
                 <FaClock />
               </span>
