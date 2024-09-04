@@ -54,6 +54,8 @@ const Signup = () => {
   const [validAddress, setValidAddress] = useState(false);
   const [addressFocus, setAddressFocus] = useState(false);
 
+  const [image, setImage] = useState(null);
+
   const [errMsg, setErrMsg] = useState('');
 
   useEffect(() => {
@@ -102,32 +104,33 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post(
-        'auth/signup',
-        JSON.stringify({
-          name,
-          phoneNumber: phone,
-          email,
-          password,
-          address,
-        }),
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        }
-      );
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('phoneNumber', phone);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('address', address);
+      formData.append('image', image); // Add image file
+
+      const response = await axios.post('auth/signup', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+
       const accessToken = response?.data.access_token;
       await db
         .collection('auth_student')
         .doc(email)
         .set({ email, accessToken });
       setAuth({ email, accessToken });
+
       Swal.fire({
         icon: 'success',
         title: 'Signup Success',
         text: 'You have successfully signed up!',
         confirmButtonText: 'OK',
       });
+
       navigate('/student', { replace: true });
     } catch (err) {
       if (!err?.response) {
@@ -135,8 +138,9 @@ const Signup = () => {
       } else if (err.response?.status === 400) {
         setErrMsg('Email Already Exists');
       } else {
-        setErrMsg('Registraton Failed');
+        setErrMsg('Registration Failed');
       }
+
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -175,6 +179,20 @@ const Signup = () => {
                     </span>
                   </div>
                   <input
+                    type='file'
+                    className='form-control'
+                    onChange={(e) => setImage(e.target.files[0])}
+                    required
+                  />
+                </div>
+
+                <div className='form-group'>
+                  <div className='icon d-flex align-items-center justify-content-center'>
+                    <span>
+                      <FcBusinessman />
+                    </span>
+                  </div>
+                  <input
                     type='text'
                     className='form-control'
                     placeholder='Names'
@@ -204,6 +222,7 @@ const Signup = () => {
                     Last Name followed by Other Names e.g. Andy James
                   </p>
                 </div>
+
                 <div className='form-group'>
                   <div className='icon d-flex align-items-center justify-content-center'>
                     <span>
@@ -240,6 +259,7 @@ const Signup = () => {
                     Enter a valid Email address e.g. andyjames@gmail.com
                   </p>
                 </div>
+
                 <div className='form-group'>
                   <div className='icon d-flex align-items-center justify-content-center'>
                     <span>
@@ -285,6 +305,7 @@ const Signup = () => {
                     <span>#</span> <span>$</span> <span>%</span>
                   </p>
                 </div>
+
                 <div className='form-group'>
                   <div className='icon d-flex align-items-center justify-content-center'>
                     <span>
@@ -365,6 +386,7 @@ const Signup = () => {
                     Enter a valid Addres - City, State & Country.
                   </p>
                 </div>
+
                 <div className='form-group'>
                   <div className='icon d-flex align-items-center justify-content-center'>
                     <span>
@@ -401,6 +423,7 @@ const Signup = () => {
                     Enter a valid Phone Number.
                   </p>
                 </div>
+
                 <div className='form-group w-100 py-3'>
                   <button
                     className='btn form-control btn-primary rounded px-3'

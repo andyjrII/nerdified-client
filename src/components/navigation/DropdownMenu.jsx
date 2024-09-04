@@ -17,7 +17,6 @@ const DropdownMenu = () => {
   const axiosPrivate = useAxiosPrivate();
   const { student, setStudent } = useStudent();
   const [email, setEmail] = useState('');
-  const [image, setImage] = useState('');
 
   const logout = useLogout();
   const navigate = useNavigate();
@@ -43,32 +42,17 @@ const DropdownMenu = () => {
         try {
           const response = await axiosPrivate.get(`students/${email}`);
           setStudent(response?.data);
-          fetchImage(email); // Fetch image after student data is set
         } catch (error) {
           console.error('Error fetching Student Profile:', error);
           // Fallback: Fetch from Localbase if server fails
           const localStudent = await db.collection('student').doc(email).get();
           setStudent(localStudent);
-          fetchImage(email); // Fetch image after student data is set
         }
       };
 
       fetchStudent();
     }
   });
-
-  const fetchImage = async (email) => {
-    try {
-      const response = await axiosPrivate.get(`students/image/${email}`, {
-        responseType: 'arraybuffer',
-      });
-      const imageBlob = new Blob([response.data], { type: 'image/jpeg' });
-      const imageUrl = URL.createObjectURL(imageBlob);
-      setImage(imageUrl);
-    } catch (error) {
-      console.error('Error getting Profile picture!', error);
-    }
-  };
 
   const signOut = async () => {
     try {
@@ -87,7 +71,11 @@ const DropdownMenu = () => {
         data-bs-toggle='dropdown'
         aria-expanded='false'
       >
-        <img src={image || DPDefault} alt='Student' className='dp' />
+        <img
+          src={student.imagePath || DPDefault}
+          alt='Student'
+          className='dp'
+        />
       </Link>
       <ul className='dropdown-menu dropdown-menu-dark navy shadow'>
         <li>
