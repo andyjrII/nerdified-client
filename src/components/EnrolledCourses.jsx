@@ -216,14 +216,16 @@ const EnrolledCourses = () => {
   });
 
   return (
-    <>
-      <h3 className='bolded px-3'>
-        <span className='badge bg-primary'>My Courses</span>
-      </h3>
-      <Slider {...settings} className='p-2'>
-        {displayMyCourses}
-      </Slider>
-    </>
+    enrollmentDetails || (
+      <>
+        <h3 className='bolded px-3'>
+          <span className='badge bg-primary'>My Courses</span>
+        </h3>
+        <Slider {...settings} className='p-2'>
+          {displayMyCourses}
+        </Slider>
+      </>
+    )
   );
 };
 
