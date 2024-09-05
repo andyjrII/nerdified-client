@@ -52,7 +52,7 @@ const DropdownMenu = () => {
 
       fetchStudent();
     }
-  });
+  }, [email]);
 
   const signOut = async () => {
     try {

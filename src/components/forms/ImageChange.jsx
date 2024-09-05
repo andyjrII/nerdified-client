@@ -9,6 +9,7 @@ const ImageChange = () => {
   const [fileName, setFileName] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePath, setImagePath] = useState('');
+  const [newImage, setNewImage] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
@@ -29,16 +30,8 @@ const ImageChange = () => {
   };
 
   const fetchImage = async () => {
-    try {
-      const response = await axiosPrivate.get(`students/image/${email}`, {
-        responseType: 'arraybuffer', // Set the response type to 'arraybuffer'
-      });
-      const imageBlob = new Blob([response.data], { type: 'image/jpeg' }); // Create a Blob from the binary data
-      const imageUrl = URL.createObjectURL(imageBlob); // Create a temporary URL for the image
-      setImagePath(imageUrl);
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    const localStudent = await db.collection('student').doc(email).get();
+    setImagePath(localStudent.imagePath);
   };
 
   const handleImageChange = (e) => {
@@ -51,23 +44,29 @@ const ImageChange = () => {
     const formData = new FormData();
     formData.append('image', selectedImage);
     try {
-      await axiosPrivate.patch(`students/upload/${email}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
+      const response = await axiosPrivate.patch(
+        `students/upload/${email}`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
+        }
+      );
       Swal.fire({
         icon: 'success',
         title: 'Image Changed',
         text: 'Your image has been changed successfully!',
         confirmButtonText: 'OK',
       });
-      fetchImage();
-      setSelectedImage(null);
+      await db.collection('student').doc(email).update({
+        imagePath: response.data,
+      });
+      setNewImage(response.data);
     } catch (err) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: err || 'Something went wrong!',
+        text: err.message || 'Something went wrong!',
         confirmButtonText: 'OK',
       });
     }
@@ -76,7 +75,7 @@ const ImageChange = () => {
   return (
     <div className='student-wrap py-4'>
       <h3 className='text-center mb-3 text-light'>Picture Change</h3>
-      <img src={imagePath} alt='Student' className='img-fluid' />
+      <img src={newImage || imagePath} alt='Student' className='img-fluid' />
       <form className='login-form rounded' onSubmit={handleImageSubmit}>
         <div className='form-group'>
           <div className='custom-file-input'>
