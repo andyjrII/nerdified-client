@@ -9,6 +9,7 @@ import { FcLock } from 'react-icons/fc';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import useStudent from '../../hooks/useStudent';
 import Swal from 'sweetalert2';
+import { SyncLoader } from 'react-spinners';
 
 const PASSWORD_REGEX =
   /^(?=.*[Link-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -31,6 +32,7 @@ const PasswordChange = () => {
   const [confirmFocus, setConfirmFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const result = PASSWORD_REGEX.test(newPassword);
@@ -44,6 +46,7 @@ const PasswordChange = () => {
   }, [newPassword, confirmPassword]);
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     const v1 = PASSWORD_REGEX.test(newPassword);
     if (!v1) {
@@ -93,18 +96,19 @@ const PasswordChange = () => {
       });
       errRef.current.focus();
     }
+    setLoading(false);
   };
 
   return (
-    <div className='student-wrap py-4'>
-      <h3 className='text-center text-light'>Password Change</h3>
+    <div className='password-change-wrap p-4 align-content-center'>
+      <h6 className='text-center text-light'>Password Change</h6>
       <p
         ref={errRef}
         className={`{errMsg ? "errmsg" : "offscreen"} text-center text-danger`}
       >
         {errMsg}
       </p>
-      <form className='login-form rounded shadow-lg' onSubmit={handleSubmit}>
+      <form className='login-form shadow-lg' onSubmit={handleSubmit}>
         <div className='form-group'>
           <div className='icon d-flex align-items-center justify-content-center'>
             <span className='fa fa-lock'>
@@ -201,7 +205,17 @@ const PasswordChange = () => {
             type='submit'
             disabled={!validNewPassword || !validConfirm ? true : false}
           >
-            Submit Form
+            {loading ? (
+              <SyncLoader
+                size={20}
+                color='#ffffff'
+                style={{
+                  transform: 'translate(-50%, -50%)',
+                }}
+              />
+            ) : (
+              'Submit'
+            )}
           </button>
         </div>
       </form>

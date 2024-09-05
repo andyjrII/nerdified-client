@@ -6,6 +6,7 @@ import useAuth from '../hooks/useAuth';
 import { FcLock, FcAddressBook } from 'react-icons/fc';
 import db from '../utils/localBase';
 import Swal from 'sweetalert2';
+import { SyncLoader } from 'react-spinners';
 
 const Signin = () => {
   const { setAuth } = useAuth(); // Ensure useAuth provides setAuth
@@ -16,7 +17,9 @@ const Signin = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const [errMsg, setErrMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     emailRef.current.focus();
@@ -27,6 +30,7 @@ const Signin = () => {
   }, [email, password]);
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     try {
@@ -75,6 +79,7 @@ const Signin = () => {
       });
       errRef.current.focus();
     }
+    setLoading(false);
   };
 
   return (
@@ -140,13 +145,23 @@ const Signin = () => {
                     type='submit'
                     className='btn form-control btn-primary rounded px-3'
                   >
-                    Sign in
+                    {loading ? (
+                      <SyncLoader
+                        size={20}
+                        color='#ffffff'
+                        style={{
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                      />
+                    ) : (
+                      'Sign in'
+                    )}
                   </button>
                 </div>
               </form>
               <div className='w-100 text-center mt-4 text'>
                 <p className='mb-0'>Don't have an account?</p>
-                <Link to='/signup'>Sign Up</Link>
+                <Link to='/signup'>Register</Link>
               </div>
             </div>
           </div>

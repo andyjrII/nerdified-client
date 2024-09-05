@@ -3,6 +3,7 @@ import { FcImageFile } from 'react-icons/fc';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import db from '../../utils/localBase';
 import Swal from 'sweetalert2';
+import { SyncLoader } from 'react-spinners';
 
 const ImageChange = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -11,6 +12,8 @@ const ImageChange = () => {
   const [imagePath, setImagePath] = useState('');
   const [newImage, setNewImage] = useState('');
   const [email, setEmail] = useState('');
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -40,6 +43,7 @@ const ImageChange = () => {
   };
 
   const handleImageSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     const formData = new FormData();
     formData.append('image', selectedImage);
@@ -54,8 +58,8 @@ const ImageChange = () => {
       );
       Swal.fire({
         icon: 'success',
-        title: 'Image Changed',
-        text: 'Your image has been changed successfully!',
+        title: 'Image Upload',
+        text: 'Image uploaded successfully!',
         confirmButtonText: 'OK',
       });
       await db.collection('student').doc(email).update({
@@ -70,13 +74,14 @@ const ImageChange = () => {
         confirmButtonText: 'OK',
       });
     }
+    setLoading(false);
   };
 
   return (
-    <div className='student-wrap py-4'>
-      <h3 className='text-center mb-3 text-light'>Picture Change</h3>
+    <div className='image-upload-wrap p-4'>
+      <h6 className='text-center mb-3 text-light'>Edit Image</h6>
       <img src={newImage || imagePath} alt='Student' className='img-fluid' />
-      <form className='login-form rounded' onSubmit={handleImageSubmit}>
+      <form className='login-form' onSubmit={handleImageSubmit}>
         <div className='form-group'>
           <div className='custom-file-input'>
             <input
@@ -95,9 +100,19 @@ const ImageChange = () => {
             </label>
           </div>
         </div>
-        <div className='mt-2'>
-          <button className='btn btn-primary rounded w-100 py-2'>
-            Submit Image
+        <div className='form-group'>
+          <button className='btn btn-primary rounded w-100 px-3'>
+            {loading ? (
+              <SyncLoader
+                size={20}
+                color='#ffffff'
+                style={{
+                  transform: 'translate(-50%, -50%)',
+                }}
+              />
+            ) : (
+              'Upload'
+            )}
           </button>
         </div>
       </form>

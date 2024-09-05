@@ -20,6 +20,7 @@ import db from '../utils/localBase';
 import useAuth from '../hooks/useAuth';
 import Swal from 'sweetalert2';
 import DPDefault from '../assets/images/navpages/person_profile.jpg';
+import { SyncLoader } from 'react-spinners';
 
 const NAME_REGEX = /[A-z-]{3,20}$/;
 const PHONE_REGEX = /[0-9]{11}$/;
@@ -61,6 +62,7 @@ const Signup = () => {
   const [imagePreview, setImagePreview] = useState(null);
 
   const [errMsg, setErrMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const result = NAME_REGEX.test(name);
@@ -109,6 +111,7 @@ const Signup = () => {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     const v1 = EMAIL_REGEX.test(email);
@@ -168,6 +171,7 @@ const Signup = () => {
       });
       errRef.current.focus();
     }
+    setLoading(false);
   };
 
   return (
@@ -492,7 +496,17 @@ const Signup = () => {
                         : false
                     }
                   >
-                    Submit Form
+                    {loading ? (
+                      <SyncLoader
+                        size={20}
+                        color='#ffffff'
+                        style={{
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                      />
+                    ) : (
+                      'Submit'
+                    )}
                   </button>
                 </div>
               </form>
