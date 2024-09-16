@@ -150,8 +150,12 @@ li svg {
 
 .navbar-dark .navbar-brand .brand-top {
   font-weight: bold;
-  font-size: 28px;
+  font-size: 25px;
   display: block;
+}
+
+.brand-top span {
+  font-size: 25px;
 }
 
 .navbar-dark .navbar-brand .brand-bottom {

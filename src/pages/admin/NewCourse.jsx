@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import Swal from 'sweetalert2';
+import { SyncLoader } from 'react-spinners';
 
 const NewCourse = () => {
   const errRef = useRef();
@@ -11,7 +12,9 @@ const NewCourse = () => {
   const [price, setPrice] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState('');
+
   const [errMsg, setErrMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setErrMsg('');
@@ -27,17 +30,17 @@ const NewCourse = () => {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
-      const response = await axiosPrivate.post(
-        'courses/create',
-        JSON.stringify({ title, price }),
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-        }
-      );
-      await fileUpload(response?.data.id);
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('price', price);
+      formData.append('pdf', selectedFile);
+      await axiosPrivate.post('courses/create', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
       Swal.fire({
         icon: 'success',
         title: 'Course Created',
@@ -46,11 +49,15 @@ const NewCourse = () => {
       });
       setTitle('');
       setPrice(0);
+      setSelectedFile(null);
+      setFileName('');
     } catch (err) {
       if (err.response?.status === 400) {
-        setErrMsg('Course with title already exists!');
+        setErrMsg('Check file & reupload.');
       } else if (err.response?.status === 401) {
         setErrMsg('Unauthorized');
+      } else if (err.response?.status === 409) {
+        setErrMsg('Course with title already exists!');
       }
       Swal.fire({
         icon: 'error',
@@ -60,21 +67,7 @@ const NewCourse = () => {
       });
       errRef.current.focus();
     }
-  };
-
-  const fileUpload = async (id) => {
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    try {
-      await axiosPrivate.patch(`courses/upload/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-        responseType: 'arraybuffer',
-      });
-    } catch (err) {
-      setErrMsg('Document upload Failed');
-      errRef.current.focus();
-    }
+    setLoading(false);
   };
 
   return (
@@ -141,7 +134,17 @@ const NewCourse = () => {
             </div>
             <div className='text-center'>
               <button className='btn bg-danger text-white btn-lg w-25'>
-                Submit
+                {loading ? (
+                  <SyncLoader
+                    size={20}
+                    color='#ffffff'
+                    style={{
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  />
+                ) : (
+                  'Submit'
+                )}
               </button>
             </div>
           </div>

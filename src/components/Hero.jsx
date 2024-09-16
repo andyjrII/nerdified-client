@@ -42,22 +42,24 @@ const Hero = () => {
             <div className='carousel-caption'>
               <h1>
                 <span className='carousel-text badge navy p-3'>
-                  Nerdified Coding Academy
+                  Nerdified <span className='text-success'>Af</span>
+                  <span className='text-warning'>ri</span>
+                  <span className='text-danger'>ca</span>
                 </span>
               </h1>
               <p>
                 <span className='carousel-text badge navy text-wrap p-3'>
-                  Join us today & take the first step towards a successful
-                  career in programming!
+                  Empowering Africa's tech potential for a sustainable and
+                  prosperous future.
                 </span>
               </p>
               <p>
                 <Link
                   className='btn btn-lg me-1 carousel-button'
-                  to='/courses'
+                  to='/about'
                   role='button'
                 >
-                  Get Nerdified
+                  About us
                 </Link>
               </p>
             </div>
@@ -76,7 +78,9 @@ const Hero = () => {
             <div className='carousel-caption text-end'>
               <h1>
                 <span className='carousel-text badge text-wrap navy p-3'>
-                  Nerdified Coding Academy
+                  Nerdified <span className='text-success'>Af</span>
+                  <span className='text-warning'>ri</span>
+                  <span className='text-danger'>ca</span>
                 </span>
               </h1>
               <p>
@@ -106,7 +110,9 @@ const Hero = () => {
             <div className='carousel-caption text-start'>
               <h1>
                 <span className='carousel-text badge navy p-3'>
-                  Nerdified Coding Academy
+                  Nerdified <span className='text-success'>Af</span>
+                  <span className='text-warning'>ri</span>
+                  <span className='text-danger'>ca</span>
                 </span>
               </h1>
               <p>

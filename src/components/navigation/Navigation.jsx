@@ -1,5 +1,10 @@
 import { Link } from 'react-router-dom';
-import { IoHomeSharp, IoBook, IoInformationCircle } from 'react-icons/io5';
+import {
+  IoHomeSharp,
+  IoBook,
+  IoInformationCircle,
+  IoCall,
+} from 'react-icons/io5';
 import { FaBlogger, FaLock } from 'react-icons/fa';
 import '../../assets/styles/navigation.css';
 import Logo from '../../assets/images/logo.png';
@@ -19,7 +24,11 @@ const Navigation = () => {
         <Link className='navbar-brand d-flex' to='/'>
           <img src={Logo} alt='<Nerdified />' id='nerdified-logo' />
           <div className='ml-3'>
-            <span className='brand-top'>Nerdified</span>
+            <span className='brand-top'>
+              Nerdified <span className='text-success'>Af</span>
+              <span className='text-warning'>ri</span>
+              <span className='text-danger'>ca</span>
+            </span>
             <span className='brand-bottom'>Educate. Empower. Nerdify</span>
           </div>
         </Link>
@@ -68,6 +77,14 @@ const Navigation = () => {
                 to='/about'
               >
                 <IoInformationCircle className='mr-2' /> About us
+              </Link>
+            </li>
+            <li className='nav-item me-2'>
+              <Link
+                className='nav-link text-center d-flex align-items-center'
+                to='/contact'
+              >
+                <IoCall className='mr-2' /> Contact us
               </Link>
             </li>
             {!auth.email && (

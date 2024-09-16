@@ -45,21 +45,20 @@ const Home = () => {
               >
                 <h2 className='section-heading mb-2'>
                   <span className='section-heading-upper'>
-                    Practical Learning
+                    High-Demand Technologies
                   </span>
                   <span className='section-heading-lower'>
-                    LEARN TO CODE & BUILD AMAZING SOFTWARE
+                    Expand Your Skills with Our Expert-Led Classes
                   </span>
                 </h2>
                 <p className='mb-2'>
-                  We are thrilled to have you consider joining our community of
-                  learners. Our classes are designed to provide you with a
-                  comprehensive & practical learning experience, tailored to
-                  meet the needs of both on-site & distant learners.
+                  Enhance your programming skills with our specialized classes
+                  in high-demand technologies. Our classes cover the entire web
+                  development spectrum, from design to deployment.
                 </p>
                 <div className='intro-button mx-auto'>
-                  <Link className='btn btn-xl text-white' to='about'>
-                    Learn more about us
+                  <Link className='btn btn-xl text-white' to='courses'>
+                    Check out our courses
                   </Link>
                 </div>
               </motion.div>

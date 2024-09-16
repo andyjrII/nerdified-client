@@ -33,6 +33,7 @@ import AllAdmins from './pages/admin/AllAdmins';
 import { StudentProvider } from './context/StudentProvider';
 import { AdminProvider } from './context/AdminProvider';
 import { AuthProvider } from './context/AuthProvider';
+import Contact from './pages/Contact';
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
               />
               <Route path='/blog' element={<Blog />} />
               <Route path='/about' element={<About />} />
+              <Route path='/contact' element={<Contact />} />
 
               {/* Student protected routes */}
               <Route element={<PersistLogin />}>

@@ -477,3 +477,11 @@ timeline > li .timeline-panel:after {
   color: #ffffff;
   background-color: #ff6347;
 }
+
+/* Contact Page */
+
+.address-map {
+  border: 0;
+  width: 100%;
+  height: 20rem;
+}
