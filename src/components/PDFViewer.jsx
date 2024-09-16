@@ -15,16 +15,8 @@ const PDFViewer = () => {
   useEffect(() => {
     const getCourseDetails = async () => {
       try {
-        const response = await axiosPrivate.get(`courses/details/${courseId}`, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
-          responseType: 'arraybuffer',
-        });
-        const pdfBlob = new Blob([response.data], {
-          type: 'application/pdf',
-        });
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-        setPdfData(pdfUrl);
+        const response = await axiosPrivate.get(`courses/details/${courseId}`);
+        setPdfData(response.data);
       } catch (error) {
         console.error('Error:', error);
       }
