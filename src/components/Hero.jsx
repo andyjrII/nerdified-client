@@ -59,7 +59,7 @@ const Hero = () => {
                   to='/about'
                   role='button'
                 >
-                  About us
+                  About Us
                 </Link>
               </p>
             </div>
@@ -68,7 +68,7 @@ const Hero = () => {
 
         <div className='carousel-item'>
           <img
-            src={Carousel2}
+            src={Carousel3}
             alt='Carousel 2'
             className='bd-placeholder-img'
             width='100%'
@@ -85,8 +85,8 @@ const Hero = () => {
               </h1>
               <p>
                 <span className='carousel-text badge navy text-wrap p-3 text-end'>
-                  Join us today & take the first step towards a successful
-                  career in programming!
+                  Kickstart your journey to a thriving programming career—join
+                  us today & unlock your future in tech!
                 </span>
               </p>
               <p>
@@ -100,7 +100,7 @@ const Hero = () => {
 
         <div className='carousel-item'>
           <img
-            src={Carousel3}
+            src={Carousel2}
             alt='Carousel 3'
             className='bd-placeholder-img'
             width='100%'
@@ -117,13 +117,13 @@ const Hero = () => {
               </h1>
               <p>
                 <span className='carousel-text badge navy text-wrap text-start p-3'>
-                  Join us today & take the first step towards a successful
-                  career in programming!
+                  Empower your business with innovative web solutions tailored
+                  to your unique needs. Let’s build your success online today!
                 </span>
               </p>
               <p>
                 <Link className='btn btn-lg carousel-button' to='/courses'>
-                  Get Nerdified
+                  Contact Us
                 </Link>
               </p>
             </div>

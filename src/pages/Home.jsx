@@ -58,7 +58,7 @@ const Home = () => {
                 </p>
                 <div className='intro-button mx-auto'>
                   <Link className='btn btn-xl text-white' to='courses'>
-                    Check out our courses
+                    View courses
                   </Link>
                 </div>
               </motion.div>
@@ -86,20 +86,20 @@ const Home = () => {
               >
                 <h2 className='section-heading mb-2'>
                   <span className='section-heading-upper'>
-                    High-Demand Technologies
+                    Cutting-Edge Solutions
                   </span>
                   <span className='section-heading-lower'>
-                    Expand Your Skills with Our Expert-Led Classes
+                    Transform Your Business with Our Custom Web Solutions
                   </span>
                 </h2>
                 <p className='mb-2'>
-                  Enhance your programming skills with our specialized classes
-                  in high-demand technologies. Our classes cover the entire web
-                  development spectrum, from design to deployment.
+                  Elevate your business with our tailored web & app development
+                  services. From concept to launch, we build cutting-edge
+                  digital solutions that drive success.
                 </p>
                 <div className='intro-button mx-auto'>
-                  <Link className='btn btn-xl text-white' to='courses'>
-                    Check out our courses
+                  <Link className='btn btn-xl text-white' to='/contact'>
+                    Contact us
                   </Link>
                 </div>
               </motion.div>

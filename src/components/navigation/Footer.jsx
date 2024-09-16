@@ -30,7 +30,7 @@ const Footer = () => {
           <div className='row'>
             <p className='text-white ml-3'>
               <span className='d-flex align-items-center'>
-                <FaCopyright className='bi mr-2' /> 2024 Nerdified
+                <FaCopyright className='bi mr-2' /> 2024 Nerdified Africa
               </span>
             </p>
           </div>
