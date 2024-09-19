@@ -19,30 +19,31 @@ const AllCourses = () => {
   const coursesPerPage = 20;
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const response = await axiosPrivate.get(
-          `courses/${currentPage}`,
-          {
-            params: {
-              search: searchQuery,
-            },
-          },
-          {
-            headers: { 'Content-Type': 'application/json' },
-            withCredentials: true,
-          }
-        );
-        setCourses(response.data.courses);
-        setTotalCourses(response.data.totalCourses);
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
     fetchCourses();
   }, [currentPage, searchQuery]);
 
   const pageCount = Math.ceil(totalCourses / coursesPerPage);
+
+  const fetchCourses = async () => {
+    try {
+      const response = await axiosPrivate.get(
+        `courses/${currentPage}`,
+        {
+          params: {
+            search: searchQuery,
+          },
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+      setCourses(response.data.courses);
+      setTotalCourses(response.data.totalCourses);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const displayCourses = courses.map((course) => {
     return (
@@ -97,6 +98,7 @@ const AllCourses = () => {
         text: `${response?.data.title} deleted successfully`,
         confirmButtonText: 'OK',
       });
+      fetchCourses();
     } catch (error) {
       Swal.fire({
         icon: 'error',
