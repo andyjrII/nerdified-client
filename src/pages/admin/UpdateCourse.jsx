@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useAdminAxiosPrivate from '../../hooks/useAdminAxiosPrivate';
 import axios from '../../api/axios';
 import Swal from 'sweetalert2';
+import { SyncLoader } from 'react-spinners';
 
 const UpdateCourse = () => {
   const axiosPrivate = useAdminAxiosPrivate();
@@ -15,9 +16,28 @@ const UpdateCourse = () => {
   const [course, setCourse] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState('');
+
+  const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState();
 
   useEffect(() => {
+    const getCourse = async () => {
+      try {
+        const response = await axios.get(`courses/course/${courseId}`);
+        if (!response.data) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Course does not exist!',
+            confirmButtonText: 'OK',
+          });
+        }
+        setCourse(response?.data);
+      } catch (err) {
+        setErrMsg('Error Occured!');
+      }
+    };
+
     getCourse();
   }, []);
 
@@ -34,35 +54,22 @@ const UpdateCourse = () => {
     }
   };
 
-  const getCourse = async () => {
-    try {
-      const response = await axios.get(`courses/course/${courseId}`);
-      if (!response.data) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Course does not exist!',
-          confirmButtonText: 'OK',
-        });
-      }
-      setCourse(response?.data);
-    } catch (err) {
-      setErrMsg('Error Occured!');
-    }
-  };
-
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
+      const formData = new FormData();
+      if (title) formData.append('title', title);
+      if (price) formData.append('price', price);
+      if (selectedFile) formData.append('pdf', selectedFile);
       const response = await axiosPrivate.patch(
         `courses/update/${courseId}`,
-        JSON.stringify({ title, price }),
+        formData,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true,
         }
       );
-      if (selectedFile) await fileUpload(response?.data.id);
       setCourse(response?.data);
       Swal.fire({
         icon: 'success',
@@ -75,7 +82,7 @@ const UpdateCourse = () => {
       if (!err?.response) {
         setErrMsg('No Server Response');
       } else if (err.response?.status === 400) {
-        setErrMsg('Course with title already exists');
+        setErrMsg('Bad request.');
       } else if (err.response?.status === 401) {
         setErrMsg('Unauthorized');
       } else {
@@ -89,21 +96,14 @@ const UpdateCourse = () => {
       });
       errRef.current.focus();
     }
+    setLoading(false);
   };
 
-  const fileUpload = async (id) => {
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    try {
-      await axiosPrivate.patch(`courses/upload/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-        responseType: 'arraybuffer', // Specify that the response should be treated as binary data
-      });
-    } catch (err) {
-      setErrMsg('Document upload Failed');
-      errRef.current.focus();
-    }
+  // Function to extract the file name with extension
+  const getFileNameFromUrl = (url) => {
+    if (!url) return ''; // Check if url is undefined or null
+    const segments = url.split('/');
+    return segments.pop(); // Return the last segment of the URL
   };
 
   return (
@@ -138,7 +138,7 @@ const UpdateCourse = () => {
               </div>
             </div>
 
-            <div className='col-md-6 mb-2'>
+            <div className='col-md-4 mb-2'>
               <div className='input-group'>
                 <span className='input-group-text bg-dark text-white'>
                   &#8358;
@@ -151,11 +151,10 @@ const UpdateCourse = () => {
                   onChange={(e) => setPrice(e.target.value)}
                   value={price}
                 />
-                <span className='input-group-text bg-dark text-white'>.00</span>
               </div>
             </div>
 
-            <div className='col-md-6 mb-2'>
+            <div className='col-md-8 mb-2'>
               <div className='input-group custom-file-input bg-dark'>
                 <input
                   type='file'
@@ -170,11 +169,27 @@ const UpdateCourse = () => {
                   {fileName || 'Choose a file'}
                 </span>
               </div>
+              <small>
+                <b>Current File: </b>
+                {course.details
+                  ? getFileNameFromUrl(course.details)
+                  : 'No file available'}
+              </small>
             </div>
 
             <div className='text-center mt-3'>
-              <button className='btn bg-danger text-white btn-lg p-2 w-25'>
-                Submit
+              <button className='btn bg-danger text-white btn-lg w-25'>
+                {loading ? (
+                  <SyncLoader
+                    size={20}
+                    color='#ffffff'
+                    style={{
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  />
+                ) : (
+                  'Update'
+                )}
               </button>
             </div>
           </div>

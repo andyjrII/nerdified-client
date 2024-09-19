@@ -40,7 +40,7 @@ const AllCourses = () => {
       }
     };
     fetchCourses();
-  }, [courses, currentPage, searchQuery]);
+  }, [currentPage, searchQuery]);
 
   const pageCount = Math.ceil(totalCourses / coursesPerPage);
 
