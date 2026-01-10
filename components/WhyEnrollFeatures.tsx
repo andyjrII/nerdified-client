@@ -50,20 +50,25 @@ const WhyEnrollFeatures = () => {
       {features.map((feature) => (
         <Card
           key={feature.id}
-          className="relative h-full overflow-hidden rounded-lg shadow-lg bg-cover bg-center group"
+          className="relative overflow-hidden rounded-lg shadow-lg bg-cover bg-center group aspect-[4/5] border border-white/20"
           style={{ backgroundImage: `url(${feature.bgImage})` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-900/90 via-blue-900/80 to-blue-900/90 group-hover:from-blue-900/95 group-hover:via-blue-900/85 group-hover:to-blue-900/95 transition-all" />
-          <CardContent className="relative h-full flex flex-col p-6 text-white">
-            <p className="pt-5 my-4 leading-relaxed text-sm flex-1">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/35 to-black/40 group-hover:from-black/50 group-hover:via-black/45 group-hover:to-black/50 transition-all" />
+          <CardContent className="relative h-full flex flex-col p-5 md:p-6 text-white">
+            <p className="leading-relaxed text-base md:text-lg flex-1 mb-4 text-left">
               {feature.description}
             </p>
-            <div className="flex items-center justify-center mt-auto pt-4">
+            
+            {/* Separator line */}
+            <div className="border-t border-white/30 mb-4" />
+            
+            {/* Icon and label - centered */}
+            <div className="flex items-center justify-center">
               <FontAwesomeIcon
                 icon={feature.icon}
-                className="mr-2 h-4 w-4"
+                className="mr-2 h-4 w-4 text-white"
               />
-              <small className="text-sm font-medium">{feature.title}</small>
+              <small className="text-sm font-semibold text-white">{feature.title}</small>
             </div>
           </CardContent>
         </Card>
