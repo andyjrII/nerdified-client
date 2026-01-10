@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect } from "react";
 import Hero from "@/components/Hero";
 import LatestBlogs from "@/components/LatestBlogs";
 import Testimonial from "@/components/Testimonial";
@@ -11,10 +12,40 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Home = () => {
+  useEffect(() => {
+    // Add class to body to apply background
+    const body = document.body;
+    const html = document.documentElement;
+    
+    body.classList.add('home-page');
+    html.classList.add('home-page');
+    
+    // Also directly set inline style as fallback
+    body.style.setProperty('background-image', "url('/images/bg/home-bg.jpg')", 'important');
+    body.style.setProperty('background-attachment', 'fixed', 'important');
+    body.style.setProperty('background-size', 'cover', 'important');
+    body.style.setProperty('background-position', 'center', 'important');
+    body.style.setProperty('background-repeat', 'no-repeat', 'important');
+    body.style.setProperty('background-color', 'transparent', 'important');
+    
+    return () => {
+      body.classList.remove('home-page');
+      html.classList.remove('home-page');
+      body.style.removeProperty('background-image');
+      body.style.removeProperty('background-attachment');
+      body.style.removeProperty('background-size');
+      body.style.removeProperty('background-position');
+      body.style.removeProperty('background-repeat');
+      body.style.removeProperty('background-color');
+    };
+  }, []);
+
   return (
-    <main>
-      <Hero />
-      <section className="bg-gray-50">
+    <div className="relative min-h-screen z-10" style={{ backgroundColor: 'transparent' }}>
+      {/* Content Container */}
+      <div className="relative min-h-screen">
+        <Hero />
+        <section className="bg-transparent min-h-screen">
         {/* Why Enroll Section */}
         <section className="container mx-auto px-4 py-12">
           <h1 className="text-center mb-8">
@@ -48,7 +79,7 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ type: "tween", duration: 0.5 }}
             >
-              <Card className="bg-gray-100">
+              <Card className="bg-white/70 backdrop-blur-sm shadow-lg">
                 <CardContent className="p-6 text-center">
                   <h2 className="text-2xl md:text-3xl font-bold mb-4">
                     <span className="block text-blue-900 mb-2">
@@ -82,7 +113,7 @@ const Home = () => {
               transition={{ type: "tween", duration: 0.5 }}
               className="order-2 md:order-1"
             >
-              <Card className="bg-gray-100">
+              <Card className="bg-white/70 backdrop-blur-sm shadow-lg">
                 <CardContent className="p-6 text-center">
                   <h2 className="text-2xl md:text-3xl font-bold mb-4">
                     <span className="block text-blue-900 mb-2">
@@ -140,7 +171,8 @@ const Home = () => {
           <Testimonial />
         </section>
       </section>
-    </main>
+      </div>
+    </div>
   );
 };
 
