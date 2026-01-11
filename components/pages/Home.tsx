@@ -58,14 +58,17 @@ const Home = () => {
 
         {/* Marketing Section 1 */}
         <section className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="relative w-full flex items-start justify-center">
+            {/* Large background image - reduced to half size */}
             <motion.div
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
               transition={{ type: "tween", duration: 0.5 }}
-              className="relative w-full h-96 rounded-lg overflow-hidden"
+              className="relative w-3/5 h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden"
             >
+              {/* Dark overlay on image */}
+              <div className="absolute inset-0 bg-black/40 z-10" />
               <Image
                 src="/images/marketing/marketing-1.jpg"
                 alt="High-Demand Technologies"
@@ -73,74 +76,90 @@ const Home = () => {
                 className="object-cover rounded-lg"
               />
             </motion.div>
+              
+            {/* Overlapping card - positioned so half is inside image, half is outside */}
             <motion.div
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
-              transition={{ type: "tween", duration: 0.5 }}
+              transition={{ type: "tween", duration: 0.5, delay: 0.2 }}
+              className="relative -ml-[12.5%] md:-ml-[12.5%] w-[85%] md:w-[50%] max-w-2xl z-20 mt-16 md:mt-20"
             >
-              <Card className="bg-white/70 backdrop-blur-sm shadow-lg">
-                <CardContent className="p-6 text-center">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                    <span className="block text-blue-900 mb-2">
-                      High-Demand Technologies
-                    </span>
-                    <span className="block text-blue-700">
-                      Expand Your Skills with Our Expert-Led Classes
-                    </span>
-                  </h2>
-                  <p className="mb-6 text-gray-700">
-                    Enhance your programming skills with our specialized classes
-                    in high-demand technologies. Our classes cover the entire web
-                    development spectrum, from design to deployment.
-                  </p>
-                  <Button asChild size="lg" className="bg-blue-900 hover:bg-blue-800">
-                    <Link href="/courses">View courses</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
+                <Card className="bg-white shadow-xl">
+                  <CardContent className="p-6 md:p-8">
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-blue-900 uppercase mb-3 tracking-wide">
+                        HIGH-DEMAND TECHNOLOGIES
+                      </p>
+                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-light mb-4 text-gray-800 uppercase leading-tight">
+                        EXPAND YOUR SKILLS WITH OUR EXPERT-LED CLASSES
+                      </h2>
+                      <p className="text-base md:text-lg text-gray-600 mb-8 leading-relaxed">
+                        Enhance your programming skills with our specialized classes
+                        in high-demand technologies. Our classes cover the entire web
+                        development spectrum, from design to deployment.
+                      </p>
+                    </div>
+                  </CardContent>
+                  
+                  {/* Button positioned at bottom, extending beyond card */}
+                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 z-30">
+                    <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-base font-bold shadow-lg">
+                      <Link href="/courses">View courses</Link>
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
           </div>
         </section>
 
         {/* Marketing Section 2 */}
         <section className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div className="relative w-full flex items-start justify-center">
+            {/* Overlapping card - positioned so half is inside image, half is outside */}
+            <motion.div
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ type: "tween", duration: 0.5, delay: 0.2 }}
+              className="relative -mr-[12.5%] md:-mr-[12.5%] w-[85%] md:w-[50%] max-w-2xl z-20 order-1 mt-16 md:mt-20"
+            >
+                <Card className="bg-white shadow-xl">
+                  <CardContent className="p-6 md:p-8">
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-blue-900 uppercase mb-3 tracking-wide">
+                        CUTTING-EDGE SOLUTIONS
+                      </p>
+                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-light mb-4 text-gray-800 uppercase leading-tight">
+                        TRANSFORM YOUR BUSINESS WITH OUR CUSTOM WEB SOLUTIONS
+                      </h2>
+                      <p className="text-base md:text-lg text-gray-600 mb-8 leading-relaxed">
+                        Elevate your business with our tailored web & app development
+                        services. From concept to launch, we build cutting-edge
+                        digital solutions that drive success.
+                      </p>
+                    </div>
+                  </CardContent>
+                  
+                  {/* Button positioned at bottom, extending beyond card */}
+                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 z-30">
+                    <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-base font-bold shadow-lg">
+                      <Link href="/contact">Contact us</Link>
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
+              
+            {/* Large background image - reduced to half size */}
             <motion.div
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
               transition={{ type: "tween", duration: 0.5 }}
-              className="order-2 md:order-1"
+              className="relative w-3/5 h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden order-2"
             >
-              <Card className="bg-white/70 backdrop-blur-sm shadow-lg">
-                <CardContent className="p-6 text-center">
-                  <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                    <span className="block text-blue-900 mb-2">
-                      Cutting-Edge Solutions
-                    </span>
-                    <span className="block text-blue-700">
-                      Transform Your Business with Our Custom Web Solutions
-                    </span>
-                  </h2>
-                  <p className="mb-6 text-gray-700">
-                    Elevate your business with our tailored web & app development
-                    services. From concept to launch, we build cutting-edge
-                    digital solutions that drive success.
-                  </p>
-                  <Button asChild size="lg" className="bg-blue-900 hover:bg-blue-800">
-                    <Link href="/contact">Contact us</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ type: "tween", duration: 0.5 }}
-              className="relative w-full h-96 rounded-lg overflow-hidden order-1 md:order-2"
-            >
+              {/* Dark overlay on image */}
+              <div className="absolute inset-0 bg-black/40 z-10" />
               <Image
                 src="/images/marketing/marketing-2.jpg"
                 alt="Cutting-Edge Solutions"
