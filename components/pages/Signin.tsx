@@ -38,7 +38,23 @@ const Signin = () => {
     setLoading(true);
     e.preventDefault();
 
+    // Validate inputs
+    if (!email || !password) {
+      setErrMsg("Email and password are required");
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Email and password are required",
+        confirmButtonText: "OK",
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log("Attempting signin for:", email);
+      console.log("API Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
+      
       const response = await axios.post(
         "auth/signin",
         { email, password },
@@ -48,7 +64,17 @@ const Signin = () => {
         }
       );
 
-      const accessToken = response?.data.access_token;
+      console.log("Signin response:", response);
+
+      // Validate response has access_token
+      if (!response?.data?.access_token) {
+        console.error("No access_token in response:", response?.data);
+        throw new Error("Invalid response from server - no access token received");
+      }
+
+      const accessToken = response.data.access_token;
+      
+      // Save to local storage
       await db
         .collection("auth_student")
         .doc(email)
@@ -73,19 +99,25 @@ const Signin = () => {
       }
     } catch (err: any) {
       console.error("Sign-in error:", err);
+      let errorMessage = "Signin Failed";
+      
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        errorMessage = "No Server Response - Check your connection";
       } else if (err.response?.status === 400) {
-        setErrMsg("Missing Email or Password");
+        errorMessage = err.response?.data?.message || "Missing Email or Password";
       } else if (err.response?.status === 401) {
-        setErrMsg("Unauthorized");
+        errorMessage = err.response?.data?.message || "Invalid email or password";
+      } else if (err.response?.status === 404) {
+        errorMessage = "User not found";
       } else {
-        setErrMsg("Signin Failed");
+        errorMessage = err.response?.data?.message || "Signin Failed";
       }
+      
+      setErrMsg(errorMessage);
       Swal.fire({
         icon: "error",
-        title: "Oops...",
-        text: errMsg || "Signin Failed!",
+        title: "Signin Failed",
+        text: errorMessage,
         confirmButtonText: "OK",
       });
       errRef.current?.focus();

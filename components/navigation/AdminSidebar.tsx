@@ -11,6 +11,7 @@ import {
   FaBinoculars,
   FaPenAlt,
   FaUserGraduate,
+  FaChalkboardTeacher,
 } from "react-icons/fa";
 import { IoSchool } from "react-icons/io5";
 import { useAdminLogout } from "@/hooks/useAdminLogout";
@@ -107,14 +108,34 @@ const AdminSidebar = () => {
                   className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 rounded-lg transition-colors"
                 >
                   <FaBinoculars className="h-4 w-4" />
-                  <span>View</span>
+                  <span>View All</span>
+                </Link>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="tutors" className="border-none">
+            <AccordionTrigger className="hover:bg-gray-800 rounded-lg px-4 py-2">
+              <div className="flex items-center gap-2">
+                <FaChalkboardTeacher className="h-5 w-5" />
+                <span>Tutors</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-2 pl-4">
+                <Link
+                  href="/admin/tutors"
+                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 rounded-lg transition-colors"
+                >
+                  <FaBinoculars className="h-4 w-4" />
+                  <span>View All</span>
                 </Link>
                 <Link
-                  href="/admin/courses/new"
+                  href="/admin/tutors/pending"
                   className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 rounded-lg transition-colors"
                 >
                   <FaPenAlt className="h-4 w-4" />
-                  <span>Create</span>
+                  <span>Pending Approval</span>
                 </Link>
               </div>
             </AccordionContent>

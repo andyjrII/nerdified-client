@@ -23,12 +23,15 @@ const NewestCourses = () => {
     const getLatestCourses = async () => {
       try {
         const response = await axiosPrivate.get("courses/latest/4", {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
-        setLatestCourses(response?.data);
+        // Ensure response.data is an array
+        const coursesData = Array.isArray(response?.data) ? response.data : [];
+        setLatestCourses(coursesData);
       } catch (error) {
-        console.error("Error fetching Latest Courses");
+        console.error("Error fetching Latest Courses:", error);
+        setLatestCourses([]); // Set empty array on error
       }
     };
 
@@ -58,26 +61,32 @@ const NewestCourses = () => {
         </span>
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-3 py-2">
-        {latestCourses.map((course) => (
-          <Card key={course.id} className="bg-yellow-500 text-white border-0">
-            <CardHeader className="text-white bg-yellow-600">
-              Last Updated on{" "}
-              <Moment format="MMMM D, YYYY">{course.updatedAt}</Moment>
-            </CardHeader>
-            <CardContent>
-              <h5 className="text-lg font-semibold text-wrap text-white mb-2">
-                {course.title}
-              </h5>
-              <p className="text-white mb-4">Price: {course.price}</p>
-              <Button
-                onClick={() => getCourse(course.id)}
-                className="w-full bg-yellow-700 hover:bg-yellow-800 text-white"
-              >
-                View
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+        {latestCourses.length > 0 ? (
+          latestCourses.map((course) => (
+            <Card key={course.id} className="bg-yellow-500 text-white border-0">
+              <CardHeader className="text-white bg-yellow-600">
+                Last Updated on{" "}
+                <Moment format="MMMM D, YYYY">{course.updatedAt}</Moment>
+              </CardHeader>
+              <CardContent>
+                <h5 className="text-lg font-semibold text-wrap text-white mb-2">
+                  {course.title}
+                </h5>
+                <p className="text-white mb-4">Price: {course.price}</p>
+                <Button
+                  onClick={() => getCourse(course.id)}
+                  className="w-full bg-yellow-700 hover:bg-yellow-800 text-white"
+                >
+                  View
+                </Button>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="col-span-full text-center text-gray-500 py-8">
+            No courses available yet.
+          </div>
+        )}
       </div>
     </>
   );

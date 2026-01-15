@@ -73,7 +73,7 @@ const CourseTotals = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mx-5 mb-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
       <Card className="bg-gradient-to-r from-pink-500 to-red-500 text-white">
         <CardHeader>
           <CardTitle className="text-white">My Courses</CardTitle>

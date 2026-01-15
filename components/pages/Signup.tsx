@@ -126,23 +126,48 @@ const Signup = () => {
       return;
     }
 
+    // Validate image is provided
+    if (!image) {
+      setErrMsg("Profile image is required");
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Profile image is required",
+        confirmButtonText: "OK",
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log("Attempting signup for:", email);
+      console.log("API Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
+      console.log("Image file:", image?.name, image?.size);
+      
       const formData = new FormData();
       formData.append("name", name);
       formData.append("phoneNumber", phone);
       formData.append("email", email);
       formData.append("password", password);
       formData.append("address", address);
-      if (image) {
-        formData.append("image", image);
-      }
+      formData.append("image", image);
 
       const response = await axios.post("auth/signup", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
 
-      const accessToken = response?.data.access_token;
+      console.log("Signup response:", response);
+
+      // Validate response has access_token
+      if (!response?.data?.access_token) {
+        console.error("No access_token in response:", response?.data);
+        throw new Error("Invalid response from server - no access token received");
+      }
+
+      const accessToken = response.data.access_token;
+      
+      // Save to local storage
       await db
         .collection("auth_student")
         .doc(email)
@@ -158,18 +183,26 @@ const Signup = () => {
 
       router.push("/student");
     } catch (err: any) {
+      console.error("Signup error:", err);
+      let errorMessage = "Registration Failed";
+      
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        errorMessage = "No Server Response - Check your connection and backend server";
       } else if (err.response?.status === 400) {
-        setErrMsg("Email Already Exists");
+        errorMessage = err.response?.data?.message || "Invalid request - " + (err.response?.data?.message || "Check all fields are filled correctly");
+      } else if (err.response?.status === 409) {
+        errorMessage = "Email Already Exists";
+      } else if (err.response?.status === 500) {
+        errorMessage = "Server Error - " + (err.response?.data?.message || "Please try again later");
       } else {
-        setErrMsg("Registration Failed");
+        errorMessage = err.response?.data?.message || "Registration Failed";
       }
 
+      setErrMsg(errorMessage);
       Swal.fire({
         icon: "error",
-        title: "Oops...",
-        text: errMsg || "Something went wrong!",
+        title: "Registration Failed",
+        text: errorMessage,
         confirmButtonText: "OK",
       });
       errRef.current?.focus();

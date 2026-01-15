@@ -10,7 +10,7 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import DPDefault from "/images/navpages/person_profile.jpg";
+const DPDefault = "/images/navpages/person_profile.jpg";
 
 interface Review {
   id: number;

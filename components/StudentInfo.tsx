@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
-import { FaClock, FaEnvelope, FaPhone } from "react-icons/fa";
+import { FaClock, FaEnvelope, FaPhone, FaUserGraduate } from "react-icons/fa";
 import { IoLocation } from "react-icons/io5";
 import db from "@/utils/localBase";
-import Welcome from "./Welcome";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 interface Student {
   email?: string;
@@ -66,53 +66,54 @@ const StudentInfo = () => {
   };
 
   return (
-    <>
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex flex-wrap justify-center gap-4 mb-4">
-          {student.email && (
-            <Button variant="outline" className="flex items-center gap-2">
-              {student.email}
-              <Badge className="bg-blue-900 text-white">
-                <FaEnvelope className="h-3 w-3" />
-              </Badge>
-            </Button>
-          )}
+    <Card className="shadow-lg mb-6">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="relative w-16 h-16 rounded-full bg-blue-100 overflow-hidden">
+            {student?.imagePath ? (
+              <Image
+                src={student.imagePath}
+                alt={student.name || "Student"}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <FaUserGraduate className="w-8 h-8 text-blue-600" />
+              </div>
+            )}
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {student?.name ? `Welcome, ${student.name}!` : "Welcome!"}
+            </h2>
+            <p className="text-gray-600">
+              {student?.email || email}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-3 pt-4 border-t">
           {student.phoneNumber && (
-            <Button variant="outline" className="flex items-center gap-2">
+            <Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
+              <FaPhone className="h-3 w-3" />
               {student.phoneNumber}
-              <Badge className="bg-blue-900 text-white">
-                <FaPhone className="h-3 w-3" />
-              </Badge>
-            </Button>
+            </Badge>
           )}
           {student.address && (
-            <Button variant="outline" className="flex items-center gap-2">
+            <Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
+              <IoLocation className="h-3 w-3" />
               {student.address}
-              <Badge className="bg-blue-900 text-white">
-                <IoLocation className="h-3 w-3" />
-              </Badge>
-            </Button>
+            </Badge>
           )}
           {student.createdAt && (
-            <Button
-              variant="outline"
-              className="flex items-center gap-2"
-              title="Date Joined"
-            >
-              <Moment format="MMMM D, YYYY">{student.createdAt}</Moment>
-              <Badge className="bg-blue-900 text-white">
-                <FaClock className="h-3 w-3" />
-              </Badge>
-            </Button>
+            <Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
+              <FaClock className="h-3 w-3" />
+              Member since <Moment format="MMM YYYY">{student.createdAt}</Moment>
+            </Badge>
           )}
         </div>
-      </div>
-      <div className="flex justify-center">
-        <div className="w-full max-w-2xl px-4">
-          <Welcome name={student.name} />
-        </div>
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 };
 

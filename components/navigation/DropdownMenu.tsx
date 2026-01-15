@@ -13,7 +13,7 @@ import {
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { useStudent } from "@/hooks/useStudent";
 import { useLogout } from "@/hooks/useLogout";
-const DPDefault = "/person_profile.jpg";
+const DPDefault = "/images/navpages/person_profile.jpg";
 import db from "@/utils/localBase";
 import {
   DropdownMenu,

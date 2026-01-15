@@ -57,9 +57,12 @@ const EnrolledCourses = () => {
   const getEnrolledCourses = async () => {
     try {
       const response = await axiosPrivate.get(`students/enrolled/${email}`);
-      setEnrollmentDetails(response?.data);
+      // Ensure response.data is an array
+      const enrollmentsData = Array.isArray(response?.data) ? response.data : [];
+      setEnrollmentDetails(enrollmentsData);
     } catch (error) {
-      console.error("Error fetching Courses");
+      console.error("Error fetching Courses:", error);
+      setEnrollmentDetails([]); // Set empty array on error
     }
   };
 
