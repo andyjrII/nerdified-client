@@ -1,20 +1,24 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Suspense } from "react";
+import SessionBookings from "@/components/sessions/SessionBookings";
 
 export default function SessionsPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Upcoming Sessions</h1>
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold">Sessions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-500 text-center py-8">
-              No upcoming sessions. Sessions will appear here when you book them.
-            </p>
-          </CardContent>
-        </Card>
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Sessions</h1>
+          <p className="text-gray-600">
+            Browse and book live sessions for your enrolled courses.
+          </p>
+        </div>
+
+        <Suspense fallback={
+          <div className="text-center py-8">
+            <div className="animate-pulse text-gray-400">Loading sessions...</div>
+          </div>
+        }>
+          <SessionBookings />
+        </Suspense>
       </div>
     </div>
   );

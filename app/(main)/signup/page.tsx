@@ -1,5 +1,5 @@
-import Signup from "@/components/pages/Signup";
+import AccountTypeSelection from "@/components/pages/AccountTypeSelection";
 
 export default function SignupPage() {
-  return <Signup />;
+  return <AccountTypeSelection />;
 }

@@ -7,15 +7,16 @@ import {
   FaBookOpen,
   FaCalendarAlt,
   FaComments,
-  FaHeart,
   FaCog,
   FaSignOutAlt,
-  FaUserGraduate,
+  FaChalkboardTeacher,
+  FaDollarSign,
+  FaUserFriends,
   FaBell,
 } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
-import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
+import { useTutorAuth } from "@/hooks/useTutorAuth";
+import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { useLoadingNavigation } from "@/hooks/useLoadingNavigation";
 import db from "@/utils/localBase";
 import { Button } from "@/components/ui/button";
@@ -24,14 +25,14 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { SyncLoader } from "react-spinners";
 
-const StudentSidebar = () => {
-  const axiosPrivate = useAxiosPrivate();
+const TutorSidebar = () => {
+  const axiosPrivate = useTutorAxiosPrivate();
   const router = useRouter();
   const pathname = usePathname();
-  const { auth } = useAuth();
+  const { auth } = useTutorAuth();
   const { loading: navLoading, navigate } = useLoadingNavigation();
   const [email, setEmail] = useState<string>("");
-  const [student, setStudent] = useState<any>(null);
+  const [tutor, setTutor] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [logoutLoading, setLogoutLoading] = useState(false);
 
@@ -40,7 +41,7 @@ const StudentSidebar = () => {
       try {
         await fetchEmail();
         if (email) {
-          await fetchStudent();
+          await fetchTutor();
           // TODO: Fetch notification count
           // await fetchNotificationCount();
         }
@@ -54,7 +55,7 @@ const StudentSidebar = () => {
 
   const fetchEmail = async () => {
     try {
-      const data = await db.collection("auth_student").get();
+      const data = await db.collection("auth_tutor").get();
       if (data.length > 0) {
         setEmail(data[0].email);
       }
@@ -63,56 +64,49 @@ const StudentSidebar = () => {
     }
   };
 
-  const fetchStudent = async () => {
+  const fetchTutor = async () => {
     try {
-      const response = await axiosPrivate.get(`students/${email}`);
-      setStudent(response?.data);
+      // Fetch tutor using /tutors/me endpoint (from JWT)
+      const response = await axiosPrivate.get(`tutors/me`, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      setTutor(response?.data);
+      // Cache in localbase
+      await db.collection("tutor").doc(email).set(response?.data);
     } catch (error) {
-      console.error("Error fetching student:", error);
+      console.error("Error fetching tutor:", error);
       try {
-        const localStudent = await db.collection("student").doc(email).get();
-        setStudent(localStudent);
+        const localTutor = await db.collection("tutor").doc(email).get();
+        setTutor(localTutor);
       } catch (localError) {
         console.error("Error fetching from localBase:", localError);
+        // Use placeholder if all else fails
+        setTutor({ email, name: "Tutor" });
       }
     }
   };
 
   const handleLogout = async () => {
-    if (logoutLoading) return; // Prevent double clicks
-    setLogoutLoading(true);
     try {
-      await axiosPrivate.post(
-        `auth/signout?email=${email}`,
-        null,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      await db.collection("auth_student").delete();
-      await db.collection("student").delete();
+      await axiosPrivate.post(`auth/tutor/signout?email=${email}`, null, {
+        withCredentials: true,
+      });
+      await db.collection("auth_tutor").delete();
+      await db.collection("tutor").delete();
       router.push("/signin");
     } catch (error) {
       console.error("Logout error:", error);
       // Still clear local storage and redirect
-      await db.collection("auth_student").delete();
-      await db.collection("student").delete();
+      await db.collection("auth_tutor").delete();
+      await db.collection("tutor").delete();
       router.push("/signin");
-    } finally {
-      setLogoutLoading(false);
     }
   };
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    if (pathname === href || navLoading) return; // Already on this page or loading
-    navigate(href);
-  };
-
   const isActive = (path: string) => {
-    if (path === "/student") {
-      return pathname === "/student";
+    if (path === "/tutor") {
+      return pathname === "/tutor";
     }
     return pathname?.startsWith(path);
   };
@@ -121,76 +115,91 @@ const StudentSidebar = () => {
     {
       label: "Dashboard",
       icon: FaHome,
-      href: "/student",
+      href: "/tutor",
       exact: true,
     },
     {
       label: "My Courses",
       icon: FaBookOpen,
-      href: "/student/courses",
+      href: "/tutor/courses",
     },
     {
-      label: "Upcoming Sessions",
+      label: "Sessions",
       icon: FaCalendarAlt,
-      href: "/student/sessions",
+      href: "/tutor/sessions",
+    },
+    {
+      label: "Availability",
+      icon: FaCalendarAlt,
+      href: "/tutor/availability",
     },
     {
       label: "Messages",
       icon: FaComments,
-      href: "/student/messages",
+      href: "/tutor/messages",
       badge: notificationCount > 0 ? notificationCount : undefined,
     },
     {
-      label: "Wishlist",
-      icon: FaHeart,
-      href: "/student/wishlist",
+      label: "Students",
+      icon: FaUserFriends,
+      href: "/tutor/students",
+    },
+    {
+      label: "Earnings",
+      icon: FaDollarSign,
+      href: "/tutor/earnings",
     },
     {
       label: "Settings",
       icon: FaCog,
-      href: "/student/settings",
+      href: "/tutor/settings",
     },
   ];
 
   return (
-    <aside className="fixed left-0 top-0 w-64 h-screen bg-blue-900 text-white flex flex-col shadow-lg z-50 overflow-y-auto">
+    <aside className="fixed left-0 top-0 w-64 h-screen bg-purple-900 text-white flex flex-col shadow-lg z-50 overflow-y-auto">
       {/* Logo/Header */}
-      <div className="p-6 border-b border-blue-800">
+      <div className="p-6 border-b border-purple-800">
         <div className="flex items-center gap-3">
-          <div className="bg-blue-700 p-2 rounded-lg">
-            <FaUserGraduate className="w-6 h-6" />
+          <div className="bg-purple-700 p-2 rounded-lg">
+            <FaChalkboardTeacher className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="font-bold text-lg">Student Portal</h2>
-            <p className="text-xs text-blue-300">Dashboard</p>
+            <h2 className="font-bold text-lg">Tutor Portal</h2>
+            <p className="text-xs text-purple-300">Dashboard</p>
           </div>
         </div>
       </div>
 
       {/* User Profile */}
-      <div className="p-4 border-b border-blue-800">
+      <div className="p-4 border-b border-purple-800">
         <div className="flex items-center gap-3">
-          <div className="relative w-12 h-12 rounded-full bg-blue-700 overflow-hidden">
-            {student?.imagePath ? (
+          <div className="relative w-12 h-12 rounded-full bg-purple-700 overflow-hidden">
+            {tutor?.imagePath ? (
               <Image
-                src={student.imagePath}
-                alt={student.name || "Student"}
+                src={tutor.imagePath}
+                alt={tutor.name || "Tutor"}
                 fill
                 className="object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <FaUserGraduate className="w-6 h-6 text-blue-300" />
+                <FaChalkboardTeacher className="w-6 h-6 text-purple-300" />
               </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm truncate">
-              {student?.name || "Student"}
+              {tutor?.name || "Tutor"}
             </p>
-            <p className="text-xs text-blue-300 truncate">
-              {student?.email || email}
+            <p className="text-xs text-purple-300 truncate">
+              {tutor?.email || email}
             </p>
+            {tutor && !tutor.approved && (
+              <Badge variant="outline" className="mt-1 bg-yellow-100 text-yellow-800 border-yellow-300 text-xs">
+                Pending Approval
+              </Badge>
+            )}
           </div>
         </div>
       </div>
@@ -205,15 +214,20 @@ const StudentSidebar = () => {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors relative",
                     active
-                      ? "bg-blue-800 text-white font-semibold"
-                      : "text-blue-200 hover:bg-blue-800/50 hover:text-white"
+                      ? "bg-purple-800 text-white font-semibold"
+                      : "text-purple-200 hover:bg-purple-800/50 hover:text-white",
+                    navLoading && pathname !== item.href ? "opacity-50 cursor-wait" : ""
                   )}
                 >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  <Icon className={cn("w-5 h-5 flex-shrink-0", navLoading && !active ? "opacity-50" : "")} />
                   <span className="flex-1">{item.label}</span>
+                  {navLoading && !active && (
+                    <SyncLoader size={4} color="#ffffff" className="ml-auto" />
+                  )}
                   {item.badge && (
                     <Badge
                       variant="destructive"
@@ -230,12 +244,12 @@ const StudentSidebar = () => {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t border-blue-800">
+      <div className="p-4 border-t border-purple-800">
         <Button
           onClick={handleLogout}
           disabled={logoutLoading}
           variant="ghost"
-          className="w-full justify-start text-blue-200 hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:cursor-wait"
+          className="w-full justify-start text-purple-200 hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:cursor-wait"
         >
           {logoutLoading ? (
             <>
@@ -255,7 +269,7 @@ const StudentSidebar = () => {
       {(navLoading || logoutLoading) && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-xl flex flex-col items-center gap-4">
-            <SyncLoader size={12} color="#3b82f6" />
+            <SyncLoader size={12} color="#a855f7" />
             <p className="text-gray-700 font-medium">
               {logoutLoading ? "Logging out..." : "Loading..."}
             </p>
@@ -266,4 +280,4 @@ const StudentSidebar = () => {
   );
 };
 
-export default StudentSidebar;
+export default TutorSidebar;

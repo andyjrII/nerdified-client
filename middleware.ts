@@ -17,6 +17,9 @@ const publicRoutes = [
 // Student protected routes (require student authentication)
 const studentRoutes = ['/student'];
 
+// Tutor protected routes (require tutor authentication)
+const tutorRoutes = ['/tutor'];
+
 // Admin protected routes (require admin authentication)
 // Note: /admin/signin is public, so it's handled separately
 const adminRoutes = ['/admin', '/admins'];
@@ -61,7 +64,18 @@ export function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refresh_token')?.value;
 
   // Handle student routes and course payment routes
-  if (isStudentRoute(pathname) || pathname.includes('/courses/') && pathname.includes('/payment')) {
+  if (isStudentRoute(pathname) || (pathname.includes('/courses/') && pathname.includes('/payment'))) {
+    if (!refreshToken) {
+      // Redirect to signin if not authenticated
+      const signinUrl = new URL('/signin', request.url);
+      signinUrl.searchParams.set('from', pathname);
+      return NextResponse.redirect(signinUrl);
+    }
+    return NextResponse.next();
+  }
+
+  // Handle tutor routes
+  if (tutorRoutes.some((route) => pathname.startsWith(route))) {
     if (!refreshToken) {
       // Redirect to signin if not authenticated
       const signinUrl = new URL('/signin', request.url);

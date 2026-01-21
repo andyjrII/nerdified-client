@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "sweetalert2/dist/sweetalert2.min.css";
 import { AuthProvider } from "@/context/AuthProvider";
 import { AdminProvider } from "@/context/AdminProvider";
 import { StudentProvider } from "@/context/StudentProvider";
+import { TutorProvider } from "@/context/TutorProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +25,9 @@ export default function RootLayout({
         <AuthProvider>
           <AdminProvider>
             <StudentProvider>
-              {children}
+              <TutorProvider>
+                {children}
+              </TutorProvider>
             </StudentProvider>
           </AdminProvider>
         </AuthProvider>

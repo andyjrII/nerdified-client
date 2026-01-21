@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
+import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { FcLock, FcAddressBook } from "react-icons/fc";
 import db from "@/utils/localBase";
 import Swal from "sweetalert2";
@@ -13,9 +14,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { FaUserGraduate, FaChalkboardTeacher } from "react-icons/fa";
+
+type UserRole = "student" | "tutor";
 
 const Signin = () => {
   const { setAuth } = useAuth();
+  const { setAuth: setTutorAuth } = useTutorAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const errRef = useRef<HTMLParagraphElement>(null);
@@ -23,6 +36,7 @@ const Signin = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<UserRole>("student");
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +46,7 @@ const Signin = () => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [email, password]);
+  }, [email, password, role]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
@@ -46,17 +60,22 @@ const Signin = () => {
         title: "Validation Error",
         text: "Email and password are required",
         confirmButtonText: "OK",
+        showConfirmButton: true,
+        confirmButtonColor: "#3b82f6",
       });
       setLoading(false);
       return;
     }
 
     try {
-      console.log("Attempting signin for:", email);
+      console.log(`Attempting ${role} signin for:`, email);
       console.log("API Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
+
+      // Choose endpoint based on role
+      const endpoint = role === "student" ? "auth/signin" : "auth/tutor/signin";
       
       const response = await axios.post(
-        "auth/signin",
+        endpoint,
         { email, password },
         {
           headers: { "Content-Type": "application/json" },
@@ -66,59 +85,103 @@ const Signin = () => {
 
       console.log("Signin response:", response);
 
-      // Validate response has access_token
-      if (!response?.data?.access_token) {
+      // Handle different response structures
+      // Student: { access_token, refresh_token }
+      // Tutor: [Tokens, boolean] - returns array with tokens and approval status
+      let accessToken: string;
+      let isApproved: boolean = true;
+
+      if (role === "tutor" && Array.isArray(response?.data)) {
+        // Tutor response is [Tokens, boolean]
+        accessToken = response.data[0]?.access_token;
+        isApproved = response.data[1] || false;
+      } else {
+        // Student response is Tokens object
+        accessToken = response?.data?.access_token;
+      }
+
+      if (!accessToken) {
         console.error("No access_token in response:", response?.data);
         throw new Error("Invalid response from server - no access token received");
       }
 
-      const accessToken = response.data.access_token;
-      
-      // Save to local storage
-      await db
-        .collection("auth_student")
-        .doc(email)
-        .set({ email, accessToken });
+      // Save to appropriate local storage collection
+      if (role === "student") {
+        await db
+          .collection("auth_student")
+          .doc(email)
+          .set({ email, accessToken });
+        setAuth({ email, accessToken });
+      } else {
+        await db
+          .collection("auth_tutor")
+          .doc(email)
+          .set({ email, accessToken });
+        setTutorAuth({ email, accessToken });
 
-      setAuth({ email, accessToken });
+        // Show approval status message for tutors
+        if (!isApproved) {
+          Swal.fire({
+            icon: "warning",
+            title: "Account Pending Approval",
+            text: "Your tutor account is pending admin approval. You'll be notified once approved.",
+            confirmButtonText: "OK",
+          });
+          setLoading(false);
+          return;
+        }
+      }
 
+      // Handle redirect
       const course = searchParams.get("course")
         ? JSON.parse(searchParams.get("course")!)
         : null;
-      
+
       if (course) {
         router.back();
       } else {
         Swal.fire({
           icon: "success",
           title: "Signin Success",
-          text: "You have successfully signed in!",
+          text: `You have successfully signed in as a ${role}!`,
           confirmButtonText: "OK",
+          showConfirmButton: true,
+          confirmButtonColor: "#3b82f6",
         });
-        router.push("/student");
+        
+        // Redirect based on role
+        if (role === "student") {
+          router.push("/student");
+        } else {
+          router.push("/tutor");
+        }
       }
     } catch (err: any) {
       console.error("Sign-in error:", err);
       let errorMessage = "Signin Failed";
-      
+
       if (!err?.response) {
         errorMessage = "No Server Response - Check your connection";
       } else if (err.response?.status === 400) {
-        errorMessage = err.response?.data?.message || "Missing Email or Password";
+        errorMessage =
+          err.response?.data?.message || "Missing Email or Password";
       } else if (err.response?.status === 401) {
-        errorMessage = err.response?.data?.message || "Invalid email or password";
+        errorMessage =
+          err.response?.data?.message || "Invalid email or password";
       } else if (err.response?.status === 404) {
-        errorMessage = "User not found";
+        errorMessage = `${role === "student" ? "Student" : "Tutor"} not found`;
       } else {
         errorMessage = err.response?.data?.message || "Signin Failed";
       }
-      
+
       setErrMsg(errorMessage);
       Swal.fire({
         icon: "error",
         title: "Signin Failed",
         text: errorMessage,
         confirmButtonText: "OK",
+        showConfirmButton: true,
+        confirmButtonColor: "#ef4444",
       });
       errRef.current?.focus();
     }
@@ -133,7 +196,10 @@ const Signin = () => {
             <div className="mx-auto w-16 h-16 bg-blue-900 rounded-full flex items-center justify-center mb-4">
               <FcLock className="w-8 h-8" />
             </div>
-            <CardTitle className="text-2xl font-bold">Signin</CardTitle>
+            <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+            <p className="text-sm text-gray-600">
+              Enter your credentials to access your account
+            </p>
           </CardHeader>
           <CardContent>
             <p
@@ -146,6 +212,31 @@ const Signin = () => {
               {errMsg}
             </p>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Role Selector */}
+              <div className="space-y-2">
+                <Label htmlFor="role">Account Type</Label>
+                <Select value={role} onValueChange={(value) => setRole(value as UserRole)}>
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Select account type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="student">
+                      <div className="flex items-center gap-2">
+                        <FaUserGraduate className="w-4 h-4" />
+                        <span>Student</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="tutor">
+                      <div className="flex items-center gap-2">
+                        <FaChalkboardTeacher className="w-4 h-4" />
+                        <span>Tutor</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -166,6 +257,7 @@ const Signin = () => {
                 </div>
               </div>
 
+              {/* Password */}
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
@@ -201,7 +293,7 @@ const Signin = () => {
                 {loading ? (
                   <SyncLoader size={8} color="#ffffff" />
                 ) : (
-                  "Sign in"
+                  `Sign in as ${role === "student" ? "Student" : "Tutor"}`
                 )}
               </Button>
             </form>
@@ -213,6 +305,11 @@ const Signin = () => {
                   Register
                 </Link>
               </p>
+              {role === "tutor" && (
+                <Badge variant="outline" className="mt-2 text-xs">
+                  ⓘ Tutor accounts require admin approval
+                </Badge>
+              )}
             </div>
           </CardContent>
         </Card>
