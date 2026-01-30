@@ -107,7 +107,7 @@ const Wishlist = () => {
 
   return (
     <section className="border-t border-b bg-gray-50 min-h-screen">
-      <main className="container mx-auto px-4 py-6">
+      <main className="w-full px-4 py-6">
         <StudentInfo />
 
         <div className="text-center mb-6">

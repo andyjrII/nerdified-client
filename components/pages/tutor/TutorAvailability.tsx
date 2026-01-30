@@ -239,15 +239,15 @@ const TutorAvailability = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 px-4 py-6 flex items-center justify-center">
         <div className="animate-pulse text-gray-400">Loading availability...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gray-50 px-4 py-6">
+      <div className="max-w-4xl mx-auto w-full space-y-6">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Availability</h1>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, startTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axios from "@/lib/api/axios";
@@ -149,12 +149,14 @@ const Signin = () => {
           confirmButtonColor: "#3b82f6",
         });
         
-        // Redirect based on role
-        if (role === "student") {
-          router.push("/student");
-        } else {
-          router.push("/tutor");
-        }
+        // Redirect based on role (startTransition keeps UI responsive)
+        startTransition(() => {
+          if (role === "student") {
+            router.push("/student");
+          } else {
+            router.push("/tutor");
+          }
+        });
       }
     } catch (err: any) {
       console.error("Sign-in error:", err);

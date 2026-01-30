@@ -13,11 +13,11 @@ import {
   FaDollarSign,
   FaUserFriends,
   FaBell,
+  FaGlobe,
 } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
-import { useLoadingNavigation } from "@/hooks/useLoadingNavigation";
 import db from "@/utils/localBase";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -30,7 +30,6 @@ const TutorSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { auth } = useTutorAuth();
-  const { loading: navLoading, navigate } = useLoadingNavigation();
   const [email, setEmail] = useState<string>("");
   const [tutor, setTutor] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);
@@ -104,6 +103,12 @@ const TutorSidebar = () => {
     }
   };
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    if (pathname === href || navLoading) return;
+    navigate(href);
+  };
+
   const isActive = (path: string) => {
     if (path === "/tutor") {
       return pathname === "/tutor";
@@ -160,7 +165,10 @@ const TutorSidebar = () => {
     <aside className="fixed left-0 top-0 w-64 h-screen bg-purple-900 text-white flex flex-col shadow-lg z-50 overflow-y-auto">
       {/* Logo/Header */}
       <div className="p-6 border-b border-purple-800">
-        <div className="flex items-center gap-3">
+        <Link
+          href="/"
+          className="flex items-center gap-3 text-white hover:opacity-90 transition-opacity"
+        >
           <div className="bg-purple-700 p-2 rounded-lg">
             <FaChalkboardTeacher className="w-6 h-6" />
           </div>
@@ -168,7 +176,14 @@ const TutorSidebar = () => {
             <h2 className="font-bold text-lg">Tutor Portal</h2>
             <p className="text-xs text-purple-300">Dashboard</p>
           </div>
-        </div>
+        </Link>
+        <Link
+          href="/"
+          className="mt-3 flex items-center gap-2 text-sm text-purple-200 hover:text-white transition-colors"
+        >
+          <FaGlobe className="w-4 h-4" />
+          Back to home
+        </Link>
       </div>
 
       {/* User Profile */}
@@ -214,20 +229,16 @@ const TutorSidebar = () => {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
+                  prefetch={true}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors relative",
                     active
                       ? "bg-purple-800 text-white font-semibold"
-                      : "text-purple-200 hover:bg-purple-800/50 hover:text-white",
-                    navLoading && pathname !== item.href ? "opacity-50 cursor-wait" : ""
+                      : "text-purple-200 hover:bg-purple-800/50 hover:text-white"
                   )}
                 >
-                  <Icon className={cn("w-5 h-5 flex-shrink-0", navLoading && !active ? "opacity-50" : "")} />
+                  <Icon className="w-5 h-5 flex-shrink-0" />
                   <span className="flex-1">{item.label}</span>
-                  {navLoading && !active && (
-                    <SyncLoader size={4} color="#ffffff" className="ml-auto" />
-                  )}
                   {item.badge && (
                     <Badge
                       variant="destructive"
@@ -266,13 +277,11 @@ const TutorSidebar = () => {
       </div>
 
       {/* Global Loading Overlay */}
-      {(navLoading || logoutLoading) && (
+      {logoutLoading && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-xl flex flex-col items-center gap-4">
             <SyncLoader size={12} color="#a855f7" />
-            <p className="text-gray-700 font-medium">
-              {logoutLoading ? "Logging out..." : "Loading..."}
-            </p>
+<p className="text-gray-700 font-medium">Logging out...</p>
           </div>
         </div>
       )}

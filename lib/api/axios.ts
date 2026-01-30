@@ -5,11 +5,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 if (!BASE_URL) {
   console.error("⚠️ NEXT_PUBLIC_BASE_URL is not set in environment variables!");
   console.error("Please set NEXT_PUBLIC_BASE_URL in your .env.local file");
-  console.error("Using fallback: http://localhost:3001/api");
+  console.error("Using fallback: http://localhost:3100/api");
 }
 
 const axiosInstance = axios.create({
-  baseURL: BASE_URL || "http://localhost:3001/api",
+  baseURL: BASE_URL || "http://localhost:3100/api",
 });
 
 // Add response interceptor for debugging
@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
 export default axiosInstance;
 
 export const axiosPrivate = axios.create({
-  baseURL: BASE_URL || "http://localhost:3001/api",
+  baseURL: BASE_URL || "http://localhost:3100/api",
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });

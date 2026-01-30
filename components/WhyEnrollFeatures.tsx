@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGlobe,
@@ -50,11 +51,17 @@ const WhyEnrollFeatures = () => {
       {features.map((feature) => (
         <Card
           key={feature.id}
-          className="relative overflow-hidden rounded-lg shadow-lg bg-cover bg-center group aspect-[4/5] border border-white/20"
-          style={{ backgroundImage: `url(${feature.bgImage})` }}
+          className="relative overflow-hidden rounded-lg shadow-lg group aspect-[4/5] border border-white/20"
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/35 to-black/40 group-hover:from-black/50 group-hover:via-black/45 group-hover:to-black/50 transition-all" />
-          <CardContent className="relative h-full flex flex-col p-5 md:p-6 text-white">
+          <Image
+            src={feature.bgImage}
+            alt=""
+            fill
+            className="object-cover object-center"
+            sizes="(max-width: 768px) 100vw, 25vw"
+          />
+          <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-black/35 to-black/40 group-hover:from-black/50 group-hover:via-black/45 group-hover:to-black/50 transition-all" />
+          <CardContent className="relative z-10 h-full flex flex-col p-5 md:p-6 text-white">
             <p className="leading-relaxed text-base md:text-lg flex-1 mb-4 text-left">
               {feature.description}
             </p>
