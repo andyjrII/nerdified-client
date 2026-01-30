@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import Swal from "sweetalert2";
@@ -29,7 +29,7 @@ const TutorCreateCourse = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<string>("0");
   const [pricingModel, setPricingModel] = useState<"PER_COURSE" | "PER_SESSION">("PER_COURSE");
-  const [courseType, setCourseType] = useState<"ONE_ON_ONE" | "GROUP_CLASS">("ONE_ON_ONE");
+  const [courseType, setCourseType] = useState<"ONE_ON_ONE" | "GROUP">("ONE_ON_ONE");
   const [maxStudents, setMaxStudents] = useState<string>("");
   const [curriculum, setCurriculum] = useState("");
   const [outcomes, setOutcomes] = useState("");
@@ -54,7 +54,7 @@ const TutorCreateCourse = () => {
         price: parseFloat(price) || 0,
         pricingModel,
         courseType,
-        maxStudents: courseType === "GROUP_CLASS" && maxStudents ? parseInt(maxStudents) : undefined,
+        maxStudents: courseType === "GROUP" && maxStudents ? parseInt(maxStudents) : undefined,
         curriculum: curriculum.trim() || undefined,
         outcomes: outcomes.trim() || undefined,
       };
@@ -73,7 +73,7 @@ const TutorCreateCourse = () => {
         confirmButtonColor: "#10b981",
       });
 
-      router.push("/tutor/courses");
+      startTransition(() => router.push("/tutor/courses"));
     } catch (err: any) {
       console.error("Course creation error:", err);
       let errorMessage = "Course creation failed";
@@ -103,8 +103,8 @@ const TutorCreateCourse = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gray-50 px-4 py-6">
+      <div className="max-w-4xl mx-auto w-full space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Link href="/tutor/courses">
@@ -191,20 +191,20 @@ const TutorCreateCourse = () => {
                   <Label htmlFor="courseType">Course Type</Label>
                   <Select
                     value={courseType}
-                    onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP_CLASS")}
+                    onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP")}
                   >
                     <SelectTrigger id="courseType">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ONE_ON_ONE">One-on-One</SelectItem>
-                      <SelectItem value="GROUP_CLASS">Group Class</SelectItem>
+                      <SelectItem value="GROUP">Group Class</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Max Students - only show for group classes */}
-                {courseType === "GROUP_CLASS" && (
+                {courseType === "GROUP" && (
                   <div className="space-y-2">
                     <Label htmlFor="maxStudents">Maximum Students</Label>
                     <Input

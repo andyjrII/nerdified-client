@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, startTransition } from "react";
 import Link from "next/link";
 import {
   faCheck,
@@ -183,7 +183,7 @@ const Signup = () => {
         confirmButtonText: "OK",
       });
 
-      router.push("/student");
+      startTransition(() => router.push("/student"));
     } catch (err: any) {
       console.error("Signup error:", err);
       let errorMessage = "Registration Failed";

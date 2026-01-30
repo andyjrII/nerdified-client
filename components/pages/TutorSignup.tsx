@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, startTransition } from "react";
 import Link from "next/link";
 import {
   faCheck,
@@ -186,11 +186,13 @@ const TutorSignup = () => {
         confirmButtonColor: "#a855f7",
       });
 
-      if (isApproved) {
-        router.push("/tutor");
-      } else {
-        router.push("/signin"); // Redirect to signin if pending approval
-      }
+      startTransition(() => {
+        if (isApproved) {
+          router.push("/tutor");
+        } else {
+          router.push("/signin"); // Redirect to signin if pending approval
+        }
+      });
     } catch (err: any) {
       console.error("Tutor signup error:", err);
       let errorMessage = "Registration Failed";
