@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
-import { FaCalendarAlt, FaVideo, FaBookOpen } from "react-icons/fa";
+import { FaCalendarAlt, FaVideo, FaBookOpen, FaSearch } from "react-icons/fa";
 import db from "@/utils/localBase";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -132,7 +133,21 @@ const EnrolledCourses = () => {
   };
 
   if (!enrollmentDetails || enrollmentDetails.length === 0) {
-    return null;
+    return (
+      <div className="text-center py-12 px-4">
+        <FaBookOpen className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">No enrolled courses yet</h3>
+        <p className="text-gray-500 mb-6 max-w-md mx-auto">
+          You haven&apos;t enrolled in any courses. Browse our catalog to find live, instructor-led courses and get started.
+        </p>
+        <Link href="/courses">
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <FaSearch className="w-4 h-4 mr-2" />
+            Browse courses
+          </Button>
+        </Link>
+      </div>
+    );
   }
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, startTransition } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import axios from "@/lib/api/axios";
@@ -45,7 +45,7 @@ const TutorEditCourse = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<string>("0");
   const [pricingModel, setPricingModel] = useState<"PER_COURSE" | "PER_SESSION">("PER_COURSE");
-  const [courseType, setCourseType] = useState<"ONE_ON_ONE" | "GROUP_CLASS">("ONE_ON_ONE");
+  const [courseType, setCourseType] = useState<"ONE_ON_ONE" | "GROUP">("ONE_ON_ONE");
   const [maxStudents, setMaxStudents] = useState<string>("");
   const [curriculum, setCurriculum] = useState("");
   const [outcomes, setOutcomes] = useState("");
@@ -96,7 +96,7 @@ const TutorEditCourse = () => {
         showConfirmButton: true,
         confirmButtonColor: "#ef4444",
       });
-      router.push("/tutor/courses");
+      startTransition(() => router.push("/tutor/courses"));
     } finally {
       setFetching(false);
     }
@@ -119,7 +119,7 @@ const TutorEditCourse = () => {
       if (price) courseData.price = parseFloat(price);
       if (pricingModel) courseData.pricingModel = pricingModel;
       if (courseType) courseData.courseType = courseType;
-      if (courseType === "GROUP_CLASS" && maxStudents) {
+      if (courseType === "GROUP" && maxStudents) {
         courseData.maxStudents = parseInt(maxStudents);
       } else if (courseType === "ONE_ON_ONE") {
         courseData.maxStudents = undefined;
@@ -141,7 +141,7 @@ const TutorEditCourse = () => {
         confirmButtonColor: "#10b981",
       });
 
-      router.push("/tutor/courses");
+      startTransition(() => router.push("/tutor/courses"));
     } catch (err: any) {
       console.error("Course update error:", err);
       let errorMessage = "Course update failed";
@@ -172,7 +172,7 @@ const TutorEditCourse = () => {
 
   if (fetching) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 px-4 py-6 flex items-center justify-center">
         <div className="animate-pulse text-gray-400">Loading course...</div>
       </div>
     );
@@ -183,8 +183,8 @@ const TutorEditCourse = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gray-50 px-4 py-6">
+      <div className="max-w-4xl mx-auto w-full space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Link href="/tutor/courses">
@@ -265,20 +265,20 @@ const TutorEditCourse = () => {
                   <Label htmlFor="courseType">Course Type</Label>
                   <Select
                     value={courseType}
-                    onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP_CLASS")}
+                    onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP")}
                   >
                     <SelectTrigger id="courseType">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ONE_ON_ONE">One-on-One</SelectItem>
-                      <SelectItem value="GROUP_CLASS">Group Class</SelectItem>
+                      <SelectItem value="GROUP">Group Class</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Max Students - only show for group classes */}
-                {courseType === "GROUP_CLASS" && (
+                {courseType === "GROUP" && (
                   <div className="space-y-2">
                     <Label htmlFor="maxStudents">Maximum Students</Label>
                     <Input

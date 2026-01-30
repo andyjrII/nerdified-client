@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -133,7 +133,7 @@ const TutorCreateSession = () => {
         confirmButtonColor: "#10b981",
       });
 
-      router.push("/tutor/sessions");
+      startTransition(() => router.push("/tutor/sessions"));
     } catch (err: any) {
       console.error("Session creation error:", err);
       let errorMessage = "Session creation failed";
@@ -191,7 +191,7 @@ const TutorCreateSession = () => {
 
   if (fetching) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 px-4 py-6 flex items-center justify-center">
         <div className="animate-pulse text-gray-400">Loading courses...</div>
       </div>
     );
@@ -221,8 +221,8 @@ const TutorCreateSession = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gray-50 px-4 py-6">
+      <div className="max-w-4xl mx-auto w-full space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Link href="/tutor/sessions">

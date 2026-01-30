@@ -12,11 +12,11 @@ import {
   FaSignOutAlt,
   FaUserGraduate,
   FaBell,
+  FaGlobe,
 } from "react-icons/fa";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import { useLoadingNavigation } from "@/hooks/useLoadingNavigation";
 import db from "@/utils/localBase";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -29,7 +29,6 @@ const StudentSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { auth } = useAuth();
-  const { loading: navLoading, navigate } = useLoadingNavigation();
   const [email, setEmail] = useState<string>("");
   const [student, setStudent] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);
@@ -104,12 +103,6 @@ const StudentSidebar = () => {
     }
   };
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    if (pathname === href || navLoading) return; // Already on this page or loading
-    navigate(href);
-  };
-
   const isActive = (path: string) => {
     if (path === "/student") {
       return pathname === "/student";
@@ -156,7 +149,10 @@ const StudentSidebar = () => {
     <aside className="fixed left-0 top-0 w-64 h-screen bg-blue-900 text-white flex flex-col shadow-lg z-50 overflow-y-auto">
       {/* Logo/Header */}
       <div className="p-6 border-b border-blue-800">
-        <div className="flex items-center gap-3">
+        <Link
+          href="/"
+          className="flex items-center gap-3 text-white hover:opacity-90 transition-opacity"
+        >
           <div className="bg-blue-700 p-2 rounded-lg">
             <FaUserGraduate className="w-6 h-6" />
           </div>
@@ -164,7 +160,14 @@ const StudentSidebar = () => {
             <h2 className="font-bold text-lg">Student Portal</h2>
             <p className="text-xs text-blue-300">Dashboard</p>
           </div>
-        </div>
+        </Link>
+        <Link
+          href="/"
+          className="mt-3 flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors"
+        >
+          <FaGlobe className="w-4 h-4" />
+          Back to home
+        </Link>
       </div>
 
       {/* User Profile */}
@@ -252,13 +255,11 @@ const StudentSidebar = () => {
       </div>
 
       {/* Global Loading Overlay */}
-      {(navLoading || logoutLoading) && (
+      {logoutLoading && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 shadow-xl flex flex-col items-center gap-4">
             <SyncLoader size={12} color="#3b82f6" />
-            <p className="text-gray-700 font-medium">
-              {logoutLoading ? "Logging out..." : "Loading..."}
-            </p>
+            <p className="text-gray-700 font-medium">Logging out...</p>
           </div>
         </div>
       )}
