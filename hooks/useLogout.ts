@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
+import { clearAuthSessionCookie } from "@/utils/authCookie";
 import db from "@/utils/localBase";
 
 export const useLogout = () => {
@@ -26,6 +27,7 @@ export const useLogout = () => {
 
     // Clear auth data
     setAuth({ email: null, accessToken: null });
+    clearAuthSessionCookie();
 
     // Clear local storage and delete data from the database
     if (typeof window !== 'undefined') {

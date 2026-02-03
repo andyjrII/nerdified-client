@@ -59,14 +59,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for refresh_token cookie (set by backend as httpOnly cookie)
-  // The backend sets this cookie on signin for both student and admin
+  // Check for auth: refresh_token (set by backend, same-origin only) or auth_session (set by frontend after login when API is on another origin, e.g. Render)
   const refreshToken = request.cookies.get('refresh_token')?.value;
+  const authSession = request.cookies.get('auth_session')?.value;
+  const isAuthenticated = !!refreshToken || !!authSession;
 
   // Handle student routes and course payment routes
   if (isStudentRoute(pathname) || (pathname.includes('/courses/') && pathname.includes('/payment'))) {
-    if (!refreshToken) {
-      // Redirect to signin if not authenticated
+    if (!isAuthenticated) {
       const signinUrl = new URL('/signin', request.url);
       signinUrl.searchParams.set('from', pathname);
       return NextResponse.redirect(signinUrl);
@@ -76,8 +76,7 @@ export function middleware(request: NextRequest) {
 
   // Handle tutor routes
   if (tutorRoutes.some((route) => pathname.startsWith(route))) {
-    if (!refreshToken) {
-      // Redirect to signin if not authenticated
+    if (!isAuthenticated) {
       const signinUrl = new URL('/signin', request.url);
       signinUrl.searchParams.set('from', pathname);
       return NextResponse.redirect(signinUrl);
@@ -87,8 +86,7 @@ export function middleware(request: NextRequest) {
 
   // Handle admin routes (excluding /admin/signin which is public)
   if (isAdminRoute(pathname)) {
-    if (!refreshToken) {
-      // Redirect to admin signin if not authenticated
+    if (!isAuthenticated) {
       const adminSigninUrl = new URL('/admin/signin', request.url);
       adminSigninUrl.searchParams.set('from', pathname);
       return NextResponse.redirect(adminSigninUrl);

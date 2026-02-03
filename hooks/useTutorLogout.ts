@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { axiosPrivate } from "@/lib/api/axios";
+import { clearAuthSessionCookie } from "@/utils/authCookie";
 import db from "@/utils/localBase";
 
 export const useTutorLogout = () => {
@@ -27,8 +28,9 @@ export const useTutorLogout = () => {
         await db.collection("tutor").delete();
       }
 
-      // Clear auth context
+      // Clear auth context and frontend session cookie
       setAuth({ email: null, accessToken: null });
+      clearAuthSessionCookie();
 
       // Redirect to signin
       router.push("/signin");
@@ -38,6 +40,7 @@ export const useTutorLogout = () => {
       await db.collection("auth_tutor").delete();
       await db.collection("tutor").delete();
       setAuth({ email: null, accessToken: null });
+      clearAuthSessionCookie();
       router.push("/signin");
     }
   };

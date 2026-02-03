@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { FcLock, FcAddressBook } from "react-icons/fc";
 import db from "@/utils/localBase";
+import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -131,6 +132,9 @@ const Signin = () => {
           return;
         }
       }
+
+      // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)
+      setAuthSessionCookie();
 
       // Handle redirect
       const course = searchParams.get("course")

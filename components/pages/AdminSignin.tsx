@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "@/lib/api/axios";
 import { FcLock, FcAddressBook } from "react-icons/fc";
 import db from "@/utils/localBase";
+import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -48,6 +49,8 @@ const AdminSignin = () => {
         .collection("auth_admin")
         .doc(email)
         .set({ email, accessToken, role });
+
+      setAuthSessionCookie();
 
       Swal.fire({
         icon: "success",

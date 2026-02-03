@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import axios from "@/lib/api/axios";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { clearAuthSessionCookie } from "@/utils/authCookie";
 import db from "@/utils/localBase";
 
 export const useAdminLogout = () => {
@@ -27,6 +28,7 @@ export const useAdminLogout = () => {
     }
 
     setAdmin({ email: null, accessToken: null });
+    clearAuthSessionCookie();
 
     if (typeof window !== "undefined") {
       localStorage.clear();

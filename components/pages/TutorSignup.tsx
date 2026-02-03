@@ -20,6 +20,7 @@ import axios from "@/lib/api/axios";
 import { useRouter } from "next/navigation";
 import db from "@/utils/localBase";
 import { useAuth } from "@/hooks/useAuth";
+import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import Image from "next/image";
 const DPDefault = "/images/navpages/person_profile.jpg";
@@ -185,6 +186,8 @@ const TutorSignup = () => {
         showConfirmButton: true,
         confirmButtonColor: "#a855f7",
       });
+
+      if (isApproved) setAuthSessionCookie();
 
       startTransition(() => {
         if (isApproved) {

@@ -20,6 +20,7 @@ import axios from "@/lib/api/axios";
 import { useRouter } from "next/navigation";
 import db from "@/utils/localBase";
 import { useAuth } from "@/hooks/useAuth";
+import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import Image from "next/image";
 const DPDefault = "/images/navpages/person_profile.jpg";
@@ -175,6 +176,9 @@ const Signup = () => {
         .doc(email)
         .set({ email, accessToken });
       setAuth({ email, accessToken });
+
+      // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)
+      setAuthSessionCookie();
 
       Swal.fire({
         icon: "success",
