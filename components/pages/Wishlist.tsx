@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { FaHeart } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
@@ -40,20 +40,7 @@ const Wishlist = () => {
   const [email, setEmail] = useState<string>("");
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) await getWishlist();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-
-    initialize();
-  }, [email]);
-
-  const fetchEmail = async () => {
+  const fetchEmail = useCallback(async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -62,9 +49,9 @@ const Wishlist = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  };
+  }, []);
 
-  const getWishlist = async () => {
+  const getWishlist = useCallback(async () => {
     try {
       const response = await axiosPrivate.get(`wishlist/email/${email}`, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -74,7 +61,32 @@ const Wishlist = () => {
     } catch (error) {
       console.error("Error getting Wishlist");
     }
-  };
+  }, [axiosPrivate, email]);
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+
+    initialize();
+  }, [fetchEmail]);
+
+  useEffect(() => {
+    if (!email) return;
+    const loadWishlist = async () => {
+      try {
+        await getWishlist();
+      } catch (error) {
+        console.log("Error loading wishlist:", error);
+      }
+    };
+
+    loadWishlist();
+  }, [email, getWishlist]);
 
   const handleRemove = async (courseId: number) => {
     try {

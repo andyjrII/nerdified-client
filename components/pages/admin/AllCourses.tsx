@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import Moment from "react-moment";
@@ -37,13 +37,9 @@ const AllCourses = () => {
 
   const coursesPerPage = 20;
 
-  useEffect(() => {
-    fetchCourses();
-  }, [currentPage, searchQuery, axiosPrivate]);
-
   const pageCount = Math.ceil(totalCourses / coursesPerPage);
 
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       const response = await axiosPrivate.get(`courses/${currentPage}`, {
         params: {
@@ -57,7 +53,11 @@ const AllCourses = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }, [axiosPrivate, currentPage, searchQuery]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
 
   const changePage = ({ selected }: { selected: number }) => {
     setCurrentPage(selected + 1);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,17 +62,7 @@ const TutorCoursesList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [enrollmentsMap, setEnrollmentsMap] = useState<Record<number, CourseEnrollment[]>>({});
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  useEffect(() => {
-    if (courses.length > 0) {
-      fetchAllEnrollments();
-    }
-  }, [courses]);
-
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       setLoading(true);
       // Fetch tutor profile which includes courses
@@ -95,9 +85,9 @@ const TutorCoursesList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate]);
 
-  const fetchAllEnrollments = async () => {
+  const fetchAllEnrollments = useCallback(async () => {
     const enrollments: Record<number, CourseEnrollment[]> = {};
     
     // Use coursePayments endpoint to get enrollments and filter by course
@@ -137,7 +127,17 @@ const TutorCoursesList = () => {
     }
     
     setEnrollmentsMap(enrollments);
-  };
+  }, [axiosPrivate]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
+  useEffect(() => {
+    if (courses.length > 0) {
+      fetchAllEnrollments();
+    }
+  }, [courses.length, fetchAllEnrollments]);
 
   const handleDelete = async (courseId: number, courseTitle: string) => {
     const result = await Swal.fire({

@@ -17,7 +17,7 @@ const Student = () => {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
           <p className="text-gray-600">
-            Welcome back! Here's your learning overview and statistics.
+            Welcome back! Here&apos;s your learning overview and statistics.
           </p>
         </div>
 

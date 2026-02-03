@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,12 +62,7 @@ const TutorSessionsList = () => {
   const [courseFilter, setCourseFilter] = useState<string>("all");
   const [courses, setCourses] = useState<Array<{ id: number; title: string }>>([]);
 
-  useEffect(() => {
-    fetchSessions();
-    fetchCourses();
-  }, []);
-
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       const response = await axiosPrivate.get(`tutors/me`, {
         headers: { "Content-Type": "application/json" },
@@ -78,9 +73,9 @@ const TutorSessionsList = () => {
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
-  };
+  }, [axiosPrivate]);
 
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosPrivate.get(`sessions/tutor`, {
@@ -102,7 +97,12 @@ const TutorSessionsList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate]);
+
+  useEffect(() => {
+    fetchSessions();
+    fetchCourses();
+  }, [fetchCourses, fetchSessions]);
 
   const handleDelete = async (sessionId: number, sessionTitle: string) => {
     const result = await Swal.fire({

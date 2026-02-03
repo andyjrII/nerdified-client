@@ -1,7 +1,7 @@
 "use client";
 
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { axiosPrivate } from "@/lib/api/axios";
+import axios from "@/lib/api/axios";
 import db from "@/utils/localBase";
 
 export const useAdminRefreshToken = () => {
@@ -9,7 +9,7 @@ export const useAdminRefreshToken = () => {
 
   const refresh = async (): Promise<string> => {
     try {
-      const response = await axiosPrivate.post(
+      const response = await axios.post(
         "auth/admin/refresh",
         {},
         {

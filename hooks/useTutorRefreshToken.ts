@@ -1,7 +1,7 @@
 "use client";
 
 import { useTutorAuth } from "@/hooks/useTutorAuth";
-import { axiosPrivate } from "@/lib/api/axios";
+import axios from "@/lib/api/axios";
 import db from "@/utils/localBase";
 
 export const useTutorRefreshToken = () => {
@@ -9,7 +9,7 @@ export const useTutorRefreshToken = () => {
 
   const refresh = async (): Promise<string> => {
     try {
-      const response = await axiosPrivate.post(
+      const response = await axios.post(
         "auth/tutor/refresh",
         {},
         {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,11 +31,7 @@ const TutorStudents = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    fetchStudents();
-  }, []);
-
-  const fetchStudents = async () => {
+  const fetchStudents = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosPrivate.get("tutors/me/students", {
@@ -49,7 +45,11 @@ const TutorStudents = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
 
   const filteredStudents = students.filter(
     (s) =>

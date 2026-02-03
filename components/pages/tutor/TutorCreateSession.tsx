@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, startTransition } from "react";
+import { useCallback, useEffect, useRef, useState, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,11 +42,7 @@ const TutorCreateSession = () => {
   const [fetching, setFetching] = useState(true);
   const [errMsg, setErrMsg] = useState("");
 
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       setFetching(true);
       const response = await axiosPrivate.get(`tutors/me`, {
@@ -72,7 +68,11 @@ const TutorCreateSession = () => {
     } finally {
       setFetching(false);
     }
-  };
+  }, [axiosPrivate, router]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
@@ -187,7 +187,7 @@ const TutorCreateSession = () => {
     if (!endTime) {
       setEndTime("10:00");
     }
-  }, []);
+  }, [endDate, endTime, startDate, startTime]);
 
   if (fetching) {
     return (

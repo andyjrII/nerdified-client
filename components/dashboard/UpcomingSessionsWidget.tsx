@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -48,13 +48,7 @@ const UpcomingSessionsWidget = () => {
     initialize();
   }, []);
 
-  useEffect(() => {
-    if (email) {
-      fetchUpcomingSessions();
-    }
-  }, [email]);
-
-  const fetchUpcomingSessions = async () => {
+  const fetchUpcomingSessions = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosPrivate.get(`sessions/bookings`, {
@@ -84,7 +78,13 @@ const UpcomingSessionsWidget = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate]);
+
+  useEffect(() => {
+    if (email) {
+      fetchUpcomingSessions();
+    }
+  }, [email, fetchUpcomingSessions]);
 
   const joinSession = (session: Session) => {
     if (session.meetingUrl) {

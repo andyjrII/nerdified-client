@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, startTransition } from "react";
+import { useCallback, useEffect, useRef, useState, startTransition } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import axios from "@/lib/api/axios";
@@ -53,13 +53,7 @@ const TutorEditCourse = () => {
   const [fetching, setFetching] = useState(true);
   const [errMsg, setErrMsg] = useState("");
 
-  useEffect(() => {
-    if (courseId) {
-      fetchCourse();
-    }
-  }, [courseId]);
-
-  const fetchCourse = async () => {
+  const fetchCourse = useCallback(async () => {
     if (!courseId) return;
     try {
       setFetching(true);
@@ -100,7 +94,13 @@ const TutorEditCourse = () => {
     } finally {
       setFetching(false);
     }
-  };
+  }, [courseId, router]);
+
+  useEffect(() => {
+    if (courseId) {
+      fetchCourse();
+    }
+  }, [courseId, fetchCourse]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);

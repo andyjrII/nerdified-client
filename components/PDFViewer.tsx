@@ -33,7 +33,8 @@ const PDFViewer = () => {
   }, [course, axiosPrivate]);
 
   useEffect(() => {
-    if (pdfData && pdfViewerRef.current) {
+    const container = pdfViewerRef.current;
+    if (pdfData && container) {
       // Use iframe for PDF viewing
       const iframe = document.createElement("iframe");
       iframe.src = pdfData;
@@ -41,13 +42,11 @@ const PDFViewer = () => {
       iframe.height = "800px";
       iframe.style.border = "none";
 
-      pdfViewerRef.current.innerHTML = "";
-      pdfViewerRef.current.appendChild(iframe);
+      container.innerHTML = "";
+      container.appendChild(iframe);
 
       return () => {
-        if (pdfViewerRef.current) {
-          pdfViewerRef.current.innerHTML = "";
-        }
+        container.innerHTML = "";
       };
     }
   }, [pdfData]);

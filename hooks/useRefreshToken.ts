@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { axiosPrivate } from "@/lib/api/axios";
+import axios from "@/lib/api/axios";
 import db from "@/utils/localBase";
 
 export const useRefreshToken = () => {
@@ -9,7 +9,7 @@ export const useRefreshToken = () => {
 
   const refresh = async (): Promise<string> => {
     try {
-      const response = await axiosPrivate.post(
+      const response = await axios.post(
         'auth/refresh',
         {},
         {

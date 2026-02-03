@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FaHome,
   FaBookOpen,
@@ -34,24 +34,7 @@ const StudentSidebar = () => {
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [logoutLoading, setLogoutLoading] = useState(false);
 
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchStudent();
-          // TODO: Fetch notification count
-          // await fetchNotificationCount();
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    initializeData();
-  }, [email]);
-
-  const fetchEmail = async () => {
+  const fetchEmail = useCallback(async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -60,9 +43,9 @@ const StudentSidebar = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  };
+  }, []);
 
-  const fetchStudent = async () => {
+  const fetchStudent = useCallback(async () => {
     try {
       const response = await axiosPrivate.get(`students/${email}`);
       setStudent(response?.data);
@@ -75,20 +58,49 @@ const StudentSidebar = () => {
         console.error("Error fetching from localBase:", localError);
       }
     }
-  };
+  }, [axiosPrivate, email]);
+
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        await fetchEmail();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    initializeData();
+  }, [fetchEmail]);
+
+  useEffect(() => {
+    if (!email) return;
+    const loadStudent = async () => {
+      try {
+        await fetchStudent();
+        // TODO: Fetch notification count
+        // await fetchNotificationCount();
+      } catch (error) {
+        console.error("Error loading student:", error);
+      }
+    };
+
+    loadStudent();
+  }, [email, fetchStudent]);
 
   const handleLogout = async () => {
     if (logoutLoading) return; // Prevent double clicks
     setLogoutLoading(true);
     try {
-      await axiosPrivate.post(
-        `auth/signout?email=${email}`,
-        null,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      if (email) {
+        await axiosPrivate.post(
+          `auth/signout?email=${encodeURIComponent(email)}`,
+          null,
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        );
+      }
       await db.collection("auth_student").delete();
       await db.collection("student").delete();
       router.push("/signin");

@@ -31,7 +31,7 @@ export const useAxiosPrivate = (): AxiosInstance => {
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
-        if (!config.headers['Authorization']) {
+        if (token && !config.headers['Authorization']) {
           config.headers['Authorization'] = `Bearer ${token}`;
         }
         return config;
@@ -44,13 +44,21 @@ export const useAxiosPrivate = (): AxiosInstance => {
       async (error) => {
         const prevRequest = error?.config as any;
         const maxRetries = 5;
+        const requestUrl = String(prevRequest?.url || "");
+        const isRefreshRequest = requestUrl.includes("auth/refresh");
 
-        if ((error?.response?.status === 403 || error?.response?.status === 401) && !prevRequest?.sent) {
+        if (
+          (error?.response?.status === 403 || error?.response?.status === 401) &&
+          !prevRequest?.sent &&
+          token &&
+          !isRefreshRequest
+        ) {
           if (retryCountRef.current < maxRetries) {
             prevRequest.sent = true;
             retryCountRef.current += 1;
             try {
               const newAccessToken = await refresh();
+              setToken(newAccessToken);
               prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
               return axiosPrivate(prevRequest);
             } catch (err) {

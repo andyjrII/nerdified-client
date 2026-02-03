@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,20 +58,7 @@ const SessionBookings = () => {
     initialize();
   }, []);
 
-  useEffect(() => {
-    if (email) {
-      fetchEnrolledCourses();
-      fetchMyBookings();
-    }
-  }, [email]);
-
-  useEffect(() => {
-    if (selectedCourseId) {
-      fetchSessions();
-    }
-  }, [selectedCourseId]);
-
-  const fetchEnrolledCourses = async () => {
+  const fetchEnrolledCourses = useCallback(async () => {
     try {
       const response = await axiosPrivate.get(`students/enrolled/${email}`);
       const courses = Array.isArray(response?.data) ? response.data : [];
@@ -85,9 +72,9 @@ const SessionBookings = () => {
       console.error("Error fetching enrolled courses:", error);
       setEnrolledCourses([]);
     }
-  };
+  }, [axiosPrivate, email, selectedCourseId]);
 
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     if (!selectedCourseId) return;
     
     try {
@@ -108,9 +95,9 @@ const SessionBookings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate, selectedCourseId]);
 
-  const fetchMyBookings = async () => {
+  const fetchMyBookings = useCallback(async () => {
     try {
       const response = await axiosPrivate.get(`sessions/bookings`, {
         headers: { "Content-Type": "application/json" },
@@ -122,7 +109,20 @@ const SessionBookings = () => {
       console.error("Error fetching bookings:", error);
       setMyBookings([]);
     }
-  };
+  }, [axiosPrivate]);
+
+  useEffect(() => {
+    if (email) {
+      fetchEnrolledCourses();
+      fetchMyBookings();
+    }
+  }, [email, fetchEnrolledCourses, fetchMyBookings]);
+
+  useEffect(() => {
+    if (selectedCourseId) {
+      fetchSessions();
+    }
+  }, [selectedCourseId, fetchSessions]);
 
   const isBooked = (sessionId: number): boolean => {
     return myBookings.some(

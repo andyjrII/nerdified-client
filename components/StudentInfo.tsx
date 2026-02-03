@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import { FaClock, FaEnvelope, FaPhone, FaUserGraduate } from "react-icons/fa";
@@ -16,6 +16,7 @@ interface Student {
   address?: string;
   createdAt?: string;
   name?: string;
+  imagePath?: string;
 }
 
 const StudentInfo = () => {
@@ -23,21 +24,7 @@ const StudentInfo = () => {
   const [email, setEmail] = useState<string>("");
   const [student, setStudent] = useState<Student>({});
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchStudent();
-        }
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-    initialize();
-  }, [email]);
-
-  const fetchEmail = async () => {
+  const fetchEmail = useCallback(async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -46,9 +33,9 @@ const StudentInfo = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  };
+  }, []);
 
-  const fetchStudent = async () => {
+  const fetchStudent = useCallback(async () => {
     try {
       const response = await axiosPrivate.get(`students/${email}`);
       const studentData = response?.data;
@@ -63,7 +50,30 @@ const StudentInfo = () => {
         console.error("Error fetching from localBase:", localError);
       }
     }
-  };
+  }, [axiosPrivate, email]);
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+    initialize();
+  }, [fetchEmail]);
+
+  useEffect(() => {
+    if (!email) return;
+    const loadStudent = async () => {
+      try {
+        await fetchStudent();
+      } catch (error) {
+        console.log("Error fetching student:", error);
+      }
+    };
+    loadStudent();
+  }, [email, fetchStudent]);
 
   return (
     <Card className="shadow-lg mb-6">

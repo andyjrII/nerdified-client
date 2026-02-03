@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,11 +53,7 @@ const TutorAvailability = () => {
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
 
-  useEffect(() => {
-    fetchAvailability();
-  }, []);
-
-  const fetchAvailability = async () => {
+  const fetchAvailability = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosPrivate.get(`sessions/availability`, {
@@ -79,7 +75,11 @@ const TutorAvailability = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate]);
+
+  useEffect(() => {
+    fetchAvailability();
+  }, [fetchAvailability]);
 
   const handleAddAvailability = async () => {
     if (!selectedDay) {
@@ -252,7 +252,7 @@ const TutorAvailability = () => {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Availability</h1>
           <p className="text-gray-600">
-            Set your weekly availability so students know when you're available for sessions
+            Set your weekly availability so students know when you&apos;re available for sessions
           </p>
         </div>
 
@@ -360,7 +360,7 @@ const TutorAvailability = () => {
                   No Availability Set
                 </h3>
                 <p className="text-gray-500 mb-6">
-                  Set your weekly availability to let students know when you're available.
+                  Set your weekly availability to let students know when you&apos;re available.
                 </p>
                 <Button
                   onClick={() => setShowForm(true)}
@@ -414,7 +414,7 @@ const TutorAvailability = () => {
               <div>
                 <h3 className="font-semibold text-blue-900 mb-1">About Availability</h3>
                 <p className="text-sm text-blue-800">
-                  Setting your availability helps students know when you're available for live
+                  Setting your availability helps students know when you&apos;re available for live
                   sessions. You can schedule sessions outside of these hours, but these are your
                   preferred teaching times.
                 </p>

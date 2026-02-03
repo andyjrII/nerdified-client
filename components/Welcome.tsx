@@ -36,7 +36,7 @@ const Welcome = ({ name }: WelcomeProps) => {
       </CardHeader>
       <CardContent>
         <p className="text-white text-lg">
-          "{name || "Student"},{" "}
+          &quot;{name || "Student"},{" "}
           {quote ? (
             <>{quote.toLowerCase()}</>
           ) : (
@@ -45,7 +45,7 @@ const Welcome = ({ name }: WelcomeProps) => {
               your temper or your self-confidence.
             </>
           )}
-          "
+          &quot;
         </p>
       </CardContent>
     </Card>

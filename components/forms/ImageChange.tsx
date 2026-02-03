@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FcImageFile } from "react-icons/fc";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import db from "@/utils/localBase";
@@ -23,25 +23,7 @@ const ImageChange = () => {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) await fetchImage();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-    initialize();
-  }, [email]);
-
-  useEffect(() => {
-    if (selectedImage) {
-      fetchImage();
-    }
-  }, [selectedImage, email]);
-
-  const fetchEmail = async () => {
+  const fetchEmail = useCallback(async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -50,16 +32,39 @@ const ImageChange = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  };
+  }, []);
 
-  const fetchImage = async () => {
+  const fetchImage = useCallback(async () => {
     try {
       const localStudent = await db.collection("student").doc(email).get();
       setImagePath(localStudent?.imagePath || "");
     } catch (error) {
       console.error("Error fetching image:", error);
     }
-  };
+  }, [email]);
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+    initialize();
+  }, [fetchEmail]);
+
+  useEffect(() => {
+    if (email) {
+      fetchImage();
+    }
+  }, [email, fetchImage]);
+
+  useEffect(() => {
+    if (selectedImage && email) {
+      fetchImage();
+    }
+  }, [selectedImage, email, fetchImage]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

@@ -23,7 +23,7 @@ const Missing = () => {
         </CardHeader>
         <CardContent>
           <p className="text-gray-600 mb-4">
-            Oops! The page you're looking for doesn't exist.
+            Oops! The page you&apos;re looking for doesn&apos;t exist.
           </p>
           <Button asChild className="bg-blue-900 hover:bg-blue-800">
             <Link href="/">Go Home</Link>

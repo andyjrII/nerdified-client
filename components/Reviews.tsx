@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import StarRating from "@/components/StarRating";
@@ -34,22 +34,7 @@ const Reviews = ({ courseId }: ReviewsProps) => {
   const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
   const [imageUrls, setImageUrls] = useState<Map<string, string>>(new Map());
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchReviews();
-        }
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-
-    initialize();
-  }, [email, courseId]);
-
-  const fetchEmail = async () => {
+  const fetchEmail = useCallback(async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -58,9 +43,45 @@ const Reviews = ({ courseId }: ReviewsProps) => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  };
+  }, []);
 
-  const fetchReviews = async () => {
+  const fetchImages = useCallback(async (emails: string[]) => {
+    try {
+      const response = await axiosPrivate.post(`students/imagepaths`, emails);
+      const imagePaths = response.data;
+      const imageBlobs = await Promise.all(
+        imagePaths.map(async (imagePath: string) => {
+          try {
+            const imageResponse = await axiosPrivate.get(
+              `students/student/image/${imagePath}`,
+              {
+                responseType: "arraybuffer",
+              }
+            );
+            return {
+              path: imagePath,
+              blob: new Blob([imageResponse.data], { type: "image/jpeg" }),
+            };
+          } catch (error) {
+            return { path: imagePath, blob: null };
+          }
+        })
+      );
+
+      const newImageUrls = new Map<string, string>();
+      emails.forEach((email, index) => {
+        const blobData = imageBlobs[index];
+        if (blobData?.blob) {
+          newImageUrls.set(email, URL.createObjectURL(blobData.blob));
+        }
+      });
+      setImageUrls(newImageUrls);
+    } catch (error) {
+      console.log("Error getting images");
+    }
+  }, [axiosPrivate]);
+
+  const fetchReviews = useCallback(async () => {
     try {
       const response = await axiosPrivate.get(`/reviews/course/${courseId}`);
       setReviews(response.data);
@@ -69,7 +90,32 @@ const Reviews = ({ courseId }: ReviewsProps) => {
     } catch (error) {
       console.log("Error fetching reviews");
     }
-  };
+  }, [axiosPrivate, courseId, fetchImages]);
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+
+    initialize();
+  }, [fetchEmail]);
+
+  useEffect(() => {
+    if (!email) return;
+    const loadReviews = async () => {
+      try {
+        await fetchReviews();
+      } catch (error) {
+        console.log("Error during reviews fetch:", error);
+      }
+    };
+
+    loadReviews();
+  }, [courseId, email, fetchReviews]);
 
   const handleReviewSubmit = async () => {
     if (!email) {
@@ -109,42 +155,6 @@ const Reviews = ({ courseId }: ReviewsProps) => {
         text: "Error submitting review!",
         confirmButtonText: "OK",
       });
-    }
-  };
-
-  const fetchImages = async (emails: string[]) => {
-    try {
-      const response = await axiosPrivate.post(`students/imagepaths`, emails);
-      const imagePaths = response.data;
-      const imageBlobs = await Promise.all(
-        imagePaths.map(async (imagePath: string) => {
-          try {
-            const imageResponse = await axiosPrivate.get(
-              `students/student/image/${imagePath}`,
-              {
-                responseType: "arraybuffer",
-              }
-            );
-            return {
-              path: imagePath,
-              blob: new Blob([imageResponse.data], { type: "image/jpeg" }),
-            };
-          } catch (error) {
-            return { path: imagePath, blob: null };
-          }
-        })
-      );
-
-      const newImageUrls = new Map<string, string>();
-      emails.forEach((email, index) => {
-        const blobData = imageBlobs[index];
-        if (blobData?.blob) {
-          newImageUrls.set(email, URL.createObjectURL(blobData.blob));
-        }
-      });
-      setImageUrls(newImageUrls);
-    } catch (error) {
-      console.log("Error getting images");
     }
   };
 

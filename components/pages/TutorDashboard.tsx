@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,13 +49,7 @@ const TutorDashboard = () => {
     initialize();
   }, []);
 
-  useEffect(() => {
-    if (email) {
-      fetchTutorData();
-    }
-  }, [email]);
-
-  const fetchTutorData = async () => {
+  const fetchTutorData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -112,7 +106,13 @@ const TutorDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate]);
+
+  useEffect(() => {
+    if (email) {
+      fetchTutorData();
+    }
+  }, [email, fetchTutorData]);
 
   if (loading) {
     return (
@@ -131,7 +131,7 @@ const TutorDashboard = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
               <p className="text-gray-600">
-                Welcome back, {tutor?.name || "Tutor"}! Here's your teaching overview.
+                Welcome back, {tutor?.name || "Tutor"}! Here&apos;s your teaching overview.
               </p>
             </div>
             {stats.pendingApproval && (
@@ -160,9 +160,9 @@ const TutorDashboard = () => {
                     Account Pending Approval
                   </h3>
                   <p className="text-yellow-800 text-sm">
-                    Your tutor account is pending admin approval. Once approved, you'll be able to
-                    create courses, schedule sessions, and start teaching. You'll be notified via
-                    email once your account is approved.
+                    Your tutor account is pending admin approval. Once approved, you&apos;ll be able
+                    to create courses, schedule sessions, and start teaching. You&apos;ll be notified
+                    via email once your account is approved.
                   </p>
                 </div>
               </div>

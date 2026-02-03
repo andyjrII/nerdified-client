@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import axios from "@/lib/api/axios";
@@ -48,14 +48,7 @@ const TutorCourseEnrollments = () => {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (courseId) {
-      fetchCourse();
-      fetchEnrollments();
-    }
-  }, [courseId]);
-
-  const fetchCourse = async () => {
+  const fetchCourse = useCallback(async () => {
     if (!courseId) return;
     try {
       const response = await axios.get(`courses/course/${courseId}`);
@@ -63,9 +56,9 @@ const TutorCourseEnrollments = () => {
     } catch (error) {
       console.error("Error fetching course:", error);
     }
-  };
+  }, [courseId]);
 
-  const fetchEnrollments = async () => {
+  const fetchEnrollments = useCallback(async () => {
     if (!courseId) return;
     try {
       setLoading(true);
@@ -104,7 +97,14 @@ const TutorCourseEnrollments = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate, courseId]);
+
+  useEffect(() => {
+    if (courseId) {
+      fetchCourse();
+      fetchEnrollments();
+    }
+  }, [courseId, fetchCourse, fetchEnrollments]);
 
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {

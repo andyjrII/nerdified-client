@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FaHome,
   FaBookOpen,
@@ -35,24 +35,7 @@ const TutorSidebar = () => {
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [logoutLoading, setLogoutLoading] = useState(false);
 
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchTutor();
-          // TODO: Fetch notification count
-          // await fetchNotificationCount();
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    initializeData();
-  }, [email]);
-
-  const fetchEmail = async () => {
+  const fetchEmail = useCallback(async () => {
     try {
       const data = await db.collection("auth_tutor").get();
       if (data.length > 0) {
@@ -61,9 +44,9 @@ const TutorSidebar = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  };
+  }, []);
 
-  const fetchTutor = async () => {
+  const fetchTutor = useCallback(async () => {
     try {
       // Fetch tutor using /tutors/me endpoint (from JWT)
       const response = await axiosPrivate.get(`tutors/me`, {
@@ -84,7 +67,34 @@ const TutorSidebar = () => {
         setTutor({ email, name: "Tutor" });
       }
     }
-  };
+  }, [axiosPrivate, email]);
+
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        await fetchEmail();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    initializeData();
+  }, [fetchEmail]);
+
+  useEffect(() => {
+    if (!email) return;
+    const loadTutor = async () => {
+      try {
+        await fetchTutor();
+        // TODO: Fetch notification count
+        // await fetchNotificationCount();
+      } catch (error) {
+        console.error("Error loading tutor:", error);
+      }
+    };
+
+    loadTutor();
+  }, [email, fetchTutor]);
 
   const handleLogout = async () => {
     try {
@@ -101,12 +111,6 @@ const TutorSidebar = () => {
       await db.collection("tutor").delete();
       router.push("/signin");
     }
-  };
-
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    if (pathname === href || navLoading) return;
-    navigate(href);
   };
 
   const isActive = (path: string) => {
