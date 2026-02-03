@@ -8,6 +8,7 @@ import LatestBlogs from "@/components/LatestBlogs";
 import Testimonial from "@/components/Testimonial";
 import { motion } from "framer-motion";
 import WhyEnrollFeatures from "@/components/WhyEnrollFeatures";
+import FeaturedCourses from "@/components/FeaturedCourses";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -71,13 +72,13 @@ const Home = () => {
               <div className="absolute inset-0 bg-black/40 z-10" />
               <Image
                 src="/images/marketing/marketing-1.jpg"
-                alt="High-Demand Technologies"
+                alt="Learn live with expert tutors"
                 fill
                 className="object-cover rounded-lg"
               />
             </motion.div>
               
-            {/* Overlapping card - positioned so half is inside image, half is outside */}
+            {/* Overlapping card - Student enrollment CTA */}
             <motion.div
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
@@ -89,23 +90,20 @@ const Home = () => {
                   <CardContent className="p-6 md:p-8">
                     <div className="text-center">
                       <p className="text-sm font-semibold text-blue-900 uppercase mb-3 tracking-wide">
-                        HIGH-DEMAND TECHNOLOGIES
+                        LEARN LIVE. LEARN BETTER.
                       </p>
                       <h2 className="text-2xl md:text-3xl lg:text-4xl font-light mb-4 text-gray-800 uppercase leading-tight">
-                        EXPAND YOUR SKILLS WITH OUR EXPERT-LED CLASSES
+                        REAL SKILLS FROM REAL TUTORS—NOT RECORDINGS
                       </h2>
                       <p className="text-base md:text-lg text-gray-600 mb-8 leading-relaxed">
-                        Enhance your programming skills with our specialized classes
-                        in high-demand technologies. Our classes cover the entire web
-                        development spectrum, from design to deployment.
+                        Join live video sessions with expert tutors—one-on-one or in small groups—so you get real-time answers, tailored feedback, and structured support. Book sessions that fit your schedule, track your progress, and build skills through practice and mentorship instead of passive videos. Whether you&apos;re upskilling, switching careers, or starting from scratch, your next level starts here.
                       </p>
                     </div>
                   </CardContent>
                   
-                  {/* Button positioned at bottom, extending beyond card */}
                   <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 z-30">
                     <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-base font-bold shadow-lg">
-                      <Link href="/courses">View courses</Link>
+                      <Link href="/signup/student">Start learning</Link>
                     </Button>
                   </div>
                 </Card>
@@ -113,10 +111,10 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Marketing Section 2 */}
+        {/* Marketing Section 2 - Tutor CTA */}
         <section className="container mx-auto px-4 py-12">
           <div className="relative w-full flex items-start justify-center">
-            {/* Overlapping card - positioned so half is inside image, half is outside */}
+            {/* Overlapping card - Tutor registration CTA */}
             <motion.div
               initial={{ scale: 0 }}
               whileInView={{ scale: 1 }}
@@ -128,23 +126,20 @@ const Home = () => {
                   <CardContent className="p-6 md:p-8">
                     <div className="text-center">
                       <p className="text-sm font-semibold text-blue-900 uppercase mb-3 tracking-wide">
-                        CUTTING-EDGE SOLUTIONS
+                        SHARE YOUR EXPERTISE. EARN AS YOU TEACH.
                       </p>
                       <h2 className="text-2xl md:text-3xl lg:text-4xl font-light mb-4 text-gray-800 uppercase leading-tight">
-                        TRANSFORM YOUR BUSINESS WITH OUR CUSTOM WEB SOLUTIONS
+                        TEACH LIVE ON NERDIFIED—BUILD YOUR TEACHING BUSINESS
                       </h2>
                       <p className="text-base md:text-lg text-gray-600 mb-8 leading-relaxed">
-                        Elevate your business with our tailored web & app development
-                        services. From concept to launch, we build cutting-edge
-                        digital solutions that drive success.
+                        Create and publish your own courses, set your availability, and teach live over video to students who are ready to learn. Nerdified handles course discovery, secure payments, session booking, and payouts—so you can focus on teaching and growing your audience. Build a sustainable teaching business on your terms, with full control over what you teach and when.
                       </p>
                     </div>
                   </CardContent>
                   
-                  {/* Button positioned at bottom, extending beyond card */}
                   <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 z-30">
                     <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-base font-bold shadow-lg">
-                      <Link href="/contact">Contact us</Link>
+                      <Link href="/signup/tutor">Become a tutor</Link>
                     </Button>
                   </div>
                 </Card>
@@ -162,13 +157,16 @@ const Home = () => {
               <div className="absolute inset-0 bg-black/40 z-10" />
               <Image
                 src="/images/marketing/marketing-2.jpg"
-                alt="Cutting-Edge Solutions"
+                alt="Teach live on Nerdified"
                 fill
                 className="object-cover rounded-lg"
               />
             </motion.div>
           </div>
         </section>
+
+        {/* Featured courses (top-rated) */}
+        <FeaturedCourses />
 
         {/* Latest Posts Section */}
         <section className="container mx-auto px-4 py-12">

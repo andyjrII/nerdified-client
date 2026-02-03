@@ -9,41 +9,34 @@ import {
   FaCopyright,
   FaBlogger,
 } from "react-icons/fa";
-import {
-  IoInformationCircle,
-  IoMail,
-  IoCall,
-  IoBook,
-  IoHome,
-  IoLocation,
-} from "react-icons/io5";
+import { IoInformationCircle, IoBook, IoHome } from "react-icons/io5";
 // Logo will use /images/logo.png path
 
 export const Footer = () => {
   return (
     <footer className="bg-blue-900 text-white border-t border-blue-800">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-6 md:px-8 lg:px-12 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Logo and Copyright */}
           <div className="space-y-4">
             <Link href="/" className="block">
               <Image
                 src="/images/logo.png"
                 alt="<Nerdified />"
-                width={120}
-                height={40}
-                className="mb-4"
+                width={50}
+                height={50}
+                className="mb-4 rounded-full object-cover aspect-square"
               />
             </Link>
             <p className="text-sm text-gray-300 flex items-center space-x-2">
               <FaCopyright className="h-4 w-4" />
-              <span>2024 Nerdified Africa</span>
+              <span>2026 Nerdified — A product by Videti</span>
             </p>
           </div>
 
-          {/* Social Media */}
+          {/* Follow Us */}
           <div>
-            <h6 className="font-semibold mb-4">JOIN US ON SOCIAL MEDIA</h6>
+            <h6 className="font-semibold mb-4">Follow Us</h6>
             <div className="space-y-3">
               <Link
                 href="https://www.facebook.com/get-nerdifiedIT"
@@ -72,28 +65,6 @@ export const Footer = () => {
                 <FaWhatsapp className="h-4 w-4" />
                 <span>+2349063368647</span>
               </Link>
-            </div>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h6 className="font-semibold mb-4">CONTACT US</h6>
-            <div className="space-y-3">
-              <div className="text-white flex items-center space-x-2 text-sm">
-                <IoLocation className="h-4 w-4" />
-                <span>Efab Estate, Lokogoma, Abuja</span>
-              </div>
-              <Link
-                href="mailto:nerdified.get@gmail.com"
-                className="text-white hover:text-blue-300 flex items-center space-x-2 text-sm"
-              >
-                <IoMail className="h-4 w-4" />
-                <span>nerdified.get@gmail.com</span>
-              </Link>
-              <div className="text-white flex items-center space-x-2 text-sm">
-                <IoCall className="h-4 w-4" />
-                <span>+2349063368647</span>
-              </div>
             </div>
           </div>
 

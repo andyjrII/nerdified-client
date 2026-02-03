@@ -11,7 +11,6 @@ import {
   FaTiktok,
   FaLinkedin,
 } from "react-icons/fa";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface TestimonialData {
@@ -91,7 +90,7 @@ const Testimonial = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="relative">
+      <div className="relative max-w-3xl mx-auto">
         {/* Slides */}
         <div className="overflow-hidden rounded-lg">
           {testimonials.map((testimonial, index) => (
@@ -101,72 +100,58 @@ const Testimonial = () => {
                 index === currentSlide ? "opacity-100 block" : "opacity-0 hidden"
               }`}
             >
-              <Card className="bg-gray-50">
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                    <div className="flex justify-center">
-                      <div className="relative w-[230px] h-[290px] rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
-                        <Image
-                          src="/images/testimonial/client-img.png"
-                          alt={testimonial.name}
-                          width={230}
-                          height={290}
-                          className="rounded-lg object-cover"
-                          unoptimized={true}
-                          priority={index === 0}
-                        />
-                      </div>
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-4 items-stretch">
+                  {/* Image - no background, centered */}
+                  <div className="flex justify-center items-center">
+                    <div className="relative w-[230px] h-[290px] rounded-t-lg md:rounded-t-none md:rounded-l-lg overflow-hidden flex items-center justify-center">
+                      <Image
+                        src="/images/testimonial/client-img.png"
+                        alt={testimonial.name}
+                        width={230}
+                        height={290}
+                        className="rounded-t-lg md:rounded-t-none md:rounded-l-lg object-cover"
+                        unoptimized={true}
+                        priority={index === 0}
+                      />
                     </div>
-                    <div className="md:col-span-2">
-                      <h3 className="text-2xl font-bold mb-4">
+                  </div>
+                  {/* Quote / what was said - white background, slightly wider, content centered */}
+                  <div className="md:col-span-2 flex flex-col justify-center items-center w-full md:pr-4">
+                    <div className="bg-white rounded-2xl md:rounded-l-none md:rounded-r-2xl rounded-b-2xl md:rounded-b-2xl p-6 max-w-lg w-full flex flex-col justify-center text-center">
+                      <h3 className="text-2xl font-bold mb-4 text-gray-900">
                         {testimonial.name}
                       </h3>
-                      <p className="text-lg mb-4 flex items-center justify-center md:justify-start">
-                        <FaQuoteLeft className="mr-2 text-blue-900" />
-                        {testimonial.text}
-                        <FaQuoteRight className="ml-2 text-blue-900" />
+                      <p className="text-lg mb-4 flex items-center justify-center text-gray-800 text-left">
+                        <FaQuoteLeft className="mr-2 text-blue-900 flex-shrink-0" />
+                        <span>{testimonial.text}</span>
+                        <FaQuoteRight className="ml-2 text-blue-900 flex-shrink-0" />
                       </p>
-                      <div className="flex items-center justify-center md:justify-start space-x-4">
-                        {testimonial.socialLinks.map((platform, idx) => (
-                          <button
-                            key={idx}
-                            className="text-blue-900 hover:text-blue-700 transition-colors"
-                            aria-label={platform}
-                          >
-                            {getSocialIcon(platform)}
-                          </button>
-                        ))}
+                      <div className="flex items-center justify-center space-x-4">
+                    {testimonial.socialLinks.map((platform, idx) => (
+                      <button
+                        key={idx}
+                        className="text-blue-900 hover:text-blue-700 transition-colors"
+                        aria-label={platform}
+                      >
+                        {getSocialIcon(platform)}
+                      </button>
+                    ))}
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Indicators */}
-        <div className="flex justify-center space-x-2 mt-4">
-          {testimonials.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`h-2 rounded-full transition-all ${
-                index === currentSlide
-                  ? "w-8 bg-blue-900"
-                  : "w-2 bg-gray-300"
-              }`}
-              aria-label={`Go to testimonial ${index + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Navigation Arrows */}
+        {/* Navigation Arrows - positioned at edges of the max-w-3xl card */}
         <Button
           onClick={goToPrevious}
           variant="ghost"
           size="icon"
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
+          className="absolute -left-14 md:-left-16 top-1/2 transform -translate-y-1/2 text-white hover:text-white/90 z-10"
           aria-label="Previous testimonial"
         >
           <svg
@@ -185,7 +170,7 @@ const Testimonial = () => {
           onClick={goToNext}
           variant="ghost"
           size="icon"
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
+          className="absolute -right-14 md:-right-16 top-1/2 transform -translate-y-1/2 text-white hover:text-white/90 z-10"
           aria-label="Next testimonial"
         >
           <svg
@@ -200,6 +185,22 @@ const Testimonial = () => {
             <path d="M9 5l7 7-7 7" />
           </svg>
         </Button>
+
+        {/* Indicators */}
+        <div className="flex justify-center space-x-2 mt-4">
+          {testimonials.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === currentSlide
+                  ? "w-8 bg-blue-900"
+                  : "w-2 bg-gray-300"
+              }`}
+              aria-label={`Go to testimonial ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

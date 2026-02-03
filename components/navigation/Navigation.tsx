@@ -49,7 +49,7 @@ export const Navigation = () => {
               alt="<Nerdified />"
               width={50}
               height={50}
-              className="rounded-full"
+              className="rounded-full object-cover aspect-square"
             />
             <div className="flex flex-col">
               <span className="text-xl font-bold">

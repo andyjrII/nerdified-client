@@ -15,17 +15,17 @@ const WhyEnrollFeatures = () => {
     {
       id: "why-enroll-1",
       icon: faGlobe,
-      title: "On-site & Online Classes",
+      title: "Live Online Classes",
       description:
-        "Whether you prefer in-person learning or flexibility of online classes, we have you covered. Our on-site classes offer a collaborative environment, while our online classes ensure that distance is never a barrier to gaining quality education.",
+        "Learn in real time with expert tutors—no prerecorded lectures. One-on-one or small-group live sessions over video so you get direct teaching, instant feedback, and real conversation. Distance is never a barrier to quality education.",
       bgImage: "/images/features/feature-1.jpeg",
     },
     {
       id: "why-enroll-2",
       icon: faSuitcase,
-      title: "Internship Opportunities",
+      title: "Mentorship & Accountability",
       description:
-        "After completing your coursework, we provide an internship program that allows you to apply what you've learned in real-world scenarios. This hands-on experience is invaluable for building your resume & gaining practical skills that employers seek.",
+        "Stay on track with dedicated tutors who guide you and keep you accountable. Get structured feedback, clear goals, and support that turns learning into lasting skills. Human connection makes the difference between browsing content and actually mastering it.",
       bgImage: "/images/features/feature-2.jpeg",
     },
     {
@@ -33,15 +33,15 @@ const WhyEnrollFeatures = () => {
       icon: faClock,
       title: "Flexible Learning Schedule",
       description:
-        "We understand that everyone has different schedules & commitments. That's why we offer flexible learning options that allow you to choose your preferred class times and the number of sessions per week. Learn at your own pace & on your own terms.",
+        "Book sessions when they work for you. Tutors set their availability and you choose the times that fit your life. Learn at your own pace, in your own time zone, with as many or as few sessions per week as you need.",
       bgImage: "/images/features/feature-3.jpeg",
     },
     {
       id: "why-enroll-4",
       icon: faLaptop,
-      title: "Real-World Projects",
+      title: "Real-World Application",
       description:
-        "Our curriculum is designed around real-world projects to ensure that you not only learn theoretical concepts but also apply them in practical situations. By working on actual projects, you'll gain the confidence & skills needed to tackle real-world challenges.",
+        "Apply what you learn in live sessions with hands-on practice and real-world scenarios. Tutors focus on skills you can use—not just theory. Build confidence and competence through guided practice and direct feedback.",
       bgImage: "/images/features/feature-4.jpeg",
     },
   ];
@@ -60,7 +60,7 @@ const WhyEnrollFeatures = () => {
             className="object-cover object-center"
             sizes="(max-width: 768px) 100vw, 25vw"
           />
-          <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-black/35 to-black/40 group-hover:from-black/50 group-hover:via-black/45 group-hover:to-black/50 transition-all" />
+          <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/65 to-black/75 group-hover:from-black/75 group-hover:via-black/70 group-hover:to-black/80 transition-all" />
           <CardContent className="relative z-10 h-full flex flex-col p-5 md:p-6 text-white">
             <p className="leading-relaxed text-base md:text-lg flex-1 mb-4 text-left">
               {feature.description}

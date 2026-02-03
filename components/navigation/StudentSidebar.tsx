@@ -33,6 +33,7 @@ const StudentSidebar = () => {
   const [student, setStudent] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [logoutLoading, setLogoutLoading] = useState(false);
+  const [profileImageError, setProfileImageError] = useState(false);
 
   const fetchEmail = useCallback(async () => {
     try {
@@ -86,6 +87,11 @@ const StudentSidebar = () => {
 
     loadStudent();
   }, [email, fetchStudent]);
+
+  // Reset image error when student image path changes (e.g. new user or updated avatar)
+  useEffect(() => {
+    setProfileImageError(false);
+  }, [student?.imagePath]);
 
   const handleLogout = async () => {
     if (logoutLoading) return; // Prevent double clicks
@@ -186,12 +192,13 @@ const StudentSidebar = () => {
       <div className="p-4 border-b border-blue-800">
         <div className="flex items-center gap-3">
           <div className="relative w-12 h-12 rounded-full bg-blue-700 overflow-hidden">
-            {student?.imagePath ? (
+            {student?.imagePath && !profileImageError ? (
               <Image
                 src={student.imagePath}
                 alt={student.name || "Student"}
                 fill
                 className="object-cover"
+                onError={() => setProfileImageError(true)}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">

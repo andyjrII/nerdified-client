@@ -7,6 +7,8 @@ const nextConfig = {
   },
 
   images: {
+    loader: 'custom',
+    loaderFile: './lib/cloudinary-loader.js',
     remotePatterns: [
       {
         protocol: 'https',

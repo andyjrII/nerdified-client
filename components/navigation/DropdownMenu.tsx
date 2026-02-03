@@ -29,6 +29,7 @@ export const StudentDropdownMenu = () => {
   const axiosPrivate = useAxiosPrivate();
   const { student, setStudent } = useStudent();
   const [email, setEmail] = useState<string>("");
+  const [profileImageError, setProfileImageError] = useState(false);
   const logout = useLogout();
 
   useEffect(() => {
@@ -71,6 +72,11 @@ export const StudentDropdownMenu = () => {
     }
   }, [email, axiosPrivate, setStudent]);
 
+  // Reset image error when student image path changes
+  useEffect(() => {
+    setProfileImageError(false);
+  }, [student?.imagePath]);
+
   const handleSignOut = async () => {
     try {
       await logout();
@@ -87,11 +93,12 @@ export const StudentDropdownMenu = () => {
           className="relative h-10 w-10 rounded-full border-2 border-white/20 hover:border-white/40 p-0"
         >
           <Image
-            src={student.imagePath || DPDefault}
+            src={profileImageError ? DPDefault : (student.imagePath || DPDefault)}
             alt="Student"
             width={36}
             height={36}
             className="rounded-full object-cover"
+            onError={() => setProfileImageError(true)}
           />
         </Button>
       </DropdownMenuTrigger>
@@ -107,20 +114,20 @@ export const StudentDropdownMenu = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-blue-700" />
-        <DropdownMenuItem asChild className="hover:bg-blue-800 focus:bg-blue-800 text-white">
+        <DropdownMenuItem asChild className="hover:bg-blue-800 focus:bg-blue-800 text-white cursor-pointer">
           <Link href="/student" className="flex items-center space-x-2 w-full">
             <FontAwesomeIcon icon={faUser} className="h-4 w-4" />
             <span>Profile</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-blue-700" />
-        <DropdownMenuItem asChild className="hover:bg-blue-800 focus:bg-blue-800 text-white">
+        <DropdownMenuItem asChild className="hover:bg-blue-800 focus:bg-blue-800 text-white cursor-pointer">
           <Link href="/student/wishlist" className="flex items-center space-x-2 w-full">
             <FontAwesomeIcon icon={faHeart} className="h-4 w-4" />
             <span>Wishlist</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild className="hover:bg-blue-800 focus:bg-blue-800 text-white">
+        <DropdownMenuItem asChild className="hover:bg-blue-800 focus:bg-blue-800 text-white cursor-pointer">
           <Link href="/student/picture" className="flex items-center space-x-2 w-full">
             <FontAwesomeIcon icon={faGear} className="h-4 w-4" />
             <span>Settings</span>

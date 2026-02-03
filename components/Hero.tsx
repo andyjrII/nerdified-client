@@ -10,25 +10,25 @@ const Hero = () => {
     {
       image: "/images/hero/carousel-bg-2.jpg",
       title: "Nerdified Africa",
-      subtitle: "Empower your business with innovative web solutions tailored to your unique needs. Let's build your success online today!",
-      buttonText: "Contact Us",
-      buttonLink: "/contact",
+      subtitle: "Live, instructor-led learning—real skills through real-time teaching and mentorship. No prerecorded lectures; just you, expert tutors, and focused growth.",
+      buttonText: "Explore live courses",
+      buttonLink: "/courses",
       alignment: "left",
     },
     {
       image: "/images/hero/carousel-bg-3.jpg",
       title: "Nerdified Africa",
-      subtitle: "Kickstart your journey to a thriving programming career—join us today & unlock your future in tech!",
-      buttonText: "Get Nerdified",
-      buttonLink: "/courses",
+      subtitle: "Learn live. Learn better. Join a marketplace where tutors and learners connect in real time—one-on-one or small groups—for accountability and mastery.",
+      buttonText: "Start learning",
+      buttonLink: "/signup/student",
       alignment: "right",
     },
     {
       image: "/images/hero/carousel-bg-1.jpg",
       title: "Nerdified Africa",
-      subtitle: "Empowering Africa's tech potential for a sustainable and prosperous future.",
-      buttonText: "About Us",
-      buttonLink: "/about",
+      subtitle: "Interaction over consumption. Whether you're upskilling, switching careers, or building a teaching business—Nerdified is where human connection powers learning.",
+      buttonText: "Teach on Nerdified",
+      buttonLink: "/signup/tutor",
       alignment: "center",
     },
   ];
@@ -115,9 +115,9 @@ const Hero = () => {
               
               {/* Call to Action Button */}
               <div className={`${slide.alignment === "center" ? "flex justify-center" : slide.alignment === "right" ? "flex justify-end" : "flex justify-start"}`}>
-                <Button 
-                  asChild 
-                  size="lg" 
+                <Button
+                  asChild
+                  size="lg"
                   className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-4 text-base font-semibold rounded-lg shadow-lg transition-all transform hover:scale-105"
                 >
                   <Link href={slide.buttonLink}>{slide.buttonText}</Link>
