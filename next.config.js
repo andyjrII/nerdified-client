@@ -2,8 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  output: 'export',
-
   experimental: {
     optimizePackageImports: ['react-icons', 'lucide-react'],
   },
