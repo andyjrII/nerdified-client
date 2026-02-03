@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaBlog,
   FaUserAlt,
@@ -35,7 +35,23 @@ const AdminSidebar = () => {
   const logout = useAdminLogout();
   const [email, setEmail] = useState<string>("");
 
-  const fetchEmail = useCallback(async () => {
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        await fetchEmail();
+        if (email) {
+          await fetchAdmin();
+        }
+      } catch (error) {
+        console.error("Error fetching email from localBase:", error);
+      }
+    };
+
+    initializeData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  const fetchEmail = async () => {
     try {
       const data = await db.collection("auth_admin").get();
       if (data.length > 0) {
@@ -44,9 +60,9 @@ const AdminSidebar = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  }, []);
+  };
 
-  const fetchAdmin = useCallback(async () => {
+  const fetchAdmin = async () => {
     try {
       const response = await axiosPrivate.get(`admin/${email}`);
       setAdmin(response?.data);
@@ -59,31 +75,7 @@ const AdminSidebar = () => {
         console.error("Error fetching from localBase:", localError);
       }
     }
-  }, [axiosPrivate, email, setAdmin]);
-
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchEmail();
-      } catch (error) {
-        console.error("Error fetching email from localBase:", error);
-      }
-    };
-
-    initializeData();
-  }, [fetchEmail]);
-
-  useEffect(() => {
-    if (!email) return;
-    const loadAdmin = async () => {
-      try {
-        await fetchAdmin();
-      } catch (error) {
-        console.error("Error loading admin:", error);
-      }
-    };
-    loadAdmin();
-  }, [email, fetchAdmin]);
+  };
 
   const signOut = async () => {
     await logout();

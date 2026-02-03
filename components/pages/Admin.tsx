@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAdminAxiosPrivate } from "@/hooks/useAdminAxiosPrivate";
 import { FaBlog, FaUserGraduate, FaChalkboardTeacher } from "react-icons/fa";
 import { IoSchool } from "react-icons/io5";
@@ -15,7 +15,12 @@ const Admin = () => {
   const [totalTutors, setTotalTutors] = useState<number>(0);
   const [pendingTutors, setPendingTutors] = useState<number>(0);
 
-  const getTotals = useCallback(async () => {
+  useEffect(() => {
+    getTotals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+  }, [axiosPrivate]);
+
+  const getTotals = async () => {
     try {
       const response = await axiosPrivate.get("admin/totals");
       setTotalStudents(response.data[0]);
@@ -26,11 +31,7 @@ const Admin = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  }, [axiosPrivate]);
-
-  useEffect(() => {
-    getTotals();
-  }, [getTotals]);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">

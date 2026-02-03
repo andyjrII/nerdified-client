@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminAxiosPrivate } from "@/hooks/useAdminAxiosPrivate";
 import axios from "@/lib/api/axios";
@@ -40,10 +40,17 @@ const UpdateCourse = () => {
   }, []);
 
   useEffect(() => {
+    if (courseId) {
+      getCourse();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- getCourse when courseId changes
+  }, [courseId]);
+
+  useEffect(() => {
     setErrMsg("");
   }, [title, price, courseId, selectedFile]);
 
-  const getCourse = useCallback(async () => {
+  const getCourse = async () => {
     if (!courseId) return;
     try {
       const response = await axios.get(`courses/course/${courseId}`);
@@ -61,13 +68,7 @@ const UpdateCourse = () => {
     } catch (err) {
       setErrMsg("Error Occurred!");
     }
-  }, [courseId]);
-
-  useEffect(() => {
-    if (courseId) {
-      getCourse();
-    }
-  }, [courseId, getCourse]);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

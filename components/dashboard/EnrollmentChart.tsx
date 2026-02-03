@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { Bar } from "react-chartjs-2";
 import {
@@ -43,7 +43,14 @@ const EnrollmentChart = () => {
     initialize();
   }, []);
 
-  const fetchEnrollments = useCallback(async () => {
+  useEffect(() => {
+    if (email) {
+      fetchEnrollments();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  const fetchEnrollments = async () => {
     try {
       const response = await axiosPrivate.get(`students/enrolled/${email}`);
       const enrollments = Array.isArray(response?.data) ? response.data : [];
@@ -52,13 +59,7 @@ const EnrollmentChart = () => {
       console.error("Error fetching enrollments:", error);
       setEnrollmentData([]);
     }
-  }, [axiosPrivate, email]);
-
-  useEffect(() => {
-    if (email) {
-      fetchEnrollments();
-    }
-  }, [email, fetchEnrollments]);
+  };
 
   // Group enrollments by month
   const monthlyEnrollments = enrollmentData.reduce((acc, enrollment) => {

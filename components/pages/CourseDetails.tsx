@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
@@ -31,7 +31,25 @@ const CourseDetails = () => {
   const [courseEnrolled, setCourseEnrolled] = useState<any>(null);
   const [isInWishlist, setIsInWishlist] = useState<boolean>(false);
 
-  const fetchEmail = useCallback(async () => {
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+        if (email) {
+          await isCourseEnrolled();
+          await checkIfInWishlist();
+        }
+        await fetchCourse();
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  const fetchEmail = async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -40,9 +58,9 @@ const CourseDetails = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  }, []);
+  };
 
-  const fetchCourse = useCallback(async () => {
+  const fetchCourse = async () => {
     try {
       let courseId = params.id;
       if (typeof window !== "undefined") {
@@ -60,9 +78,9 @@ const CourseDetails = () => {
     } catch (error) {
       console.error("Error fetching course:", error);
     }
-  }, [axiosPrivate, params.id]);
+  };
 
-  const isCourseEnrolled = useCallback(async () => {
+  const isCourseEnrolled = async () => {
     if (!course?.id) return;
     try {
       const response = await axiosPrivate.get(
@@ -76,9 +94,9 @@ const CourseDetails = () => {
     } catch (error) {
       console.error("Error verifying if Course is Enrolled.");
     }
-  }, [axiosPrivate, course?.id]);
+  };
 
-  const checkIfInWishlist = useCallback(async () => {
+  const checkIfInWishlist = async () => {
     if (!course?.id || !email) return;
     try {
       const response = await axiosPrivate.get(`wishlist/email/${email}`, {
@@ -90,36 +108,7 @@ const CourseDetails = () => {
     } catch (error) {
       console.log("Error fetching Wishlist!");
     }
-  }, [axiosPrivate, course?.id, email]);
-
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        await fetchCourse();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-
-    initialize();
-  }, [fetchCourse, fetchEmail]);
-
-  useEffect(() => {
-    if (!course?.id) return;
-    const loadCourseMeta = async () => {
-      try {
-        await isCourseEnrolled();
-        if (email) {
-          await checkIfInWishlist();
-        }
-      } catch (error) {
-        console.log("Error fetching course metadata:", error);
-      }
-    };
-
-    loadCourseMeta();
-  }, [checkIfInWishlist, course?.id, email, isCourseEnrolled]);
+  };
 
   const handleWishlistToggle = async () => {
     if (!course?.id) return;

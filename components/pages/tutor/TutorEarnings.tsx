@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -51,7 +51,12 @@ const TutorEarnings = () => {
   const [data, setData] = useState<EarningsData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchEarnings = useCallback(async () => {
+  useEffect(() => {
+    fetchEarnings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+  }, []);
+
+  const fetchEarnings = async () => {
     try {
       setLoading(true);
       const response = await axiosPrivate.get("tutors/me/earnings", {
@@ -64,11 +69,7 @@ const TutorEarnings = () => {
     } finally {
       setLoading(false);
     }
-  }, [axiosPrivate]);
-
-  useEffect(() => {
-    fetchEarnings();
-  }, [fetchEarnings]);
+  };
 
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {

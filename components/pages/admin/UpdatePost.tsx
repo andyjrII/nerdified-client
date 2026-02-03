@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "@/lib/api/axios";
 import { useAdminAxiosPrivate } from "@/hooks/useAdminAxiosPrivate";
@@ -40,6 +40,13 @@ const UpdatePost = () => {
   }, []);
 
   useEffect(() => {
+    if (postId) {
+      getPost();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- getPost when postId changes
+  }, [postId]);
+
+  useEffect(() => {
     setErrMsg("");
   }, [title, datePosted, postUrl, selectedImage, postId]);
 
@@ -51,7 +58,7 @@ const UpdatePost = () => {
     }
   };
 
-  const getPost = useCallback(async () => {
+  const getPost = async () => {
     if (!postId) return;
     try {
       const response = await axios.get(`blog/post/${postId}`);
@@ -70,13 +77,7 @@ const UpdatePost = () => {
     } catch (err) {
       setErrMsg("Post does not exist");
     }
-  }, [postId]);
-
-  useEffect(() => {
-    if (postId) {
-      getPost();
-    }
-  }, [postId, getPost]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

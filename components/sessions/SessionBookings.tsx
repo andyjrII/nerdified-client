@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,7 +58,22 @@ const SessionBookings = () => {
     initialize();
   }, []);
 
-  const fetchEnrolledCourses = useCallback(async () => {
+  useEffect(() => {
+    if (email) {
+      fetchEnrolledCourses();
+      fetchMyBookings();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  useEffect(() => {
+    if (selectedCourseId) {
+      fetchSessions();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when selectedCourseId changes
+  }, [selectedCourseId]);
+
+  const fetchEnrolledCourses = async () => {
     try {
       const response = await axiosPrivate.get(`students/enrolled/${email}`);
       const courses = Array.isArray(response?.data) ? response.data : [];
@@ -72,9 +87,9 @@ const SessionBookings = () => {
       console.error("Error fetching enrolled courses:", error);
       setEnrolledCourses([]);
     }
-  }, [axiosPrivate, email, selectedCourseId]);
+  };
 
-  const fetchSessions = useCallback(async () => {
+  const fetchSessions = async () => {
     if (!selectedCourseId) return;
     
     try {
@@ -95,9 +110,9 @@ const SessionBookings = () => {
     } finally {
       setLoading(false);
     }
-  }, [axiosPrivate, selectedCourseId]);
+  };
 
-  const fetchMyBookings = useCallback(async () => {
+  const fetchMyBookings = async () => {
     try {
       const response = await axiosPrivate.get(`sessions/bookings`, {
         headers: { "Content-Type": "application/json" },
@@ -109,20 +124,7 @@ const SessionBookings = () => {
       console.error("Error fetching bookings:", error);
       setMyBookings([]);
     }
-  }, [axiosPrivate]);
-
-  useEffect(() => {
-    if (email) {
-      fetchEnrolledCourses();
-      fetchMyBookings();
-    }
-  }, [email, fetchEnrolledCourses, fetchMyBookings]);
-
-  useEffect(() => {
-    if (selectedCourseId) {
-      fetchSessions();
-    }
-  }, [selectedCourseId, fetchSessions]);
+  };
 
   const isBooked = (sessionId: number): boolean => {
     return myBookings.some(
@@ -329,12 +331,15 @@ const SessionBookings = () => {
       {/* Sessions List */}
       {selectedCourseId && (
         <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FaCalendarAlt className="w-5 h-5 text-blue-600" />
-              Available Sessions
-            </CardTitle>
-          </CardHeader>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FaCalendarAlt className="w-5 h-5 text-blue-600" />
+            Available Sessions
+          </CardTitle>
+          <p className="text-sm text-gray-500 font-normal">
+            Times are shown in your local timezone.
+          </p>
+        </CardHeader>
           <CardContent>
             {loading ? (
               <div className="text-center py-8">

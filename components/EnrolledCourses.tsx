@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
@@ -33,6 +33,22 @@ const EnrolledCourses = () => {
   const [sessionsCount, setSessionsCount] = useState<Record<number, number>>({});
 
   useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+        if (email) {
+          await getEnrolledCourses();
+        }
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  useEffect(() => {
     // Fetch session counts for each enrolled course
     const fetchSessionsCounts = async () => {
       const counts: Record<number, number> = {};
@@ -61,7 +77,7 @@ const EnrolledCourses = () => {
     }
   }, [enrollmentDetails, axiosPrivate]);
 
-  const fetchEmail = useCallback(async () => {
+  const fetchEmail = async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -70,9 +86,9 @@ const EnrolledCourses = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  }, []);
+  };
 
-  const getEnrolledCourses = useCallback(async () => {
+  const getEnrolledCourses = async () => {
     try {
       const response = await axiosPrivate.get(`students/enrolled/${email}`);
       // Ensure response.data is an array
@@ -82,32 +98,7 @@ const EnrolledCourses = () => {
       console.error("Error fetching Courses:", error);
       setEnrollmentDetails([]); // Set empty array on error
     }
-  }, [axiosPrivate, email]);
-
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-
-    initialize();
-  }, [fetchEmail]);
-
-  useEffect(() => {
-    if (!email) return;
-    const loadEnrollments = async () => {
-      try {
-        await getEnrolledCourses();
-      } catch (error) {
-        console.log("Error loading enrollments:", error);
-      }
-    };
-
-    loadEnrollments();
-  }, [email, getEnrolledCourses]);
+  };
 
   const getCourse = async (id: number) => {
     try {

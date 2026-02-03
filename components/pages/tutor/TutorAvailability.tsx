@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,9 +21,11 @@ import {
   FaClock,
   FaCheck,
   FaTimes,
+  FaGlobe,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
+import Moment from "react-moment";
 
 interface Availability {
   id: number;
@@ -31,6 +33,15 @@ interface Availability {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
+}
+
+interface TutorSession {
+  id: number;
+  title?: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+  course: { id: number; title: string };
 }
 
 const DAYS_OF_WEEK = [
@@ -43,17 +54,55 @@ const DAYS_OF_WEEK = [
   { value: "SUNDAY", label: "Sunday" },
 ];
 
+const COMMON_TIMEZONES = [
+  { value: "UTC", label: "UTC" },
+  { value: "Africa/Lagos", label: "Africa (Lagos)" },
+  { value: "Africa/Cairo", label: "Africa (Cairo)" },
+  { value: "Africa/Johannesburg", label: "Africa (Johannesburg)" },
+  { value: "America/New_York", label: "America (New York)" },
+  { value: "America/Los_Angeles", label: "America (Los Angeles)" },
+  { value: "America/Chicago", label: "America (Chicago)" },
+  { value: "Europe/London", label: "Europe (London)" },
+  { value: "Europe/Paris", label: "Europe (Paris)" },
+  { value: "Asia/Dubai", label: "Asia (Dubai)" },
+  { value: "Asia/Kolkata", label: "Asia (Kolkata)" },
+  { value: "Asia/Tokyo", label: "Asia (Tokyo)" },
+];
+
 const TutorAvailability = () => {
   const axiosPrivate = useTutorAxiosPrivate();
   const [availabilities, setAvailabilities] = useState<Availability[]>([]);
+  const [sessions, setSessions] = useState<TutorSession[]>([]);
+  const [timezone, setTimezone] = useState<string>("UTC");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [timezoneSaving, setTimezoneSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [selectedDay, setSelectedDay] = useState("");
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
 
-  const fetchAvailability = useCallback(async () => {
+  useEffect(() => {
+    fetchAvailability();
+    fetchTutorAndSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+  }, []);
+
+  const fetchTutorAndSessions = async () => {
+    try {
+      const [tutorRes, sessionsRes] = await Promise.all([
+        axiosPrivate.get("tutors/me", { withCredentials: true }),
+        axiosPrivate.get("sessions/tutor", { withCredentials: true }),
+      ]);
+      if (tutorRes?.data?.timezone) setTimezone(tutorRes.data.timezone);
+      const sess = Array.isArray(sessionsRes?.data) ? sessionsRes.data : [];
+      setSessions(sess);
+    } catch (e) {
+      console.error("Error fetching tutor/sessions:", e);
+    }
+  };
+
+  const fetchAvailability = async () => {
     try {
       setLoading(true);
       const response = await axiosPrivate.get(`sessions/availability`, {
@@ -75,11 +124,36 @@ const TutorAvailability = () => {
     } finally {
       setLoading(false);
     }
-  }, [axiosPrivate]);
+  };
 
-  useEffect(() => {
-    fetchAvailability();
-  }, [fetchAvailability]);
+  const handleTimezoneChange = async (newTz: string) => {
+    setTimezone(newTz);
+    try {
+      setTimezoneSaving(true);
+      await axiosPrivate.patch(
+        "tutors/me",
+        { timezone: newTz },
+        { headers: { "Content-Type": "application/json" }, withCredentials: true }
+      );
+      Swal.fire({
+        icon: "success",
+        title: "Timezone updated",
+        text: "Your timezone is used for scheduling and availability.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.error("Error updating timezone:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to update timezone.",
+        confirmButtonText: "OK",
+      });
+    } finally {
+      setTimezoneSaving(false);
+    }
+  };
 
   const handleAddAvailability = async () => {
     if (!selectedDay) {
@@ -245,6 +319,24 @@ const TutorAvailability = () => {
     );
   }
 
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    return d;
+  });
+  const sessionsByDay = weekDays.map((day) => {
+    const dayStart = new Date(day);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(day);
+    dayEnd.setHours(23, 59, 59, 999);
+    return sessions.filter((s) => {
+      const t = new Date(s.startTime);
+      return t >= dayStart && t <= dayEnd && s.status !== "CANCELLED";
+    });
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6">
       <div className="max-w-4xl mx-auto w-full space-y-6">
@@ -255,6 +347,82 @@ const TutorAvailability = () => {
             Set your weekly availability so students know when you&apos;re available for sessions
           </p>
         </div>
+
+        {/* Timezone */}
+        <Card className="border-blue-100">
+          <CardContent className="pt-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2 text-gray-700">
+                <FaGlobe className="w-5 h-5 text-blue-600" />
+                <Label htmlFor="timezone" className="font-medium">Your timezone</Label>
+              </div>
+              <Select
+                value={timezone || "UTC"}
+                onValueChange={handleTimezoneChange}
+                disabled={timezoneSaving}
+              >
+                <SelectTrigger id="timezone" className="w-[280px]">
+                  <SelectValue placeholder="Select timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COMMON_TIMEZONES.map((tz) => (
+                    <SelectItem key={tz.value} value={tz.value}>
+                      {tz.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {timezoneSaving && <SyncLoader size={14} color="#2563eb" />}
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              Session times and availability are shown in this timezone.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* This week schedule */}
+        {sessions.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FaCalendarAlt className="w-5 h-5 text-green-600" />
+                This week&apos;s schedule
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3">
+                {weekDays.map((day, i) => (
+                  <div key={i} className="border rounded-lg p-3 bg-gray-50">
+                    <div className="text-xs font-semibold text-gray-500 uppercase mb-2">
+                      <Moment format="ddd M/D">{day}</Moment>
+                    </div>
+                    <div className="space-y-2">
+                      {sessionsByDay[i].length === 0 ? (
+                        <p className="text-xs text-gray-400">No sessions</p>
+                      ) : (
+                        sessionsByDay[i].map((s) => (
+                          <div
+                            key={s.id}
+                            className="text-xs p-2 rounded bg-blue-50 border border-blue-100"
+                          >
+                            <div className="font-medium text-gray-800 truncate">
+                              {s.title || s.course?.title || "Session"}
+                            </div>
+                            <div className="text-gray-600">
+                              <Moment format="h:mm A">{s.startTime}</Moment>
+                              {" – "}
+                              <Moment format="h:mm A">{s.endTime}</Moment>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Current Availability */}
         <Card>

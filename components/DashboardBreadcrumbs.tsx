@@ -45,6 +45,30 @@ const defaultSegmentLabels: Record<string, Record<string, string>> = {
 
 type BreadcrumbPortalType = "student" | "tutor" | "admin";
 
+export type PathConfigEntry = {
+  basePath: string;
+  config: BreadcrumbConfig;
+};
+
+/**
+ * Returns the first BreadcrumbConfig whose basePath matches the pathname.
+ * Entries are matched by longest basePath first (e.g. /admins before /admin).
+ */
+export function getBreadcrumbConfigForPath(
+  pathname: string,
+  entries: PathConfigEntry[]
+): BreadcrumbConfig | null {
+  const sorted = [...entries].sort(
+    (a, b) => b.basePath.length - a.basePath.length
+  );
+  const normalized = pathname.replace(/\/$/, "") || "/";
+  const found = sorted.find(({ basePath }) => {
+    const base = basePath.replace(/\/$/, "") || "/";
+    return normalized === base || normalized.startsWith(base + "/");
+  });
+  return found?.config ?? null;
+}
+
 function getSegmentLabel(
   segment: string,
   segments: string[],
@@ -109,24 +133,7 @@ function buildCrumbs(
 
 interface DashboardBreadcrumbsProps {
   config: BreadcrumbConfig;
-  type: BreadcrumbPortalType;
-}
-
-export function getBreadcrumbConfigForPath(
-  pathname: string,
-  configs: { basePath: string; config: BreadcrumbConfig }[]
-): BreadcrumbConfig | null {
-  const normalizedPath = pathname || "";
-  let bestMatch: BreadcrumbConfig | null = null;
-  let bestLength = -1;
-  configs.forEach(({ basePath, config }) => {
-    const normalizedBase = basePath.replace(/\/$/, "");
-    if (normalizedPath.startsWith(normalizedBase) && normalizedBase.length > bestLength) {
-      bestMatch = config;
-      bestLength = normalizedBase.length;
-    }
-  });
-  return bestMatch;
+  type: "student" | "tutor" | "admin";
 }
 
 export function DashboardBreadcrumbs({ config, type }: DashboardBreadcrumbsProps) {
@@ -143,7 +150,7 @@ export function DashboardBreadcrumbs({ config, type }: DashboardBreadcrumbsProps
       {crumbs.map((crumb, i) => {
         const isLast = i === crumbs.length - 1;
         return (
-          <span key={`${crumb.href}-${i}`} className="flex items-center gap-1.5">
+          <span key={crumb.href} className="flex items-center gap-1.5">
             {i > 0 && (
               <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden />
             )}

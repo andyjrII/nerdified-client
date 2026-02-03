@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, startTransition } from "react";
+import { useRef, useState, useEffect, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaCalendarAlt, FaArrowLeft, FaClock } from "react-icons/fa";
+import { FaCalendarAlt, FaArrowLeft, FaClock, FaMagic } from "react-icons/fa";
+import Moment from "react-moment";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
 import Link from "next/link";
@@ -41,8 +42,45 @@ const TutorCreateSession = () => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [errMsg, setErrMsg] = useState("");
+  const [suggestedSlots, setSuggestedSlots] = useState<
+    Array<{ start: string; end: string }>
+  >([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
-  const fetchCourses = useCallback(async () => {
+  useEffect(() => {
+    fetchCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+  }, []);
+
+  useEffect(() => {
+    if (!courseId) {
+      setSuggestedSlots([]);
+      return;
+    }
+    const from = new Date();
+    const to = new Date();
+    to.setDate(to.getDate() + 14);
+    setLoadingSlots(true);
+    axiosPrivate
+      .get("sessions/suggested-slots", {
+        params: {
+          courseId,
+          from: from.toISOString(),
+          to: to.toISOString(),
+          durationMinutes: 60,
+        },
+        withCredentials: true,
+      })
+      .then((res) => {
+        const data = Array.isArray(res?.data) ? res.data : [];
+        setSuggestedSlots(data.slice(0, 12));
+      })
+      .catch(() => setSuggestedSlots([]))
+      .finally(() => setLoadingSlots(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when courseId changes, axiosPrivate stable
+  }, [courseId]);
+
+  const fetchCourses = async () => {
     try {
       setFetching(true);
       const response = await axiosPrivate.get(`tutors/me`, {
@@ -68,11 +106,7 @@ const TutorCreateSession = () => {
     } finally {
       setFetching(false);
     }
-  }, [axiosPrivate, router]);
-
-  useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
@@ -144,6 +178,10 @@ const TutorCreateSession = () => {
         errorMessage = err.response?.data?.message || "Invalid request data";
       } else if (err.response?.status === 404) {
         errorMessage = "Course not found or does not belong to you";
+      } else if (err.response?.status === 409) {
+        errorMessage =
+          err.response?.data?.message ||
+          "This time slot overlaps with an existing session.";
       } else {
         errorMessage = err.response?.data?.message || "Session creation failed";
       }
@@ -187,7 +225,8 @@ const TutorCreateSession = () => {
     if (!endTime) {
       setEndTime("10:00");
     }
-  }, [endDate, endTime, startDate, startTime]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- set default form values once on mount
+  }, []);
 
   if (fetching) {
     return (
@@ -272,6 +311,51 @@ const TutorCreateSession = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Suggested times (from availability, no conflicts) */}
+              {courseId && (
+                <div className="space-y-2 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                  <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                    <FaMagic className="w-4 h-4 text-indigo-600" />
+                    Suggested times (within your availability, no conflicts)
+                  </div>
+                  {loadingSlots ? (
+                    <p className="text-sm text-slate-500">Loading suggestions…</p>
+                  ) : suggestedSlots.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                      Set your availability to see suggested times, or pick a date and time below.
+                    </p>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {suggestedSlots.map((slot, i) => {
+                        const start = new Date(slot.start);
+                        const end = new Date(slot.end);
+                        const startDateStr = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`;
+                        const startTimeStr = `${String(start.getHours()).padStart(2, "0")}:${String(start.getMinutes()).padStart(2, "0")}`;
+                        const endDateStr = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, "0")}-${String(end.getDate()).padStart(2, "0")}`;
+                        const endTimeStr = `${String(end.getHours()).padStart(2, "0")}:${String(end.getMinutes()).padStart(2, "0")}`;
+                        return (
+                          <Button
+                            key={i}
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="text-xs"
+                            onClick={() => {
+                              setStartDate(startDateStr);
+                              setEndDate(endDateStr);
+                              setStartTime(startTimeStr);
+                              setEndTime(endTimeStr);
+                            }}
+                          >
+                            <Moment format="MMM D, h:mm A">{slot.start}</Moment>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Title */}
               <div className="space-y-2">

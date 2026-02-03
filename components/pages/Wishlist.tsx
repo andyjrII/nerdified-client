@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { FaHeart } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
@@ -40,7 +40,21 @@ const Wishlist = () => {
   const [email, setEmail] = useState<string>("");
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
 
-  const fetchEmail = useCallback(async () => {
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+        if (email) await getWishlist();
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- getWishlist/fetchEmail stable, run when email changes
+  }, [email]);
+
+  const fetchEmail = async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -49,9 +63,9 @@ const Wishlist = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  }, []);
+  };
 
-  const getWishlist = useCallback(async () => {
+  const getWishlist = async () => {
     try {
       const response = await axiosPrivate.get(`wishlist/email/${email}`, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -61,32 +75,7 @@ const Wishlist = () => {
     } catch (error) {
       console.error("Error getting Wishlist");
     }
-  }, [axiosPrivate, email]);
-
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-
-    initialize();
-  }, [fetchEmail]);
-
-  useEffect(() => {
-    if (!email) return;
-    const loadWishlist = async () => {
-      try {
-        await getWishlist();
-      } catch (error) {
-        console.log("Error loading wishlist:", error);
-      }
-    };
-
-    loadWishlist();
-  }, [email, getWishlist]);
+  };
 
   const handleRemove = async (courseId: number) => {
     try {

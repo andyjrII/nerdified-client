@@ -40,7 +40,8 @@ const Hero = () => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [slides.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- slides.length stable for carousel
+  }, []);
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);

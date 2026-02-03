@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import db from "@/utils/localBase";
 import Moment from "react-moment";
@@ -49,6 +49,13 @@ const Courses = () => {
   }, []);
 
   useEffect(() => {
+    if (email) {
+      getWishlist();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  useEffect(() => {
     const getCourses = async () => {
       try {
         const response = await axiosPrivate.get(`courses/${currentPage}`, {
@@ -65,24 +72,18 @@ const Courses = () => {
     getCourses();
   }, [currentPage, searchQuery, axiosPrivate]);
 
-  const getWishlist = useCallback(async () => {
+  const getWishlist = async () => {
     if (!email) return;
     try {
       const response = await axiosPrivate.get(`wishlist/email/${email}`);
       const wishlistSet = new Set<number>(
-        response.data.map((item: any) => Number(item.courseId))
+        response.data.map((item: { courseId: number }) => item.courseId)
       );
       setWishlist(wishlistSet);
     } catch (error) {
       console.error("Error getting wishlist", error);
     }
-  }, [axiosPrivate, email]);
-
-  useEffect(() => {
-    if (email) {
-      getWishlist();
-    }
-  }, [email, getWishlist]);
+  };
 
   const handleWishlistToggle = async (courseId: number) => {
     if (email) {

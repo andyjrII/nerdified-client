@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,7 +49,14 @@ const TutorDashboard = () => {
     initialize();
   }, []);
 
-  const fetchTutorData = useCallback(async () => {
+  useEffect(() => {
+    if (email) {
+      fetchTutorData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  const fetchTutorData = async () => {
     try {
       setLoading(true);
 
@@ -106,13 +113,7 @@ const TutorDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [axiosPrivate]);
-
-  useEffect(() => {
-    if (email) {
-      fetchTutorData();
-    }
-  }, [email, fetchTutorData]);
+  };
 
   if (loading) {
     return (
@@ -160,9 +161,9 @@ const TutorDashboard = () => {
                     Account Pending Approval
                   </h3>
                   <p className="text-yellow-800 text-sm">
-                    Your tutor account is pending admin approval. Once approved, you&apos;ll be able
-                    to create courses, schedule sessions, and start teaching. You&apos;ll be notified
-                    via email once your account is approved.
+                    Your tutor account is pending admin approval. Once approved, you&apos;ll be able to
+                    create courses, schedule sessions, and start teaching. You&apos;ll be notified via
+                    email once your account is approved.
                   </p>
                 </div>
               </div>

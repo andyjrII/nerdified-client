@@ -46,7 +46,9 @@ const PDFViewer = () => {
       container.appendChild(iframe);
 
       return () => {
-        container.innerHTML = "";
+        if (container) {
+          container.innerHTML = "";
+        }
       };
     }
   }, [pdfData]);

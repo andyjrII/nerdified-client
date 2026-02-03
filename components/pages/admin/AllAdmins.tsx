@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAdminAxiosPrivate } from "@/hooks/useAdminAxiosPrivate";
 import { FaTrashAlt } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
@@ -35,7 +35,26 @@ const AllAdmins = () => {
 
   const adminsPerPage = 20;
 
-  const fetchRole = useCallback(async () => {
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        await fetchRole();
+      } catch (error) {
+        console.error("Error fetching role from localBase:", error);
+      }
+    };
+
+    initializeData();
+  }, []);
+
+  useEffect(() => {
+    if (role) {
+      fetchAdmins();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchAdmins used intentionally when filters/role change
+  }, [currentPage, searchQuery, role, axiosPrivate]);
+
+  const fetchRole = async () => {
     try {
       const data = await db.collection("auth_admin").get();
       if (data.length > 0) {
@@ -44,9 +63,9 @@ const AllAdmins = () => {
     } catch (error) {
       console.error("Error fetching role:", error);
     }
-  }, []);
+  };
 
-  const fetchAdmins = useCallback(async () => {
+  const fetchAdmins = async () => {
     try {
       const response = await axiosPrivate.get(`admin/all/${currentPage}`, {
         params: {
@@ -59,25 +78,7 @@ const AllAdmins = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  }, [axiosPrivate, currentPage, role, searchQuery]);
-
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchRole();
-      } catch (error) {
-        console.error("Error fetching role from localBase:", error);
-      }
-    };
-
-    initializeData();
-  }, [fetchRole]);
-
-  useEffect(() => {
-    if (role) {
-      fetchAdmins();
-    }
-  }, [fetchAdmins, role]);
+  };
 
   const pageCount = Math.ceil(totalAdmins / adminsPerPage);
 

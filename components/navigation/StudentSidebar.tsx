@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaHome,
   FaBookOpen,
@@ -33,9 +33,26 @@ const StudentSidebar = () => {
   const [student, setStudent] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [logoutLoading, setLogoutLoading] = useState(false);
-  const [profileImageError, setProfileImageError] = useState(false);
 
-  const fetchEmail = useCallback(async () => {
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        await fetchEmail();
+        if (email) {
+          await fetchStudent();
+          // TODO: Fetch notification count
+          // await fetchNotificationCount();
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    initializeData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  const fetchEmail = async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -44,9 +61,9 @@ const StudentSidebar = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  }, []);
+  };
 
-  const fetchStudent = useCallback(async () => {
+  const fetchStudent = async () => {
     try {
       const response = await axiosPrivate.get(`students/${email}`);
       setStudent(response?.data);
@@ -59,54 +76,20 @@ const StudentSidebar = () => {
         console.error("Error fetching from localBase:", localError);
       }
     }
-  }, [axiosPrivate, email]);
-
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchEmail();
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    initializeData();
-  }, [fetchEmail]);
-
-  useEffect(() => {
-    if (!email) return;
-    const loadStudent = async () => {
-      try {
-        await fetchStudent();
-        // TODO: Fetch notification count
-        // await fetchNotificationCount();
-      } catch (error) {
-        console.error("Error loading student:", error);
-      }
-    };
-
-    loadStudent();
-  }, [email, fetchStudent]);
-
-  // Reset image error when student image path changes (e.g. new user or updated avatar)
-  useEffect(() => {
-    setProfileImageError(false);
-  }, [student?.imagePath]);
+  };
 
   const handleLogout = async () => {
     if (logoutLoading) return; // Prevent double clicks
     setLogoutLoading(true);
     try {
-      if (email) {
-        await axiosPrivate.post(
-          `auth/signout?email=${encodeURIComponent(email)}`,
-          null,
-          {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
-          }
-        );
-      }
+      await axiosPrivate.post(
+        `auth/signout?email=${email}`,
+        null,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
       await db.collection("auth_student").delete();
       await db.collection("student").delete();
       router.push("/signin");
@@ -192,13 +175,12 @@ const StudentSidebar = () => {
       <div className="p-4 border-b border-blue-800">
         <div className="flex items-center gap-3">
           <div className="relative w-12 h-12 rounded-full bg-blue-700 overflow-hidden">
-            {student?.imagePath && !profileImageError ? (
+            {student?.imagePath ? (
               <Image
                 src={student.imagePath}
                 alt={student.name || "Student"}
                 fill
                 className="object-cover"
-                onError={() => setProfileImageError(true)}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { FcImageFile } from "react-icons/fc";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import db from "@/utils/localBase";
@@ -23,7 +23,27 @@ const ImageChange = () => {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  const fetchEmail = useCallback(async () => {
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+        if (email) await fetchImage();
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  useEffect(() => {
+    if (selectedImage) {
+      fetchImage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when selectedImage/email change
+  }, [selectedImage, email]);
+
+  const fetchEmail = async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -32,39 +52,16 @@ const ImageChange = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  }, []);
+  };
 
-  const fetchImage = useCallback(async () => {
+  const fetchImage = async () => {
     try {
       const localStudent = await db.collection("student").doc(email).get();
       setImagePath(localStudent?.imagePath || "");
     } catch (error) {
       console.error("Error fetching image:", error);
     }
-  }, [email]);
-
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-    initialize();
-  }, [fetchEmail]);
-
-  useEffect(() => {
-    if (email) {
-      fetchImage();
-    }
-  }, [email, fetchImage]);
-
-  useEffect(() => {
-    if (selectedImage && email) {
-      fetchImage();
-    }
-  }, [selectedImage, email, fetchImage]);
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

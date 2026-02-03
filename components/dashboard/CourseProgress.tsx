@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -26,7 +26,14 @@ const CourseProgress = () => {
     initialize();
   }, []);
 
-  const fetchEnrollments = useCallback(async () => {
+  useEffect(() => {
+    if (email) {
+      fetchEnrollments();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  const fetchEnrollments = async () => {
     try {
       const response = await axiosPrivate.get(`students/enrolled/${email}`);
       const data = Array.isArray(response?.data) ? response.data : [];
@@ -35,13 +42,7 @@ const CourseProgress = () => {
       console.error("Error fetching enrollments:", error);
       setEnrollments([]);
     }
-  }, [axiosPrivate, email]);
-
-  useEffect(() => {
-    if (email) {
-      fetchEnrollments();
-    }
-  }, [email, fetchEnrollments]);
+  };
 
   const totalCourses = enrollments.length;
   const completedCourses = enrollments.filter(

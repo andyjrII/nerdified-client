@@ -3,7 +3,7 @@ import AdminSignin from "@/components/pages/AdminSignin";
 
 export default function AdminSigninPage() {
   return (
-    <Suspense fallback={<div className="p-6 text-center text-gray-500">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
       <AdminSignin />
     </Suspense>
   );

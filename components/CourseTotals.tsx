@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import db from "@/utils/localBase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,25 @@ const CourseTotals = () => {
   const [totalWishes, setTotalWishes] = useState<number>(0);
   const [totalPaid, setTotalPaid] = useState<string | number>("₦0.00");
 
-  const fetchEmail = useCallback(async () => {
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await fetchEmail();
+        if (email) {
+          await getTotalCourses();
+          await getTotalWishItems();
+          await getPaidAmountTotals();
+        }
+      } catch (error) {
+        console.log("Error during initialization:", error);
+      }
+    };
+
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
+
+  const fetchEmail = async () => {
     try {
       const data = await db.collection("auth_student").get();
       if (data.length > 0) {
@@ -22,18 +40,18 @@ const CourseTotals = () => {
     } catch (error) {
       console.error("Error fetching email:", error);
     }
-  }, []);
+  };
 
-  const getTotalCourses = useCallback(async () => {
+  const getTotalCourses = async () => {
     try {
       const response = await axiosPrivate.get(`students/total/${email}`);
       setTotalCourse(response?.data);
     } catch (error) {
       console.error("Error getting total number of Courses");
     }
-  }, [axiosPrivate, email]);
+  };
 
-  const getTotalWishItems = useCallback(async () => {
+  const getTotalWishItems = async () => {
     try {
       const response = await axiosPrivate.get(`wishlist/total/${email}`, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -43,9 +61,9 @@ const CourseTotals = () => {
     } catch (error) {
       console.error("Error getting total Wishlist items");
     }
-  }, [axiosPrivate, email]);
+  };
 
-  const getPaidAmountTotals = useCallback(async () => {
+  const getPaidAmountTotals = async () => {
     try {
       const response = await axiosPrivate.get(`students/total-paid/${email}`);
       const total = response?.data;
@@ -53,34 +71,7 @@ const CourseTotals = () => {
     } catch (error) {
       console.error("Error getting total amount paid for Courses");
     }
-  }, [axiosPrivate, email]);
-
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-
-    initialize();
-  }, [fetchEmail]);
-
-  useEffect(() => {
-    if (!email) return;
-    const loadTotals = async () => {
-      try {
-        await getTotalCourses();
-        await getTotalWishItems();
-        await getPaidAmountTotals();
-      } catch (error) {
-        console.log("Error during totals fetch:", error);
-      }
-    };
-
-    loadTotals();
-  }, [email, getPaidAmountTotals, getTotalCourses, getTotalWishItems]);
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">

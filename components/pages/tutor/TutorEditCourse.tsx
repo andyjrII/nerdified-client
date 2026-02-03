@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, startTransition } from "react";
+import { useRef, useState, useEffect, startTransition } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import axios from "@/lib/api/axios";
@@ -53,7 +53,14 @@ const TutorEditCourse = () => {
   const [fetching, setFetching] = useState(true);
   const [errMsg, setErrMsg] = useState("");
 
-  const fetchCourse = useCallback(async () => {
+  useEffect(() => {
+    if (courseId) {
+      fetchCourse();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when courseId changes
+  }, [courseId]);
+
+  const fetchCourse = async () => {
     if (!courseId) return;
     try {
       setFetching(true);
@@ -94,13 +101,7 @@ const TutorEditCourse = () => {
     } finally {
       setFetching(false);
     }
-  }, [courseId, router]);
-
-  useEffect(() => {
-    if (courseId) {
-      fetchCourse();
-    }
-  }, [courseId, fetchCourse]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
