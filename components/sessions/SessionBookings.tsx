@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FaCalendarAlt, FaClock, FaVideo, FaTimes, FaCheckCircle } from "react-icons/fa";
 import Moment from "react-moment";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import Swal from "sweetalert2";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Session {
   id: number;
@@ -34,6 +34,7 @@ interface Session {
 const SessionBookings = () => {
   const axiosPrivate = useAxiosPrivate();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const courseIdParam = searchParams.get("courseId");
   const [email, setEmail] = useState<string>("");
   const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
@@ -45,17 +46,8 @@ const SessionBookings = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        const data = await db.collection("auth_student").get();
-        if (data.length > 0) {
-          setEmail(data[0].email);
-        }
-      } catch (error) {
-        console.error("Error fetching email:", error);
-      }
-    };
-    initialize();
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
   }, []);
 
   useEffect(() => {
@@ -169,6 +161,18 @@ const SessionBookings = () => {
     return true;
   };
 
+  const isJoinWindow = (session: Session): boolean => {
+    const now = new Date();
+    const start = new Date(session.startTime);
+    const end = new Date(session.endTime);
+    const earlyMs = 30 * 60 * 1000; // 30 minutes before start
+    const lateMs = 30 * 60 * 1000; // 30 minutes after end
+    return (
+      now.getTime() >= start.getTime() - earlyMs &&
+      now.getTime() <= end.getTime() + lateMs
+    );
+  };
+
   const bookSession = async (sessionId: number) => {
     try {
       const response = await axiosPrivate.post(
@@ -247,11 +251,7 @@ const SessionBookings = () => {
   };
 
   const joinSession = (session: Session) => {
-    if (session.meetingUrl) {
-      window.open(session.meetingUrl, "_blank");
-    } else {
-      alert("Session meeting link will be available when the session starts.");
-    }
+    router.push(`/student/sessions/live/${session.id}`);
   };
 
   const getStatusBadge = (session: Session) => {
@@ -414,7 +414,7 @@ const SessionBookings = () => {
                               <FaTimes className="w-4 h-4 mr-2" />
                               Cancel Booking
                             </Button>
-                            {session.status === "IN_PROGRESS" && session.meetingUrl && (
+                            {(session.status === "IN_PROGRESS" || session.status === "SCHEDULED") && (
                               <Button
                                 size="sm"
                                 onClick={() => joinSession(session)}

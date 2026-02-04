@@ -10,7 +10,7 @@ import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { unformatCurrency } from "@/utils/unformatCurrency";
 import PaystackPop from "@paystack/inline-js";
 import Missing from "./Missing";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -44,24 +44,12 @@ const CourseEnrollment = () => {
   const [course, setCourse] = useState<any>(null);
 
   useEffect(() => {
-    const initializeData = async () => {
-      try {
-        const data = await db.collection("auth_student").get();
-        if (data.length > 0) {
-          setEmail(data[0].email);
-        }
-        if (typeof window !== "undefined") {
-          const storedCourse = localStorage.getItem("NERDVILLE_COURSE");
-          if (storedCourse) {
-            setCourse(JSON.parse(storedCourse));
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching email from localBase:", error);
-      }
-    };
-
-    initializeData();
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
+    if (typeof window !== "undefined") {
+      const storedCourse = localStorage.getItem("NERDVILLE_COURSE");
+      if (storedCourse) setCourse(JSON.parse(storedCourse));
+    }
   }, []);
 
   useEffect(() => {

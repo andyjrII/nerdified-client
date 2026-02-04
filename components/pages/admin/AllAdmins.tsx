@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAdminAxiosPrivate } from "@/hooks/useAdminAxiosPrivate";
 import { FaTrashAlt } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
-import db from "@/utils/localBase";
+import { getAuthAdmin } from "@/utils/authStorage";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -36,34 +36,14 @@ const AllAdmins = () => {
   const adminsPerPage = 20;
 
   useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchRole();
-      } catch (error) {
-        console.error("Error fetching role from localBase:", error);
-      }
-    };
-
-    initializeData();
+    const data = getAuthAdmin();
+    if (data?.role) setRole(data.role);
   }, []);
 
   useEffect(() => {
-    if (role) {
-      fetchAdmins();
-    }
+    if (role) fetchAdmins();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchAdmins used intentionally when filters/role change
   }, [currentPage, searchQuery, role, axiosPrivate]);
-
-  const fetchRole = async () => {
-    try {
-      const data = await db.collection("auth_admin").get();
-      if (data.length > 0) {
-        setRole(data[0].role);
-      }
-    } catch (error) {
-      console.error("Error fetching role:", error);
-    }
-  };
 
   const fetchAdmins = async () => {
     try {

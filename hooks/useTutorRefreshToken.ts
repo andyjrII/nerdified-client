@@ -2,7 +2,7 @@
 
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import axios from "@/lib/api/axios";
-import db from "@/utils/localBase";
+import { getAuthTutor, setAuthTutor } from "@/utils/authStorage";
 
 export const useTutorRefreshToken = () => {
   const { setAuth } = useTutorAuth();
@@ -18,24 +18,15 @@ export const useTutorRefreshToken = () => {
         }
       );
 
-      setAuth({
-        email: null,
-        accessToken: response.data.access_token,
-      });
+      const newToken = response.data.access_token;
+      setAuth({ email: null, accessToken: newToken });
 
-      const authData = await db.collection("auth_tutor").get();
-
-      if (authData.length > 0) {
-        // Update the accessToken in Localbase
-        await db
-          .collection("auth_tutor")
-          .doc({ email: authData[0].email })
-          .update({
-            accessToken: response.data.access_token,
-          });
+      const existing = getAuthTutor();
+      if (existing) {
+        setAuthTutor({ ...existing, accessToken: newToken });
       }
 
-      return response.data.access_token;
+      return newToken;
     } catch (error: any) {
       console.error(
         "Failed to refresh tutor token:",

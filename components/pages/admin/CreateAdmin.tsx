@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FcLock, FcAddressBook, FcBusinessman } from "react-icons/fc";
-import db from "@/utils/localBase";
+import { getAuthAdmin } from "@/utils/authStorage";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,17 +46,8 @@ const CreateAdmin = () => {
   const [role, setRole] = useState<string>("SUB");
 
   useEffect(() => {
-    const fetchRole = async () => {
-      try {
-        const data = await db.collection("auth_admin").get();
-        if (data.length > 0) {
-          setRole(data[0].role || "SUB");
-        }
-      } catch (error) {
-        console.error("Error fetching role:", error);
-      }
-    };
-    fetchRole();
+    const data = getAuthAdmin();
+    if (data?.role) setRole(data.role);
   }, []);
 
   useEffect(() => {

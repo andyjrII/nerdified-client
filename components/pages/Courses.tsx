@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import Moment from "react-moment";
 import ReactPaginate from "react-paginate";
 import { motion } from "framer-motion";
@@ -35,17 +35,8 @@ const Courses = () => {
   const coursesPerPage = 20;
 
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        const data = await db.collection("auth_student").get();
-        if (data.length > 0) {
-          setEmail(data[0].email);
-        }
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-    initialize();
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
   }, []);
 
   useEffect(() => {

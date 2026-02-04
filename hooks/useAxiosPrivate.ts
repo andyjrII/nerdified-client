@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRefreshToken } from './useRefreshToken';
 import { axiosPrivate } from '@/lib/api/axios';
-import db from '@/utils/localBase';
+import { getAuthStudent } from '@/utils/authStorage';
 import { useLogout } from './useLogout';
 import { AxiosInstance } from 'axios';
 
@@ -14,18 +14,8 @@ export const useAxiosPrivate = (): AxiosInstance => {
   const retryCountRef = useRef<number>(0);
 
   useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const data = await db.collection('auth_student').get();
-        if (data.length > 0) {
-          setToken(data[0].accessToken);
-        }
-      } catch (error) {
-        console.error('Error fetching token:', error);
-      }
-    };
-
-    fetchToken();
+    const data = getAuthStudent();
+    if (data?.accessToken) setToken(data.accessToken);
   }, []);
 
   useEffect(() => {

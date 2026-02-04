@@ -307,17 +307,15 @@ const TutorSessionsList = () => {
                       </div>
 
                       <div className="flex gap-2 pt-4 border-t">
-                        {session.meetingUrl && (
-                          <Button
+                        <Button
                             variant="outline"
                             className="flex-1"
                             size="sm"
-                            onClick={() => window.open(session.meetingUrl, "_blank")}
+                            onClick={() => router.push(`/tutor/sessions/live/${session.id}`)}
                           >
                             <FaVideo className="w-3 h-3 mr-2" />
                             Join
                           </Button>
-                        )}
                         <Button
                           variant="ghost"
                           size="sm"

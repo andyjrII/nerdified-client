@@ -102,6 +102,7 @@ const About = () => {
                   alt="Logo"
                   fill
                   className="rounded-full object-cover border-4 border-blue-900"
+                  unoptimized
                 />
               </div>
             </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import StarRating from "@/components/StarRating";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import Swal from "sweetalert2";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,32 +34,19 @@ const Reviews = ({ courseId }: ReviewsProps) => {
   const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
   const [imageUrls, setImageUrls] = useState<Map<string, string>>(new Map());
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchReviews();
-        }
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
+  const fetchEmail = () => {
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
+  };
 
-    initialize();
+  useEffect(() => {
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) fetchReviews();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email/courseId change
   }, [email, courseId]);
-
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_student").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
-  };
 
   const fetchReviews = async () => {
     try {

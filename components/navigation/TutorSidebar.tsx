@@ -18,7 +18,12 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
-import db from "@/utils/localBase";
+import { useTutorLogout } from "@/hooks/useTutorLogout";
+import {
+  getAuthTutor,
+  getTutorProfile,
+  setTutorProfile,
+} from "@/utils/authStorage";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -30,78 +35,53 @@ const TutorSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { auth } = useTutorAuth();
+  const logout = useTutorLogout();
   const [email, setEmail] = useState<string>("");
   const [tutor, setTutor] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [navLoading, setNavLoading] = useState(false);
 
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchTutor();
-          // TODO: Fetch notification count
-          // await fetchNotificationCount();
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  const fetchEmail = () => {
+    const data = getAuthTutor();
+    if (data?.email) setEmail(data.email);
+  };
 
-    initializeData();
+  useEffect(() => {
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) {
+      fetchTutor();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
   }, [email]);
 
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_tutor").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
-  };
-
   const fetchTutor = async () => {
     try {
-      // Fetch tutor using /tutors/me endpoint (from JWT)
       const response = await axiosPrivate.get(`tutors/me`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-      setTutor(response?.data);
-      // Cache in localbase
-      await db.collection("tutor").doc(email).set(response?.data);
+      const data = response?.data;
+      setTutor(data);
+      if (data) setTutorProfile(data as Record<string, unknown>);
     } catch (error) {
       console.error("Error fetching tutor:", error);
-      try {
-        const localTutor = await db.collection("tutor").doc(email).get();
-        setTutor(localTutor);
-      } catch (localError) {
-        console.error("Error fetching from localBase:", localError);
-        // Use placeholder if all else fails
-        setTutor({ email, name: "Tutor" });
-      }
+      const cached = getTutorProfile();
+      if (cached) setTutor(cached);
+      else setTutor({ email, name: "Tutor" });
     }
   };
 
   const handleLogout = async () => {
+    if (logoutLoading) return;
+    setLogoutLoading(true);
     try {
-      await axiosPrivate.post(`auth/tutor/signout?email=${email}`, null, {
-        withCredentials: true,
-      });
-      await db.collection("auth_tutor").delete();
-      await db.collection("tutor").delete();
-      router.push("/signin");
-    } catch (error) {
-      console.error("Logout error:", error);
-      // Still clear local storage and redirect
-      await db.collection("auth_tutor").delete();
-      await db.collection("tutor").delete();
-      router.push("/signin");
+      await logout();
+    } finally {
+      setLogoutLoading(false);
     }
   };
 

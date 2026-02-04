@@ -7,7 +7,7 @@ import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { FcLock, FcAddressBook } from "react-icons/fc";
-import db from "@/utils/localBase";
+import { setAuthStudent, setAuthTutor } from "@/utils/authStorage";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
@@ -106,18 +106,11 @@ const Signin = () => {
         throw new Error("Invalid response from server - no access token received");
       }
 
-      // Save to appropriate local storage collection
       if (role === "student") {
-        await db
-          .collection("auth_student")
-          .doc(email)
-          .set({ email, accessToken });
+        setAuthStudent({ email, accessToken });
         setAuth({ email, accessToken });
       } else {
-        await db
-          .collection("auth_tutor")
-          .doc(email)
-          .set({ email, accessToken });
+        setAuthTutor({ email, accessToken });
         setTutorAuth({ email, accessToken });
 
         // Show approval status message for tutors

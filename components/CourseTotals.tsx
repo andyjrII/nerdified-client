@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/utils/formatCurrency";
 
@@ -13,34 +13,23 @@ const CourseTotals = () => {
   const [totalWishes, setTotalWishes] = useState<number>(0);
   const [totalPaid, setTotalPaid] = useState<string | number>("₦0.00");
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await getTotalCourses();
-          await getTotalWishItems();
-          await getPaidAmountTotals();
-        }
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
+  const fetchEmail = () => {
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
+  };
 
-    initialize();
+  useEffect(() => {
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) {
+      getTotalCourses();
+      getTotalWishItems();
+      getPaidAmountTotals();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
   }, [email]);
-
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_student").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
-  };
 
   const getTotalCourses = async () => {
     try {

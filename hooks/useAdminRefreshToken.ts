@@ -2,7 +2,7 @@
 
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import axios from "@/lib/api/axios";
-import db from "@/utils/localBase";
+import { getAuthAdmin, setAuthAdmin } from "@/utils/authStorage";
 
 export const useAdminRefreshToken = () => {
   const { setAdmin } = useAdminAuth();
@@ -18,23 +18,15 @@ export const useAdminRefreshToken = () => {
         }
       );
 
-      setAdmin({
-        email: null,
-        accessToken: response.data.access_token,
-      });
+      const newToken = response.data.access_token;
+      setAdmin({ email: null, accessToken: newToken });
 
-      const authData = await db.collection("auth_admin").get();
-
-      if (authData.length > 0) {
-        await db
-          .collection("auth_admin")
-          .doc({ email: authData[0].email })
-          .update({
-            accessToken: response.data.access_token,
-          });
+      const existing = getAuthAdmin();
+      if (existing) {
+        setAuthAdmin({ ...existing, accessToken: newToken });
       }
 
-      return response.data.access_token;
+      return newToken;
     } catch (error: any) {
       console.error(
         "Failed to refresh admin token:",

@@ -5,7 +5,7 @@ import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import { FaClock, FaEnvelope, FaPhone, FaUserGraduate } from "react-icons/fa";
 import { IoLocation } from "react-icons/io5";
-import db from "@/utils/localBase";
+import { getAuthStudent, getStudentProfile, setStudentProfile } from "@/utils/authStorage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
@@ -24,46 +24,30 @@ const StudentInfo = () => {
   const [email, setEmail] = useState<string>("");
   const [student, setStudent] = useState<Student>({});
 
+  const fetchEmail = () => {
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
+  };
+
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchStudent();
-        }
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-    initialize();
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) fetchStudent();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
   }, [email]);
-
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_student").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
-  };
 
   const fetchStudent = async () => {
     try {
       const response = await axiosPrivate.get(`students/${email}`);
       const studentData = response?.data;
-      await db.collection("student").doc(email).set(studentData);
+      if (studentData) setStudentProfile(studentData as Record<string, unknown>);
       setStudent(studentData);
     } catch (error) {
       console.error("Failed to fetch student data from server.");
-      try {
-        const localStudent = await db.collection("student").doc(email).get();
-        setStudent(localStudent);
-      } catch (localError) {
-        console.error("Error fetching from localBase:", localError);
-      }
+      const cached = getStudentProfile();
+      if (cached) setStudent(cached as Student);
     }
   };
 

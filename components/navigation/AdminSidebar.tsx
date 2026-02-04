@@ -17,7 +17,11 @@ import { IoSchool } from "react-icons/io5";
 import { useAdminLogout } from "@/hooks/useAdminLogout";
 import { useAdminAxiosPrivate } from "@/hooks/useAdminAxiosPrivate";
 import { useAdmin } from "@/hooks/useAdmin";
-import db from "@/utils/localBase";
+import {
+  getAuthAdmin,
+  getAdminProfile,
+  setAdminProfile,
+} from "@/utils/authStorage";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,45 +39,32 @@ const AdminSidebar = () => {
   const logout = useAdminLogout();
   const [email, setEmail] = useState<string>("");
 
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchAdmin();
-        }
-      } catch (error) {
-        console.error("Error fetching email from localBase:", error);
-      }
-    };
+  const fetchEmail = () => {
+    const data = getAuthAdmin();
+    if (data?.email) setEmail(data.email);
+  };
 
-    initializeData();
+  useEffect(() => {
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) {
+      fetchAdmin();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
   }, [email]);
-
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_admin").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
-  };
 
   const fetchAdmin = async () => {
     try {
       const response = await axiosPrivate.get(`admin/${email}`);
-      setAdmin(response?.data);
+      const data = response?.data;
+      setAdmin(data);
+      if (data) setAdminProfile(data as Record<string, unknown>);
     } catch (error) {
       console.error("Error:", error);
-      try {
-        const localAdmin = await db.collection("admin").doc(email).get();
-        setAdmin(localAdmin);
-      } catch (localError) {
-        console.error("Error fetching from localBase:", localError);
-      }
+      const cached = getAdminProfile();
+      if (cached) setAdmin(cached);
     }
   };
 

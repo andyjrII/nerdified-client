@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import { FaBookOpen, FaCheckCircle, FaClock } from "react-icons/fa";
 
 const CourseProgress = () => {
@@ -13,17 +13,8 @@ const CourseProgress = () => {
   const [enrollments, setEnrollments] = useState<any[]>([]);
 
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        const data = await db.collection("auth_student").get();
-        if (data.length > 0) {
-          setEmail(data[0].email);
-        }
-      } catch (error) {
-        console.error("Error fetching email:", error);
-      }
-    };
-    initialize();
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
   }, []);
 
   useEffect(() => {

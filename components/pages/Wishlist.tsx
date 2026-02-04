@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { FaHeart } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import Moment from "react-moment";
 import { formatCurrency } from "@/utils/formatCurrency";
 import StarRating from "@/components/StarRating";
@@ -40,30 +40,19 @@ const Wishlist = () => {
   const [email, setEmail] = useState<string>("");
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) await getWishlist();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-
-    initialize();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- getWishlist/fetchEmail stable, run when email changes
-  }, [email]);
-
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_student").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
+  const fetchEmail = () => {
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
   };
+
+  useEffect(() => {
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) getWishlist();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, [email]);
 
   const getWishlist = async () => {
     try {

@@ -4,38 +4,35 @@ import { useRouter } from "next/navigation";
 import axios from "@/lib/api/axios";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { clearAuthSessionCookie } from "@/utils/authCookie";
-import db from "@/utils/localBase";
+import {
+  getAuthAdmin,
+  clearAuthAdmin,
+  clearAdminProfile,
+} from "@/utils/authStorage";
 
 export const useAdminLogout = () => {
   const { admin, setAdmin } = useAdminAuth();
   const router = useRouter();
 
   const logout = async () => {
+    const fromContext = typeof admin.email === "string" ? admin.email.trim() : "";
+    const fromStorage = getAuthAdmin()?.email;
+    const email = fromContext || (typeof fromStorage === "string" ? fromStorage.trim() : "");
     try {
-      await axios.post(
-        "auth/admin/signout",
-        {},
-        {
-          params: {
-            email: admin.email,
-          },
+      if (email) {
+        await axios.post("auth/admin/signout", null, {
+          params: { email },
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
-        }
-      );
+        });
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Admin logout API error:", err);
     }
-
     setAdmin({ email: null, accessToken: null });
     clearAuthSessionCookie();
-
-    if (typeof window !== "undefined") {
-      localStorage.clear();
-      await db.collection("auth_admin").delete();
-      await db.collection("admin").delete();
-    }
-
+    clearAuthAdmin();
+    clearAdminProfile();
     router.push("/admin/signin");
   };
 

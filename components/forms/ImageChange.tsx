@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { FcImageFile } from "react-icons/fc";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import db from "@/utils/localBase";
+import { getAuthStudent, getStudentProfile, setStudentProfile } from "@/utils/authStorage";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
 import Image from "next/image";
@@ -23,41 +23,38 @@ const ImageChange = () => {
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
+  const fetchEmail = () => {
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
+  };
+
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) await fetchImage();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
-    initialize();
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) fetchImage();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
   }, [email]);
 
   useEffect(() => {
-    if (selectedImage) {
-      fetchImage();
-    }
+    if (selectedImage && email) fetchImage();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when selectedImage/email change
   }, [selectedImage, email]);
 
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_student").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
-  };
-
   const fetchImage = async () => {
+    const cached = getStudentProfile();
+    if (cached && typeof cached.imagePath === "string") {
+      setImagePath(cached.imagePath);
+      return;
+    }
     try {
-      const localStudent = await db.collection("student").doc(email).get();
-      setImagePath(localStudent?.imagePath || "");
+      const response = await axiosPrivate.get(`students/${email}`);
+      const data = response?.data;
+      if (data) {
+        setStudentProfile(data as Record<string, unknown>);
+        setImagePath(data.imagePath || "");
+      }
     } catch (error) {
       console.error("Error fetching image:", error);
     }
@@ -106,9 +103,8 @@ const ImageChange = () => {
         confirmButtonText: "OK",
       });
 
-      await db.collection("student").doc(email).update({
-        imagePath: response.data,
-      });
+      const cached = getStudentProfile();
+      setStudentProfile({ ...cached, imagePath: response.data } as Record<string, unknown>);
       setNewImage(response.data);
       setSelectedImage(null);
       setFileName("");

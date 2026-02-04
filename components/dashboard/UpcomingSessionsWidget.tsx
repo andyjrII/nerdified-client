@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FaCalendarAlt, FaClock, FaVideo, FaExclamationCircle } from "react-icons/fa";
 import Moment from "react-moment";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import { useRouter } from "next/navigation";
 
 interface Session {
@@ -35,17 +35,8 @@ const UpcomingSessionsWidget = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        const data = await db.collection("auth_student").get();
-        if (data.length > 0) {
-          setEmail(data[0].email);
-        }
-      } catch (error) {
-        console.error("Error fetching email:", error);
-      }
-    };
-    initialize();
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
   }, []);
 
   useEffect(() => {
@@ -88,12 +79,7 @@ const UpcomingSessionsWidget = () => {
   };
 
   const joinSession = (session: Session) => {
-    if (session.meetingUrl) {
-      window.open(session.meetingUrl, "_blank");
-    } else {
-      // TODO: Implement join session logic when video integration is added
-      alert("Session meeting link will be available when the session starts.");
-    }
+    router.push(`/student/sessions/live/${session.id}`);
   };
 
   const viewAllSessions = () => {
@@ -222,15 +208,14 @@ const UpcomingSessionsWidget = () => {
                 <Button
                   size="sm"
                   className="w-full"
-                  onClick={() => joinSession(session)}
-                  disabled={!session.meetingUrl && !isStartingSoon}
+                  onClick={() =>
+                    isStartingSoon
+                      ? joinSession(session)
+                      : router.push("/student/sessions")
+                  }
                 >
                   <FaVideo className="w-3 h-3 mr-2" />
-                  {session.meetingUrl
-                    ? "Join Session"
-                    : isStartingSoon
-                    ? "Session Starting Soon"
-                    : "View Details"}
+                  {isStartingSoon ? "Join Session" : "View Details"}
                 </Button>
               </div>
             );

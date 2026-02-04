@@ -22,14 +22,17 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Log errors for debugging
-    console.error("❌ API Error:", {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      message: error.response?.data?.message || error.message,
-      data: error.response?.data,
-    });
+    // Skip noisy logging for signout (local logout proceeds anyway)
+    const url = String(error?.config?.url ?? "");
+    if (!url.includes("signout")) {
+      console.error("❌ API Error:", {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response?.status,
+        message: error.response?.data?.message || error.message,
+        data: error.response?.data,
+      });
+    }
     return Promise.reject(error);
   }
 );

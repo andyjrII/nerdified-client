@@ -17,7 +17,12 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import db from "@/utils/localBase";
+import { useLogout } from "@/hooks/useLogout";
+import {
+  getAuthStudent,
+  getStudentProfile,
+  setStudentProfile,
+} from "@/utils/authStorage";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -36,20 +41,14 @@ const StudentSidebar = () => {
   const [profileImageError, setProfileImageError] = useState(false);
 
   useEffect(() => {
-    const initializeData = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await fetchStudent();
-          // TODO: Fetch notification count
-          // await fetchNotificationCount();
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    fetchEmail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
+  }, []);
 
-    initializeData();
+  useEffect(() => {
+    if (email) {
+      fetchStudent();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
   }, [email]);
 
@@ -58,53 +57,29 @@ const StudentSidebar = () => {
     setProfileImageError(false);
   }, [student?.imagePath]);
 
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_student").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
+  const fetchEmail = () => {
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
   };
 
   const fetchStudent = async () => {
     try {
       const response = await axiosPrivate.get(`students/${email}`);
-      setStudent(response?.data);
+      const data = response?.data;
+      setStudent(data);
+      if (data) setStudentProfile(data as Record<string, unknown>);
     } catch (error) {
       console.error("Error fetching student:", error);
-      try {
-        const localStudent = await db.collection("student").doc(email).get();
-        setStudent(localStudent);
-      } catch (localError) {
-        console.error("Error fetching from localBase:", localError);
-      }
+      const cached = getStudentProfile();
+      if (cached) setStudent(cached);
     }
   };
 
   const handleLogout = async () => {
-    if (logoutLoading) return; // Prevent double clicks
+    if (logoutLoading) return;
     setLogoutLoading(true);
     try {
-      await axiosPrivate.post(
-        `auth/signout?email=${email}`,
-        null,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      await db.collection("auth_student").delete();
-      await db.collection("student").delete();
-      router.push("/signin");
-    } catch (error) {
-      console.error("Logout error:", error);
-      // Still clear local storage and redirect
-      await db.collection("auth_student").delete();
-      await db.collection("student").delete();
-      router.push("/signin");
+      await logout();
     } finally {
       setLogoutLoading(false);
     }

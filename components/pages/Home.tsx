@@ -75,6 +75,7 @@ const Home = () => {
                 alt="Learn live with expert tutors"
                 fill
                 className="object-cover rounded-lg"
+                unoptimized
               />
             </motion.div>
               
@@ -160,6 +161,7 @@ const Home = () => {
                 alt="Teach live on Nerdified"
                 fill
                 className="object-cover rounded-lg"
+                unoptimized
               />
             </motion.div>
           </div>

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import { FaCalendarAlt, FaVideo, FaBookOpen, FaSearch } from "react-icons/fa";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,19 +32,17 @@ const EnrolledCourses = () => {
   const [enrollmentDetails, setEnrollmentDetails] = useState<EnrollmentDetail[]>([]);
   const [sessionsCount, setSessionsCount] = useState<Record<number, number>>({});
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await getEnrolledCourses();
-        }
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
+  const fetchEmail = () => {
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
+  };
 
-    initialize();
+  useEffect(() => {
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) getEnrolledCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
   }, [email]);
 
@@ -76,17 +74,6 @@ const EnrolledCourses = () => {
       fetchSessionsCounts();
     }
   }, [enrollmentDetails, axiosPrivate]);
-
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_student").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
-  };
 
   const getEnrolledCourses = async () => {
     try {

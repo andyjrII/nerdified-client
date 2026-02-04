@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useTutorRefreshToken } from "./useTutorRefreshToken";
 import { axiosPrivate } from "@/lib/api/axios";
-import db from "@/utils/localBase";
+import { getAuthTutor } from "@/utils/authStorage";
 import { useTutorLogout } from "./useTutorLogout";
 import { AxiosInstance } from "axios";
 
@@ -14,18 +14,8 @@ export const useTutorAxiosPrivate = (): AxiosInstance => {
   const retryCountRef = useRef<number>(0);
 
   useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const data = await db.collection("auth_tutor").get();
-        if (data.length > 0) {
-          setToken(data[0].accessToken);
-        }
-      } catch (error) {
-        console.error("Error fetching tutor token:", error);
-      }
-    };
-
-    fetchToken();
+    const data = getAuthTutor();
+    if (data?.accessToken) setToken(data.accessToken);
   }, []);
 
   useEffect(() => {

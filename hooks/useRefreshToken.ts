@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import axios from "@/lib/api/axios";
-import db from "@/utils/localBase";
+import { getAuthStudent, setAuthStudent } from "@/utils/authStorage";
 
 export const useRefreshToken = () => {
   const { setAuth } = useAuth();
@@ -10,35 +10,26 @@ export const useRefreshToken = () => {
   const refresh = async (): Promise<string> => {
     try {
       const response = await axios.post(
-        'auth/refresh',
+        "auth/refresh",
         {},
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
           withCredentials: true,
         }
       );
-      
-      setAuth({
-        email: null,
-        accessToken: response.data.access_token,
-      });
 
-      const authData = await db.collection('auth_student').get();
+      const newToken = response.data.access_token;
+      setAuth({ email: null, accessToken: newToken });
 
-      if (authData.length > 0) {
-        // Update the accessToken in Localbase
-        await db
-          .collection('auth_student')
-          .doc({ email: authData[0].email })
-          .update({
-            accessToken: response.data.access_token,
-          });
+      const existing = getAuthStudent();
+      if (existing) {
+        setAuthStudent({ ...existing, accessToken: newToken });
       }
 
-      return response.data.access_token;
+      return newToken;
     } catch (error: any) {
       console.error(
-        'Failed to refresh token:',
+        "Failed to refresh token:",
         error.response ? error.response.data : error.message
       );
       throw error;

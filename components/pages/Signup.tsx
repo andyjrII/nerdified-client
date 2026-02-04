@@ -18,7 +18,7 @@ import {
 } from "react-icons/fc";
 import axios from "@/lib/api/axios";
 import { useRouter } from "next/navigation";
-import db from "@/utils/localBase";
+import { setAuthStudent } from "@/utils/authStorage";
 import { useAuth } from "@/hooks/useAuth";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
@@ -169,12 +169,7 @@ const Signup = () => {
       }
 
       const accessToken = response.data.access_token;
-      
-      // Save to local storage
-      await db
-        .collection("auth_student")
-        .doc(email)
-        .set({ email, accessToken });
+      setAuthStudent({ email, accessToken });
       setAuth({ email, accessToken });
 
       // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)

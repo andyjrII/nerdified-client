@@ -26,6 +26,7 @@ export const Footer = () => {
                 width={50}
                 height={50}
                 className="mb-4 rounded-full object-cover aspect-square"
+                unoptimized
               />
             </Link>
             <p className="text-sm text-gray-300 flex items-center space-x-2">

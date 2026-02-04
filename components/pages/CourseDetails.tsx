@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import Moment from "react-moment";
 import { FaClock, FaMoneyBill, FaStar, FaHeart } from "react-icons/fa";
 import Missing from "./Missing";
@@ -31,34 +31,23 @@ const CourseDetails = () => {
   const [courseEnrolled, setCourseEnrolled] = useState<any>(null);
   const [isInWishlist, setIsInWishlist] = useState<boolean>(false);
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await fetchEmail();
-        if (email) {
-          await isCourseEnrolled();
-          await checkIfInWishlist();
-        }
-        await fetchCourse();
-      } catch (error) {
-        console.log("Error during initialization:", error);
-      }
-    };
+  const fetchEmail = () => {
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
+  };
 
-    initialize();
+  useEffect(() => {
+    fetchEmail();
+  }, []);
+
+  useEffect(() => {
+    if (email) {
+      isCourseEnrolled();
+      checkIfInWishlist();
+    }
+    fetchCourse();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
   }, [email]);
-
-  const fetchEmail = async () => {
-    try {
-      const data = await db.collection("auth_student").get();
-      if (data.length > 0) {
-        setEmail(data[0].email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-    }
-  };
 
   const fetchCourse = async () => {
     try {

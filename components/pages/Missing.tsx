@@ -17,6 +17,7 @@ const Missing = () => {
               width={200}
               height={200}
               className="mx-auto"
+              unoptimized
             />
           </div>
           <CardTitle className="text-3xl font-bold">404</CardTitle>

@@ -14,7 +14,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 ChartJS.register(
@@ -34,17 +34,8 @@ const SpendingChart = () => {
   const [enrollmentData, setEnrollmentData] = useState<any[]>([]);
 
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        const data = await db.collection("auth_student").get();
-        if (data.length > 0) {
-          setEmail(data[0].email);
-        }
-      } catch (error) {
-        console.error("Error fetching email:", error);
-      }
-    };
-    initialize();
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
   }, []);
 
   useEffect(() => {

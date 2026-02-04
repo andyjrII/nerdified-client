@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useAdminRefreshToken } from "./useAdminRefreshToken";
 import { axiosPrivate } from "@/lib/api/axios";
-import db from "@/utils/localBase";
+import { getAuthAdmin } from "@/utils/authStorage";
 import { useAdminLogout } from "./useAdminLogout";
 import { AxiosInstance } from "axios";
 
@@ -14,18 +14,8 @@ export const useAdminAxiosPrivate = (): AxiosInstance => {
   const retryCountRef = useRef<number>(0);
 
   useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const data = await db.collection("auth_admin").get();
-        if (data.length > 0) {
-          setToken(data[0].accessToken);
-        }
-      } catch (error) {
-        console.error("Error fetching admin token:", error);
-      }
-    };
-
-    fetchToken();
+    const data = getAuthAdmin();
+    if (data?.accessToken) setToken(data.accessToken);
   }, []);
 
   useEffect(() => {

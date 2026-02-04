@@ -13,7 +13,7 @@ import {
   Legend,
 } from "chart.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import db from "@/utils/localBase";
+import { getAuthStudent } from "@/utils/authStorage";
 
 ChartJS.register(
   CategoryScale,
@@ -30,17 +30,8 @@ const EnrollmentChart = () => {
   const [enrollmentData, setEnrollmentData] = useState<any[]>([]);
 
   useEffect(() => {
-    const initialize = async () => {
-      try {
-        const data = await db.collection("auth_student").get();
-        if (data.length > 0) {
-          setEmail(data[0].email);
-        }
-      } catch (error) {
-        console.error("Error fetching email:", error);
-      }
-    };
-    initialize();
+    const data = getAuthStudent();
+    if (data?.email) setEmail(data.email);
   }, []);
 
   useEffect(() => {

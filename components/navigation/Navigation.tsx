@@ -41,15 +41,16 @@ export const Navigation = () => {
   return (
     <nav className="bg-blue-900 text-white shadow-md relative z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20 md:h-24">
-          {/* Logo and Brand */}
-          <Link href="/" className="flex items-center space-x-3">
+        <div className="flex items-center h-20 md:h-24">
+          {/* Left: Logo and Brand */}
+          <Link href="/" className="flex items-center space-x-3 shrink-0">
             <Image
               src="/images/logo.png"
               alt="<Nerdified />"
               width={50}
               height={50}
               className="rounded-full object-cover aspect-square"
+              unoptimized
             />
             <div className="flex flex-col">
               <span className="text-xl font-bold">
@@ -63,8 +64,8 @@ export const Navigation = () => {
             </div>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-6">
+          {/* Center: Navigation Links */}
+          <div className="hidden md:flex flex-1 justify-center items-center space-x-6">
             {navLinks.map(({ href, label, icon: Icon }) => {
               const active = isActive(href);
               return (
@@ -97,8 +98,11 @@ export const Navigation = () => {
                 </Link>
               );
             })}
+          </div>
 
-            {!auth.email && (
+          {/* Right: Sign in (when logged out) or User dropdown (when logged in) */}
+          <div className="hidden md:flex items-center shrink-0">
+            {!auth.email ? (
               <Link
                 href="/signin"
                 className={cn(
@@ -121,12 +125,14 @@ export const Navigation = () => {
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500" />
                 )}
               </Link>
+            ) : (
+              <StudentDropdownMenu />
             )}
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <button className="text-white p-2">
+            <button className="text-white p-2" type="button" aria-label="Menu">
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -140,13 +146,6 @@ export const Navigation = () => {
               </svg>
             </button>
           </div>
-
-          {/* User Dropdown */}
-          {auth.email && (
-            <div className="hidden md:block">
-              <StudentDropdownMenu />
-            </div>
-          )}
         </div>
       </div>
     </nav>

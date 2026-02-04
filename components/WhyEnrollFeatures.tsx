@@ -59,6 +59,7 @@ const WhyEnrollFeatures = () => {
             fill
             className="object-cover object-center"
             sizes="(max-width: 768px) 100vw, 25vw"
+            unoptimized
           />
           <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/65 to-black/75 group-hover:from-black/75 group-hover:via-black/70 group-hover:to-black/80 transition-all" />
           <CardContent className="relative z-10 h-full flex flex-col p-5 md:p-6 text-white">

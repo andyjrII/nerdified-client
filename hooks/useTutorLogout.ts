@@ -1,48 +1,38 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import axios from "@/lib/api/axios";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
-import { axiosPrivate } from "@/lib/api/axios";
 import { clearAuthSessionCookie } from "@/utils/authCookie";
-import db from "@/utils/localBase";
+import {
+  getAuthTutor,
+  clearAuthTutor,
+  clearTutorProfile,
+} from "@/utils/authStorage";
 
 export const useTutorLogout = () => {
   const router = useRouter();
   const { setAuth } = useTutorAuth();
 
   const logout = async () => {
+    const stored = getAuthTutor();
+    const email = typeof stored?.email === "string" ? stored.email.trim() : "";
     try {
-      // Get email from local storage
-      const authData = await db.collection("auth_tutor").get();
-      if (authData.length > 0) {
-        const email = authData[0].email;
-
-        // Call logout endpoint
-        await axiosPrivate.post(`auth/tutor/signout?email=${email}`, null, {
+      if (email) {
+        await axios.post("auth/tutor/signout", null, {
+          params: { email },
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
-
-        // Clear local storage
-        await db.collection("auth_tutor").delete();
-        await db.collection("tutor").delete();
       }
-
-      // Clear auth context and frontend session cookie
-      setAuth({ email: null, accessToken: null });
-      clearAuthSessionCookie();
-
-      // Redirect to signin
-      router.push("/signin");
-    } catch (error) {
-      console.error("Error during tutor logout:", error);
-      // Clear local storage even if API call fails
-      await db.collection("auth_tutor").delete();
-      await db.collection("tutor").delete();
-      setAuth({ email: null, accessToken: null });
-      clearAuthSessionCookie();
-      router.push("/signin");
+    } catch {
+      // Proceed with local logout; API may 400 if email missing
     }
+    setAuth({ email: null, accessToken: null });
+    clearAuthSessionCookie();
+    clearAuthTutor();
+    clearTutorProfile();
+    router.push("/signin");
   };
 
   return logout;

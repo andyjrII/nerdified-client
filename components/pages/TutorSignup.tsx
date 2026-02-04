@@ -18,8 +18,8 @@ import {
 } from "react-icons/fc";
 import axios from "@/lib/api/axios";
 import { useRouter } from "next/navigation";
-import db from "@/utils/localBase";
-import { useAuth } from "@/hooks/useAuth";
+import { setAuthTutor } from "@/utils/authStorage";
+import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import Image from "next/image";
@@ -39,7 +39,7 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
 
 const TutorSignup = () => {
   const router = useRouter();
-  const { setAuth } = useAuth();
+  const { setAuth } = useTutorAuth();
   const errRef = useRef<HTMLParagraphElement>(null);
 
   const [name, setName] = useState("");
@@ -166,14 +166,8 @@ const TutorSignup = () => {
       }
 
       const accessToken = response.data.access_token;
-      // Tutors start with approved: false (need admin approval)
       const isApproved = false;
-
-      // Save to local storage
-      await db
-        .collection("auth_tutor")
-        .doc(email)
-        .set({ email, accessToken });
+      setAuthTutor({ email, accessToken });
       setAuth({ email, accessToken });
 
       Swal.fire({

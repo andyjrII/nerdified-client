@@ -3,8 +3,9 @@
 import { useRef, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "@/lib/api/axios";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { FcLock, FcAddressBook } from "react-icons/fc";
-import db from "@/utils/localBase";
+import { setAuthAdmin } from "@/utils/authStorage";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,10 +46,8 @@ const AdminSignin = () => {
       );
       const accessToken = response?.data[0]?.access_token;
       const role = response?.data[1];
-      await db
-        .collection("auth_admin")
-        .doc(email)
-        .set({ email, accessToken, role });
+      setAuthAdmin({ email, accessToken, role });
+      setAdmin({ email, accessToken });
 
       setAuthSessionCookie();
 
