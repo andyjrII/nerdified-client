@@ -43,12 +43,7 @@ const CreateAdmin = () => {
   const [confirmFocus, setConfirmFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
-  const [role, setRole] = useState<string>("SUB");
-
-  useEffect(() => {
-    const data = getAuthAdmin();
-    if (data?.role) setRole(data.role);
-  }, []);
+  const [role, setRole] = useState<"SUB_ADMIN" | "SUPER_ADMIN">("SUB_ADMIN");
 
   useEffect(() => {
     setValidName(NAME_REGEX.test(name));

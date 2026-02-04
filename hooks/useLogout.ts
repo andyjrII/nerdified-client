@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
 import { clearAuthSessionCookie } from "@/utils/authCookie";
 import {
@@ -9,23 +8,26 @@ import {
   clearAuthStudent,
   clearStudentProfile,
 } from "@/utils/authStorage";
+import axios from "@/lib/api/axios";
 
 export const useLogout = () => {
-  const { auth, setAuth } = useAuth();
+  const { setAuth } = useAuth();
   const router = useRouter();
 
   const logout = async () => {
-    const fromContext = typeof auth.email === "string" ? auth.email.trim() : "";
-    const fromStorage = getAuthStudent()?.email;
-    const email = fromContext || (typeof fromStorage === "string" ? fromStorage.trim() : "");
+    const raw = getAuthStudent()?.accessToken;
+    const token = typeof raw === "string" ? raw.trim() : "";
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     try {
-      if (email) {
-        await axios.post("auth/signout", null, {
-          params: { email },
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        });
-      }
+      await axios.post("auth/signout", {}, {
+        headers,
+        withCredentials: true,
+      });
     } catch (err) {
       console.error(err);
     }

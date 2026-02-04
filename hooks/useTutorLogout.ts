@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import axios from "@/lib/api/axios";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { clearAuthSessionCookie } from "@/utils/authCookie";
 import {
@@ -9,24 +8,28 @@ import {
   clearAuthTutor,
   clearTutorProfile,
 } from "@/utils/authStorage";
+import axios from "@/lib/api/axios";
 
 export const useTutorLogout = () => {
   const router = useRouter();
   const { setAuth } = useTutorAuth();
 
   const logout = async () => {
-    const stored = getAuthTutor();
-    const email = typeof stored?.email === "string" ? stored.email.trim() : "";
+    const raw = getAuthTutor()?.accessToken;
+    const token = typeof raw === "string" ? raw.trim() : "";
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     try {
-      if (email) {
-        await axios.post("auth/tutor/signout", null, {
-          params: { email },
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        });
-      }
-    } catch {
-      // Proceed with local logout; API may 400 if email missing
+      await axios.post("auth/signout", {}, {
+        headers,
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.error(err);
     }
     setAuth({ email: null, accessToken: null });
     clearAuthSessionCookie();

@@ -10,7 +10,7 @@ export const useTutorRefreshToken = () => {
   const refresh = async (): Promise<string> => {
     try {
       const response = await axios.post(
-        "auth/tutor/refresh",
+        "auth/refresh",
         {},
         {
           headers: { "Content-Type": "application/json" },

@@ -7,7 +7,14 @@ import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { FcLock, FcAddressBook } from "react-icons/fc";
-import { setAuthStudent, setAuthTutor } from "@/utils/authStorage";
+import {
+  setAuthStudent,
+  setAuthTutor,
+  clearAuthStudent,
+  clearStudentProfile,
+  clearAuthTutor,
+  clearTutorProfile,
+} from "@/utils/authStorage";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
@@ -72,12 +79,11 @@ const Signin = () => {
       console.log(`Attempting ${role} signin for:`, email);
       console.log("API Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
 
-      // Choose endpoint based on role
-      const endpoint = role === "student" ? "auth/signin" : "auth/tutor/signin";
-      
+      // Unified sign-in: single endpoint with role in body
+      const apiRole = role === "student" ? "STUDENT" : "TUTOR";
       const response = await axios.post(
-        endpoint,
-        { email, password },
+        "auth/signin",
+        { email, password, role: apiRole },
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -86,20 +92,9 @@ const Signin = () => {
 
       console.log("Signin response:", response);
 
-      // Handle different response structures
-      // Student: { access_token, refresh_token }
-      // Tutor: [Tokens, boolean] - returns array with tokens and approval status
-      let accessToken: string;
-      let isApproved: boolean = true;
-
-      if (role === "tutor" && Array.isArray(response?.data)) {
-        // Tutor response is [Tokens, boolean]
-        accessToken = response.data[0]?.access_token;
-        isApproved = response.data[1] || false;
-      } else {
-        // Student response is Tokens object
-        accessToken = response?.data?.access_token;
-      }
+      const data = response?.data;
+      const accessToken = data?.access_token;
+      const isApproved = data?.approved !== false;
 
       if (!accessToken) {
         console.error("No access_token in response:", response?.data);
@@ -183,6 +178,16 @@ const Signin = () => {
         confirmButtonColor: "#ef4444",
       });
       errRef.current?.focus();
+      // Clear any stale auth so nav shows Sign In instead of profile
+      if (role === "student") {
+        setAuth({ email: null, accessToken: null });
+        clearAuthStudent();
+        clearStudentProfile();
+      } else {
+        setTutorAuth({ email: null, accessToken: null });
+        clearAuthTutor();
+        clearTutorProfile();
+      }
     }
     setLoading(false);
   };

@@ -35,7 +35,7 @@ export const useTutorAxiosPrivate = (): AxiosInstance => {
         const prevRequest = error?.config as any;
         const maxRetries = 5;
         const requestUrl = String(prevRequest?.url || "");
-        const isRefreshRequest = requestUrl.includes("auth/tutor/refresh");
+        const isRefreshRequest = requestUrl.includes("auth/refresh");
 
         if (
           (error?.response?.status === 401 || error?.response?.status === 403) &&

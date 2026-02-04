@@ -177,7 +177,7 @@ const AdminSidebar = () => {
           <span>Payments</span>
         </Link>
 
-        {admin.role === "SUPER" && (
+        {admin.role === "SUPER_ADMIN" && (
           <>
             <hr className="my-4 border-gray-700" />
             <Accordion type="single" collapsible className="w-full">

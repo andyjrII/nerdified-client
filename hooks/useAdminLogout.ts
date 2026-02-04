@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import axios from "@/lib/api/axios";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { clearAuthSessionCookie } from "@/utils/authCookie";
 import {
@@ -9,23 +8,26 @@ import {
   clearAuthAdmin,
   clearAdminProfile,
 } from "@/utils/authStorage";
+import axios from "@/lib/api/axios";
 
 export const useAdminLogout = () => {
-  const { admin, setAdmin } = useAdminAuth();
+  const { setAdmin } = useAdminAuth();
   const router = useRouter();
 
   const logout = async () => {
-    const fromContext = typeof admin.email === "string" ? admin.email.trim() : "";
-    const fromStorage = getAuthAdmin()?.email;
-    const email = fromContext || (typeof fromStorage === "string" ? fromStorage.trim() : "");
+    const raw = getAuthAdmin()?.accessToken;
+    const token = typeof raw === "string" ? raw.trim() : "";
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     try {
-      if (email) {
-        await axios.post("auth/admin/signout", null, {
-          params: { email },
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        });
-      }
+      await axios.post("auth/signout", {}, {
+        headers,
+        withCredentials: true,
+      });
     } catch (err) {
       console.error("Admin logout API error:", err);
     }

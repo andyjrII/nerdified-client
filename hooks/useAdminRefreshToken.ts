@@ -10,7 +10,7 @@ export const useAdminRefreshToken = () => {
   const refresh = async (): Promise<string> => {
     try {
       const response = await axios.post(
-        "auth/admin/refresh",
+        "auth/refresh",
         {},
         {
           headers: { "Content-Type": "application/json" },

@@ -48,10 +48,7 @@ const AllAdmins = () => {
   const fetchAdmins = async () => {
     try {
       const response = await axiosPrivate.get(`admin/all/${currentPage}`, {
-        params: {
-          search: searchQuery,
-          role,
-        },
+        params: { search: searchQuery },
       });
       setAdmins(response.data.admins);
       setTotalAdmins(response.data.totalAdmins);
@@ -74,11 +71,7 @@ const AllAdmins = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await axiosPrivate.delete(`admin/${id}`, {
-        params: {
-          role,
-        },
-      });
+      const response = await axiosPrivate.delete(`admin/${id}`);
       Swal.fire({
         icon: "success",
         title: "Delete Success",

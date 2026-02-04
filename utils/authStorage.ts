@@ -44,7 +44,12 @@ function safeRemove(key: string): void {
 
 export type AuthStudent = { email: string; accessToken: string };
 export type AuthTutor = { email: string; accessToken: string };
-export type AuthAdmin = { email: string; accessToken: string; role?: string };
+export type AuthAdmin = {
+  email: string;
+  accessToken: string;
+  /** SUPER_ADMIN | SUB_ADMIN */
+  role?: "SUPER_ADMIN" | "SUB_ADMIN";
+};
 
 export function getAuthStudent(): AuthStudent | null {
   return safeGet<AuthStudent>(KEYS.AUTH_STUDENT);

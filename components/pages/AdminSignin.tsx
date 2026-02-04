@@ -45,9 +45,9 @@ const AdminSignin = () => {
         }
       );
       const accessToken = response?.data[0]?.access_token;
-      const role = response?.data[1];
+      const role = response?.data[1]; // SUPER_ADMIN | SUB_ADMIN
       setAuthAdmin({ email, accessToken, role });
-      setAdmin({ email, accessToken });
+      setAdmin({ email, accessToken, role });
 
       setAuthSessionCookie();
 
