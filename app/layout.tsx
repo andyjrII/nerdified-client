@@ -20,8 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning>
+      {/* suppressHydrationWarning: avoids hydration errors when browser extensions (e.g. Dark Reader) modify DOM before React hydrates, especially in __next_metadata_boundary__ */}
+      <body className={inter.className} suppressHydrationWarning>
         <AuthProvider>
           <AdminProvider>
             <StudentProvider>

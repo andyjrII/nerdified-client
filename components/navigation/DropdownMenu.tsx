@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
   faGear,
-  faUser,
   faSignOut,
   faHome,
 } from "@fortawesome/free-solid-svg-icons";
@@ -106,12 +105,6 @@ export const StudentDropdownMenu = () => {
           <Link href="/student" className="flex items-center space-x-2 w-full">
             <FontAwesomeIcon icon={faHome} className="h-4 w-4" />
             <span>Dashboard</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild className="hover:bg-blue-800 focus:bg-blue-800 text-white cursor-pointer">
-          <Link href="/student" className="flex items-center space-x-2 w-full">
-            <FontAwesomeIcon icon={faUser} className="h-4 w-4" />
-            <span>Profile</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-blue-700" />
