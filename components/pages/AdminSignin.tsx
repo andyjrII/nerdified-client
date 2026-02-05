@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 const AdminSignin = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { setAdmin } = useAdminAuth();
   const from = searchParams.get("from") || "/admin";
   const errRef = useRef<HTMLParagraphElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);

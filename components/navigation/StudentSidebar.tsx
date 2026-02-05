@@ -34,6 +34,7 @@ const StudentSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { auth } = useAuth();
+  const logout = useLogout();
   const [email, setEmail] = useState<string>("");
   const [student, setStudent] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);

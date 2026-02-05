@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import "sweetalert2/dist/sweetalert2.min.css";
 import { AuthProvider } from "@/context/AuthProvider";
 import { AdminProvider } from "@/context/AdminProvider";
 import { StudentProvider } from "@/context/StudentProvider";
 import { TutorProvider } from "@/context/TutorProvider";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Nerdified - Learn Live. Learn Better.",
@@ -22,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       {/* suppressHydrationWarning: avoids hydration errors when browser extensions (e.g. Dark Reader) modify DOM before React hydrates, especially in __next_metadata_boundary__ */}
-      <body className={inter.className} suppressHydrationWarning>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <AuthProvider>
           <AdminProvider>
             <StudentProvider>
