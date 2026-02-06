@@ -29,6 +29,15 @@ import {
 import Swal from "sweetalert2";
 import Moment from "react-moment";
 import Link from "next/link";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface Session {
   id: number;
@@ -41,6 +50,7 @@ interface Session {
   course: {
     id: number;
     title: string;
+    status?: string;
   };
   bookings?: Array<{
     id: number;
@@ -61,6 +71,11 @@ const TutorSessionsList = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [courseFilter, setCourseFilter] = useState<string>("all");
   const [courses, setCourses] = useState<Array<{ id: number; title: string }>>([]);
+  const [rescheduleModal, setRescheduleModal] = useState<{ sessionId: number; title: string } | null>(null);
+  const [rescheduleReason, setRescheduleReason] = useState("");
+  const [rescheduleStart, setRescheduleStart] = useState("");
+  const [rescheduleEnd, setRescheduleEnd] = useState("");
+  const [rescheduleSubmitting, setRescheduleSubmitting] = useState(false);
 
   useEffect(() => {
     fetchSessions();
@@ -149,6 +164,39 @@ const TutorSessionsList = () => {
         showConfirmButton: true,
         confirmButtonColor: "#ef4444",
       });
+    }
+  };
+
+  const submitRescheduleRequest = async () => {
+    if (!rescheduleModal || rescheduleReason.trim().length < 10) {
+      Swal.fire({ icon: "warning", title: "Reason required", text: "Please provide a reason (at least 10 characters).", confirmButtonColor: "#f59e0b" });
+      return;
+    }
+    if (!rescheduleStart || !rescheduleEnd) {
+      Swal.fire({ icon: "warning", title: "Dates required", text: "Please set requested start and end date/time.", confirmButtonColor: "#f59e0b" });
+      return;
+    }
+    setRescheduleSubmitting(true);
+    try {
+      await axiosPrivate.post(
+        "sessions/reschedule-requests",
+        {
+          sessionId: rescheduleModal.sessionId,
+          requestedStartTime: new Date(rescheduleStart).toISOString(),
+          requestedEndTime: new Date(rescheduleEnd).toISOString(),
+          reason: rescheduleReason.trim(),
+        },
+        { withCredentials: true }
+      );
+      Swal.fire({ icon: "success", title: "Request submitted", text: "Admin will review your reschedule request.", confirmButtonColor: "#10b981" });
+      setRescheduleModal(null);
+      setRescheduleReason("");
+      setRescheduleStart("");
+      setRescheduleEnd("");
+    } catch (err: any) {
+      Swal.fire({ icon: "error", title: "Failed", text: err.response?.data?.message || "Could not submit request.", confirmButtonColor: "#ef4444" });
+    } finally {
+      setRescheduleSubmitting(false);
     }
   };
 
@@ -306,7 +354,7 @@ const TutorSessionsList = () => {
                         </div>
                       </div>
 
-                      <div className="flex gap-2 pt-4 border-t">
+                      <div className="flex flex-wrap gap-2 pt-4 border-t">
                         <Button
                             variant="outline"
                             className="flex-1"
@@ -316,6 +364,16 @@ const TutorSessionsList = () => {
                             <FaVideo className="w-3 h-3 mr-2" />
                             Join
                           </Button>
+                        {session.course?.status === "PUBLISHED" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setRescheduleModal({ sessionId: session.id, title: session.title || session.course?.title || "Session" })}
+                          >
+                            <FaEdit className="w-3 h-3 mr-1" />
+                            Reschedule
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
@@ -400,6 +458,35 @@ const TutorSessionsList = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Reschedule request modal */}
+        <Dialog open={!!rescheduleModal} onOpenChange={(open) => !open && setRescheduleModal(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Request reschedule: {rescheduleModal?.title}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              <div>
+                <Label>New start (date & time)</Label>
+                <Input type="datetime-local" value={rescheduleStart} onChange={(e) => setRescheduleStart(e.target.value)} />
+              </div>
+              <div>
+                <Label>New end (date & time)</Label>
+                <Input type="datetime-local" value={rescheduleEnd} onChange={(e) => setRescheduleEnd(e.target.value)} />
+              </div>
+              <div>
+                <Label>Reason (min 10 characters)</Label>
+                <Textarea value={rescheduleReason} onChange={(e) => setRescheduleReason(e.target.value)} placeholder="Why do you need to reschedule?" rows={3} />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setRescheduleModal(null)}>Cancel</Button>
+              <Button onClick={submitRescheduleRequest} disabled={rescheduleSubmitting}>
+                {rescheduleSubmitting ? "Submitting…" : "Submit request"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

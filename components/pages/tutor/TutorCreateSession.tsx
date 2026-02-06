@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, startTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -24,11 +24,13 @@ import Link from "next/link";
 interface Course {
   id: number;
   title: string;
+  status?: string;
 }
 
 const TutorCreateSession = () => {
   const axiosPrivate = useTutorAxiosPrivate();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const errRef = useRef<HTMLParagraphElement>(null);
 
   const [courses, setCourses] = useState<Course[]>([]);
@@ -87,10 +89,13 @@ const TutorCreateSession = () => {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-      const tutorCourses = Array.isArray(response?.data?.courses) ? response.data.courses : [];
-      setCourses(tutorCourses);
-      if (tutorCourses.length > 0) {
-        setCourseId(String(tutorCourses[0].id));
+      const allCourses = Array.isArray(response?.data?.courses) ? response.data.courses : [];
+      const draftCourses = allCourses.filter((c: Course) => c.status === "DRAFT");
+      setCourses(draftCourses);
+      if (draftCourses.length > 0) {
+        const fromUrl = searchParams.get("courseId");
+        const match = fromUrl && draftCourses.find((c: Course) => String(c.id) === fromUrl);
+        setCourseId(match ? String(match.id) : String(draftCourses[0].id));
       }
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -243,14 +248,18 @@ const TutorCreateSession = () => {
           <Card>
             <CardContent className="pt-12 pb-12 text-center">
               <FaCalendarAlt className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Courses Available</h3>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">No draft courses</h3>
               <p className="text-gray-500 mb-6">
-                You need to create at least one course before scheduling sessions.
+                Sessions can only be added to draft courses. Create a course or open a draft course, add sessions here, then publish. For published courses, use &quot;Request to add session&quot; on the course edit page.
               </p>
               <Link href="/tutor/courses/new">
                 <Button className="bg-purple-600 hover:bg-purple-700">
-                  Create Your First Course
+                  Create a course
                 </Button>
+              </Link>
+              <span className="mx-2">or</span>
+              <Link href="/tutor/courses">
+                <Button variant="outline">Back to courses</Button>
               </Link>
             </CardContent>
           </Card>
