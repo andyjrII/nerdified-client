@@ -12,6 +12,8 @@ import {
   FaPenAlt,
   FaUserGraduate,
   FaChalkboardTeacher,
+  FaCalendarAlt,
+  FaCalendarPlus,
 } from "react-icons/fa";
 import { IoSchool } from "react-icons/io5";
 import { useAdminLogout } from "@/hooks/useAdminLogout";
@@ -175,6 +177,21 @@ const AdminSidebar = () => {
         >
           <FaDollarSign className="h-5 w-5" />
           <span>Payments</span>
+        </Link>
+
+        <Link
+          href="/admin/reschedule-requests"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 rounded-lg transition-colors"
+        >
+          <FaCalendarAlt className="h-5 w-5" />
+          <span>Reschedule Requests</span>
+        </Link>
+        <Link
+          href="/admin/add-session-requests"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 rounded-lg transition-colors"
+        >
+          <FaCalendarPlus className="h-5 w-5" />
+          <span>Add Session Requests</span>
         </Link>
 
         {admin.role === "SUPER_ADMIN" && (

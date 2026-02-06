@@ -134,33 +134,6 @@ const SessionBookings = () => {
     );
   };
 
-  const canBook = (session: Session): boolean => {
-    const now = new Date();
-    const startTime = new Date(session.startTime);
-    
-    // Can't book past sessions or cancelled sessions
-    if (startTime < now || session.status === "CANCELLED") {
-      return false;
-    }
-
-    // Check if already booked
-    if (isBooked(session.id)) {
-      return false;
-    }
-
-    // Check capacity if available
-    if (session.maxStudents && session.bookings) {
-      const activeBookings = session.bookings.filter(
-        (b: any) => b.status !== "CANCELLED"
-      ).length;
-      if (activeBookings >= session.maxStudents) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
   const isJoinWindow = (session: Session): boolean => {
     const now = new Date();
     const start = new Date(session.startTime);
@@ -171,41 +144,6 @@ const SessionBookings = () => {
       now.getTime() >= start.getTime() - earlyMs &&
       now.getTime() <= end.getTime() + lateMs
     );
-  };
-
-  const bookSession = async (sessionId: number) => {
-    try {
-      const response = await axiosPrivate.post(
-        `sessions/${sessionId}/book`,
-        null,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-
-      Swal.fire({
-        icon: "success",
-        title: "Session Booked!",
-        text: "You have successfully booked this session.",
-        confirmButtonText: "OK",
-      });
-
-      // Refresh sessions and bookings
-      await fetchSessions();
-      await fetchMyBookings();
-    } catch (error: any) {
-      console.error("Error booking session:", error);
-      const errorMessage =
-        error.response?.data?.message || "Failed to book session. Please try again.";
-      
-      Swal.fire({
-        icon: "error",
-        title: "Booking Failed",
-        text: errorMessage,
-        confirmButtonText: "OK",
-      });
-    }
   };
 
   const cancelBooking = async (bookingId: number) => {
@@ -305,9 +243,12 @@ const SessionBookings = () => {
       {/* Course Selector */}
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Select Course</CardTitle>
+          <CardTitle>Your sessions</CardTitle>
         </CardHeader>
         <CardContent>
+          <p className="text-sm text-gray-500 mb-4">
+            When you enroll in a course, you are automatically reserved for all its sessions. Select a course to view and join.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {enrolledCourses.map((enrollment) => (
               <Button
@@ -334,7 +275,7 @@ const SessionBookings = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FaCalendarAlt className="w-5 h-5 text-blue-600" />
-            Available Sessions
+            Sessions for this course
           </CardTitle>
           <p className="text-sm text-gray-500 font-normal">
             Times are shown in your local timezone.
@@ -426,15 +367,9 @@ const SessionBookings = () => {
                             )}
                           </>
                         ) : (
-                          <Button
-                            size="sm"
-                            onClick={() => bookSession(session.id)}
-                            disabled={!canBook(session)}
-                            className="flex-1"
-                          >
-                            <FaCalendarAlt className="w-4 h-4 mr-2" />
-                            {canBook(session) ? "Book Session" : "Unavailable"}
-                          </Button>
+                          <span className="text-sm text-gray-500">
+                            Your place is reserved when you enroll. If you don’t see a booking yet, the tutor may add sessions later.
+                          </span>
                         )}
                       </div>
                     </div>

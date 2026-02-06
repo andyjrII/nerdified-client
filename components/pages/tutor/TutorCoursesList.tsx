@@ -37,6 +37,7 @@ interface Course {
   pricingModel: string;
   courseType: string;
   maxStudents?: number;
+  status?: string;
   createdAt: string;
   updatedAt: string;
   enrollments?: CourseEnrollment[];
@@ -302,6 +303,11 @@ const TutorCoursesList = () => {
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2 mb-2">
+                      {course.status === "DRAFT" ? (
+                        <Badge className="bg-amber-100 text-amber-800">Draft</Badge>
+                      ) : (
+                        <Badge className="bg-green-100 text-green-800">Published</Badge>
+                      )}
                       {getCourseTypeBadge(course.courseType)}
                       {getPricingModelBadge(course.pricingModel)}
                     </div>
