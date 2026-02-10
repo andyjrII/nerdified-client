@@ -9,7 +9,6 @@ import { useAuth } from "@/hooks/useAuth";
 import Moment from "react-moment";
 import { formatCurrency } from "@/utils/formatCurrency";
 import StarRating from "@/components/StarRating";
-import StudentInfo from "@/components/StudentInfo";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -90,8 +89,6 @@ const Wishlist = () => {
   return (
     <section className="border-t border-b bg-gray-50 min-h-screen">
       <main className="w-full px-4 py-6">
-        <StudentInfo />
-
         <div className="text-center mb-6">
           <h1 className="inline-block bg-red-600 text-white px-6 py-2 rounded-full text-2xl font-bold">
             Wishlist

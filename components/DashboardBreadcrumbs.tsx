@@ -145,23 +145,23 @@ export function DashboardBreadcrumbs({ config, type }: DashboardBreadcrumbsProps
   return (
     <nav
       aria-label="Breadcrumb"
-      className="flex items-center gap-1.5 text-sm text-gray-500 mb-4 flex-wrap"
+      className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4 flex-wrap"
     >
       {crumbs.map((crumb, i) => {
         const isLast = i === crumbs.length - 1;
         return (
           <span key={`${crumb.href}-${i}`} className="flex items-center gap-1.5">
             {i > 0 && (
-              <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden />
+              <ChevronRight className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" aria-hidden />
             )}
             {isLast ? (
-              <span className="font-medium text-gray-900" aria-current="page">
+              <span className="font-medium text-foreground" aria-current="page">
                 {crumb.label}
               </span>
             ) : (
               <Link
                 href={crumb.href}
-                className="hover:text-gray-900 transition-colors"
+                className="hover:text-foreground transition-colors"
               >
                 {crumb.label}
               </Link>

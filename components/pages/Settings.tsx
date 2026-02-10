@@ -1,15 +1,12 @@
 "use client";
 
-import StudentInfo from "@/components/StudentInfo";
 import ImageChange from "@/components/forms/ImageChange";
 import PasswordChange from "@/components/forms/PasswordChange";
-import { Card } from "@/components/ui/card";
 
 const Settings = () => {
   return (
     <section className="border-t border-b bg-gray-50 min-h-screen">
       <main className="w-full px-4 py-6">
-        <StudentInfo />
         <div className="text-center my-6">
           <h1 className="inline-block bg-red-600 text-white px-6 py-2 rounded-full text-2xl font-bold">
             Settings

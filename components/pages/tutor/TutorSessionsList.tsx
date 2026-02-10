@@ -25,6 +25,7 @@ import {
   FaClock,
   FaSearch,
   FaArrowLeft,
+  FaCopy,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import Moment from "react-moment";
@@ -46,6 +47,7 @@ interface Session {
   startTime: string;
   endTime: string;
   status: string;
+  sessionType?: "GROUP" | "ONE_ON_ONE";
   meetingUrl?: string;
   course: {
     id: number;
@@ -76,6 +78,10 @@ const TutorSessionsList = () => {
   const [rescheduleStart, setRescheduleStart] = useState("");
   const [rescheduleEnd, setRescheduleEnd] = useState("");
   const [rescheduleSubmitting, setRescheduleSubmitting] = useState(false);
+  const [duplicateModal, setDuplicateModal] = useState<Session | null>(null);
+  const [duplicateStart, setDuplicateStart] = useState("");
+  const [duplicateEnd, setDuplicateEnd] = useState("");
+  const [duplicateSubmitting, setDuplicateSubmitting] = useState(false);
 
   useEffect(() => {
     fetchSessions();
@@ -200,6 +206,53 @@ const TutorSessionsList = () => {
     }
   };
 
+  const canDuplicateSession = (session: Session) => {
+    if (session.sessionType === "ONE_ON_ONE") return true;
+    return session.course?.status === "DRAFT";
+  };
+
+  const submitDuplicate = async () => {
+    if (!duplicateModal || !duplicateStart || !duplicateEnd) {
+      Swal.fire({
+        icon: "warning",
+        title: "Dates required",
+        text: "Please set new start and end date/time for the duplicate session.",
+        confirmButtonColor: "#f59e0b",
+      });
+      return;
+    }
+    setDuplicateSubmitting(true);
+    try {
+      await axiosPrivate.post(
+        `sessions/${duplicateModal.id}/duplicate`,
+        {
+          startTime: new Date(duplicateStart).toISOString(),
+          endTime: new Date(duplicateEnd).toISOString(),
+        },
+        { withCredentials: true }
+      );
+      Swal.fire({
+        icon: "success",
+        title: "Session duplicated",
+        text: "A new session has been created with the same details. You can edit it from your sessions list.",
+        confirmButtonColor: "#10b981",
+      });
+      setDuplicateModal(null);
+      setDuplicateStart("");
+      setDuplicateEnd("");
+      fetchSessions();
+    } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: err.response?.data?.message || "Could not duplicate session.",
+        confirmButtonColor: "#ef4444",
+      });
+    } finally {
+      setDuplicateSubmitting(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {
       SCHEDULED: "bg-blue-100 text-blue-800",
@@ -232,20 +285,20 @@ const TutorSessionsList = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-6 flex items-center justify-center">
-        <div className="animate-pulse text-gray-400">Loading sessions...</div>
+      <div className="min-h-screen bg-background px-4 py-6 flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading sessions...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6">
+    <div className="min-h-screen bg-background px-4 py-6">
       <div className="w-full space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Sessions</h1>
-            <p className="text-gray-600">Manage your scheduled live sessions</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">My Sessions</h1>
+            <p className="text-muted-foreground">Manage your scheduled live sessions</p>
           </div>
           <Link href="/tutor/sessions/new">
             <Button className="bg-blue-600 hover:bg-blue-700">
@@ -256,11 +309,11 @@ const TutorSessionsList = () => {
         </div>
 
         {/* Filters */}
-        <Card>
+        <Card className="bg-card border-border">
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Search sessions..."
                   value={searchQuery}
@@ -300,7 +353,7 @@ const TutorSessionsList = () => {
         {/* Upcoming Sessions */}
         {upcomingSessions.length > 0 && (
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Upcoming Sessions</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-4">Upcoming Sessions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingSessions.map((session) => {
                 const bookingsCount = session.bookings?.filter(
@@ -313,13 +366,13 @@ const TutorSessionsList = () => {
                 return (
                   <Card
                     key={session.id}
-                    className={`shadow-lg ${
-                      isStartingSoon ? "border-orange-300 bg-orange-50" : ""
+                    className={`shadow-lg bg-card border-border ${
+                      isStartingSoon ? "border-orange-400 dark:border-orange-600 bg-orange-50 dark:bg-orange-950/30" : ""
                     }`}
                   >
                     <CardHeader>
                       <div className="flex items-start justify-between mb-2">
-                        <CardTitle className="text-lg font-bold line-clamp-2">
+                        <CardTitle className="text-lg font-bold line-clamp-2 text-foreground">
                           {session.title || session.course?.title || "Session"}
                         </CardTitle>
                         {getStatusBadge(session.status)}
@@ -332,29 +385,29 @@ const TutorSessionsList = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3 mb-4">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <FaBookOpen className="w-4 h-4" />
                           <span className="truncate">{session.course?.title}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <FaClock className="w-4 h-4" />
                           <span>
                             <Moment format="MMM D, YYYY • h:mm A">{session.startTime}</Moment>
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <FaClock className="w-4 h-4" />
                           <span>
                             <Moment format="h:mm A">{session.endTime}</Moment>
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <FaUsers className="w-4 h-4" />
                           <span>{bookingsCount} student{bookingsCount !== 1 ? "s" : ""} booked</span>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 pt-4 border-t">
+                      <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
                         <Button
                             variant="outline"
                             className="flex-1"
@@ -372,6 +425,20 @@ const TutorSessionsList = () => {
                           >
                             <FaEdit className="w-3 h-3 mr-1" />
                             Reschedule
+                          </Button>
+                        )}
+                        {canDuplicateSession(session) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setDuplicateModal(session);
+                              setDuplicateStart("");
+                              setDuplicateEnd("");
+                            }}
+                          >
+                            <FaCopy className="w-3 h-3 mr-1" />
+                            Duplicate
                           </Button>
                         )}
                         <Button
@@ -394,7 +461,7 @@ const TutorSessionsList = () => {
         {/* Past Sessions */}
         {pastSessions.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Past Sessions</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-4">Past Sessions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {pastSessions.map((session) => {
                 const bookingsCount = session.bookings?.filter(
@@ -402,10 +469,10 @@ const TutorSessionsList = () => {
                 ).length || 0;
 
                 return (
-                  <Card key={session.id} className="shadow-lg opacity-75">
+                  <Card key={session.id} className="shadow-lg opacity-75 bg-card border-border">
                     <CardHeader>
                       <div className="flex items-start justify-between mb-2">
-                        <CardTitle className="text-lg font-bold line-clamp-2">
+                        <CardTitle className="text-lg font-bold line-clamp-2 text-foreground">
                           {session.title || session.course?.title || "Session"}
                         </CardTitle>
                         {getStatusBadge(session.status)}
@@ -413,21 +480,37 @@ const TutorSessionsList = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3 mb-4">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <FaBookOpen className="w-4 h-4" />
                           <span className="truncate">{session.course?.title}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <FaClock className="w-4 h-4" />
                           <span>
                             <Moment format="MMM D, YYYY • h:mm A">{session.startTime}</Moment>
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <FaUsers className="w-4 h-4" />
                           <span>{bookingsCount} attended</span>
                         </div>
                       </div>
+                      {canDuplicateSession(session) && (
+                        <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setDuplicateModal(session);
+                              setDuplicateStart("");
+                              setDuplicateEnd("");
+                            }}
+                          >
+                            <FaCopy className="w-3 h-3 mr-1" />
+                            Duplicate
+                          </Button>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 );
@@ -438,11 +521,11 @@ const TutorSessionsList = () => {
 
         {/* Empty State */}
         {filteredSessions.length === 0 && (
-          <Card>
+          <Card className="bg-card border-border">
             <CardContent className="pt-12 pb-12 text-center">
-              <FaCalendarAlt className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No Sessions Found</h3>
-              <p className="text-gray-500 mb-6">
+              <FaCalendarAlt className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Sessions Found</h3>
+              <p className="text-muted-foreground mb-6">
                 {searchQuery || statusFilter !== "all" || courseFilter !== "all"
                   ? "No sessions match your filters."
                   : "Schedule your first session to start teaching!"}
@@ -483,6 +566,42 @@ const TutorSessionsList = () => {
               <Button variant="outline" onClick={() => setRescheduleModal(null)}>Cancel</Button>
               <Button onClick={submitRescheduleRequest} disabled={rescheduleSubmitting}>
                 {rescheduleSubmitting ? "Submitting…" : "Submit request"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Duplicate session modal */}
+        <Dialog open={!!duplicateModal} onOpenChange={(open) => !open && setDuplicateModal(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Duplicate session</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">
+              Create a new session with the same title and description as &quot;{duplicateModal?.title || duplicateModal?.course?.title || "Session"}&quot;. Choose the new date and time.
+            </p>
+            <div className="space-y-4 py-2">
+              <div>
+                <Label>New start (date & time)</Label>
+                <Input
+                  type="datetime-local"
+                  value={duplicateStart}
+                  onChange={(e) => setDuplicateStart(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>New end (date & time)</Label>
+                <Input
+                  type="datetime-local"
+                  value={duplicateEnd}
+                  onChange={(e) => setDuplicateEnd(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDuplicateModal(null)}>Cancel</Button>
+              <Button onClick={submitDuplicate} disabled={duplicateSubmitting}>
+                {duplicateSubmitting ? "Creating…" : "Create duplicate"}
               </Button>
             </DialogFooter>
           </DialogContent>

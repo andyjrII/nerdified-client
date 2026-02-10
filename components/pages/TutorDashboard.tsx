@@ -102,21 +102,21 @@ const TutorDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-6 flex items-center justify-center">
-        <div className="animate-pulse text-gray-400">Loading dashboard...</div>
+      <div className="min-h-screen bg-background px-4 py-6 flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading dashboard...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6">
+    <div className="min-h-screen bg-background px-4 py-6">
       <div className="w-full space-y-6">
         {/* Welcome Section */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-              <p className="text-gray-600">
+              <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard</h1>
+              <p className="text-muted-foreground">
                 Welcome back, {tutor?.name || "Tutor"}! Here&apos;s your teaching overview.
               </p>
             </div>
@@ -158,7 +158,7 @@ const TutorDashboard = () => {
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg">
+          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-700 dark:to-purple-800 text-white shadow-lg border-0">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <FaBookOpen className="w-5 h-5" />
@@ -175,7 +175,7 @@ const TutorDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg">
+          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 text-white shadow-lg border-0">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <FaUsers className="w-5 h-5" />
@@ -192,7 +192,7 @@ const TutorDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg">
+          <Card className="bg-gradient-to-r from-green-500 to-green-600 dark:from-green-700 dark:to-green-800 text-white shadow-lg border-0">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <FaDollarSign className="w-5 h-5" />
@@ -209,7 +209,7 @@ const TutorDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg">
+          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-700 dark:to-orange-800 text-white shadow-lg border-0">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <FaCalendarAlt className="w-5 h-5" />
@@ -228,9 +228,9 @@ const TutorDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <Card className="shadow-lg">
+        <Card className="shadow-lg bg-card border-border">
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle className="text-foreground">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

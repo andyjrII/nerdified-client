@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { SyncLoader } from "react-spinners";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const TutorSidebar = () => {
   const axiosPrivate = useTutorAxiosPrivate();
@@ -133,34 +134,37 @@ const TutorSidebar = () => {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 w-64 h-screen bg-purple-900 text-white flex flex-col shadow-lg z-50 overflow-y-auto">
+    <aside className="fixed left-0 top-0 w-64 h-screen bg-purple-900 dark:bg-slate-900 text-white flex flex-col shadow-lg z-50 overflow-y-auto">
       {/* Logo/Header */}
-      <div className="p-6 border-b border-purple-800">
+      <div className="p-6 border-b border-purple-800 dark:border-slate-700">
         <Link
           href="/"
           className="flex items-center gap-3 text-white hover:opacity-90 transition-opacity"
         >
-          <div className="bg-purple-700 p-2 rounded-lg">
+          <div className="bg-purple-700 dark:bg-slate-700 p-2 rounded-lg">
             <FaChalkboardTeacher className="w-6 h-6" />
           </div>
           <div>
             <h2 className="font-bold text-lg">Tutor Portal</h2>
-            <p className="text-xs text-purple-300">Dashboard</p>
+            <p className="text-xs text-purple-300 dark:text-slate-400">Dashboard</p>
           </div>
         </Link>
-        <Link
-          href="/"
-          className="mt-3 flex items-center gap-2 text-sm text-purple-200 hover:text-white transition-colors"
-        >
-          <FaGlobe className="w-4 h-4" />
-          Back to home
-        </Link>
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-sm text-purple-200 dark:text-slate-400 hover:text-white dark:hover:text-slate-100 transition-colors"
+          >
+            <FaGlobe className="w-4 h-4" />
+            Back to home
+          </Link>
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* User Profile */}
-      <div className="p-4 border-b border-purple-800">
+      <div className="p-4 border-b border-purple-800 dark:border-slate-700">
         <div className="flex items-center gap-3">
-          <div className="relative w-12 h-12 rounded-full bg-purple-700 overflow-hidden">
+          <div className="relative w-12 h-12 rounded-full bg-purple-700 dark:bg-slate-700 overflow-hidden">
             {tutor?.imagePath ? (
               <Image
                 src={tutor.imagePath}
@@ -170,7 +174,7 @@ const TutorSidebar = () => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <FaChalkboardTeacher className="w-6 h-6 text-purple-300" />
+                <FaChalkboardTeacher className="w-6 h-6 text-purple-300 dark:text-slate-400" />
               </div>
             )}
           </div>
@@ -178,11 +182,11 @@ const TutorSidebar = () => {
             <p className="font-semibold text-sm truncate">
               {tutor?.name || "Tutor"}
             </p>
-            <p className="text-xs text-purple-300 truncate">
+            <p className="text-xs text-purple-300 dark:text-slate-400 truncate">
               {tutor?.email || email}
             </p>
             {tutor && !tutor.approved && (
-              <Badge variant="outline" className="mt-1 bg-yellow-100 text-yellow-800 border-yellow-300 text-xs">
+              <Badge variant="outline" className="mt-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700 text-xs">
                 Pending Approval
               </Badge>
             )}
@@ -204,8 +208,8 @@ const TutorSidebar = () => {
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors relative",
                     active
-                      ? "bg-purple-800 text-white font-semibold"
-                      : "text-purple-200 hover:bg-purple-800/50 hover:text-white"
+                      ? "bg-purple-800 dark:bg-slate-700 text-white font-semibold"
+                      : "text-purple-200 dark:text-slate-400 hover:bg-purple-800/50 dark:hover:bg-slate-700/50 hover:text-white dark:hover:text-slate-100"
                   )}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
@@ -226,12 +230,12 @@ const TutorSidebar = () => {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t border-purple-800">
+      <div className="p-4 border-t border-purple-800 dark:border-slate-700">
         <Button
           onClick={handleLogout}
           disabled={logoutLoading}
           variant="ghost"
-          className="w-full justify-start text-purple-200 hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:cursor-wait"
+          className="w-full justify-start text-purple-200 dark:text-slate-400 hover:bg-red-600 hover:text-white disabled:opacity-50 disabled:cursor-wait"
         >
           {logoutLoading ? (
             <>
@@ -250,9 +254,9 @@ const TutorSidebar = () => {
       {/* Global Loading Overlay */}
       {logoutLoading && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 shadow-xl flex flex-col items-center gap-4">
-            <SyncLoader size={12} color="#a855f7" />
-<p className="text-gray-700 font-medium">Logging out...</p>
+          <div className="bg-background border border-border rounded-lg p-6 shadow-xl flex flex-col items-center gap-4">
+            <SyncLoader size={12} color="hsl(var(--primary))" />
+            <p className="text-foreground font-medium">Logging out...</p>
           </div>
         </div>
       )}
