@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FaCalendarAlt, FaClock, FaVideo, FaTimes, FaCheckCircle } from "react-icons/fa";
 import Moment from "react-moment";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -36,7 +36,8 @@ const SessionBookings = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const courseIdParam = searchParams.get("courseId");
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(
     courseIdParam ? parseInt(courseIdParam) : null
@@ -44,11 +45,6 @@ const SessionBookings = () => {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [myBookings, setMyBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  }, []);
 
   useEffect(() => {
     if (email) {

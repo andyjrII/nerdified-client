@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import Moment from "react-moment";
 import ReactPaginate from "react-paginate";
 import { motion } from "framer-motion";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaBookOpen } from "react-icons/fa";
 import StarRating from "@/components/StarRating";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -25,7 +25,8 @@ interface Course {
 
 const Courses = () => {
   const axiosPrivate = useAxiosPrivate();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [courses, setCourses] = useState<Course[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -33,11 +34,6 @@ const Courses = () => {
   const [wishlist, setWishlist] = useState<Set<number>>(new Set());
 
   const coursesPerPage = 20;
-
-  useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  }, []);
 
   useEffect(() => {
     if (email) {
@@ -165,6 +161,19 @@ const Courses = () => {
             className="max-w-md mx-auto"
           />
         </div>
+
+        {/* Empty state */}
+        {courses.length === 0 && (
+          <Card className="max-w-md mx-auto py-12 px-6 text-center mb-8">
+            <FaBookOpen className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">No courses found</h3>
+            <p className="text-gray-500">
+              {searchQuery
+                ? "No courses match your search. Try a different keyword."
+                : "No courses are available right now. Check back later!"}
+            </p>
+          </Card>
+        )}
 
         {/* Courses Grid */}
         <motion.div

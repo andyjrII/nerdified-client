@@ -108,7 +108,7 @@ const LatestBlogs = () => {
           </Card>
         ))
         ) : (
-          <div className="col-span-full text-center py-8 text-gray-500">
+          <div className="col-span-full text-center py-8 text-white text-lg md:text-xl">
             No blog posts available
           </div>
         )}

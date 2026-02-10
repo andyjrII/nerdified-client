@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAdminAxiosPrivate } from "@/hooks/useAdminAxiosPrivate";
 import { FaTrashAlt } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
-import { getAuthAdmin } from "@/utils/authStorage";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,18 +27,14 @@ interface Admin {
 
 const AllAdmins = () => {
   const axiosPrivate = useAdminAxiosPrivate();
-  const [role, setRole] = useState<string>("");
+  const { admin } = useAdminAuth();
+  const role = admin?.role ?? "";
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [totalAdmins, setTotalAdmins] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const adminsPerPage = 20;
-
-  useEffect(() => {
-    const data = getAuthAdmin();
-    if (data?.role) setRole(data.role);
-  }, []);
 
   useEffect(() => {
     if (role) fetchAdmins();

@@ -42,9 +42,11 @@ interface Course {
   title: string;
   description?: string;
   price: number;
+  priceOneOnOne?: number;
   pricingModel: string;
   courseType: string;
   maxStudents?: number;
+  maxOneOnOneStudents?: number;
   curriculum?: string;
   outcomes?: string;
   status?: "DRAFT" | "PUBLISHED";
@@ -63,8 +65,10 @@ const TutorEditCourse = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<string>("0");
   const [pricingModel, setPricingModel] = useState<"PER_COURSE" | "PER_SESSION">("PER_COURSE");
-  const [courseType, setCourseType] = useState<"ONE_ON_ONE" | "GROUP">("ONE_ON_ONE");
+  const [courseType, setCourseType] = useState<"ONE_ON_ONE" | "GROUP" | "BOTH">("ONE_ON_ONE");
   const [maxStudents, setMaxStudents] = useState<string>("");
+  const [priceOneOnOne, setPriceOneOnOne] = useState<string>("");
+  const [maxOneOnOneStudents, setMaxOneOnOneStudents] = useState<string>("");
   const [curriculum, setCurriculum] = useState("");
   const [outcomes, setOutcomes] = useState("");
   const [loading, setLoading] = useState(false);
@@ -118,6 +122,8 @@ const TutorEditCourse = () => {
       setPricingModel(courseData.pricingModel || "PER_COURSE");
       setCourseType(courseData.courseType || "ONE_ON_ONE");
       setMaxStudents(courseData.maxStudents ? String(courseData.maxStudents) : "");
+      setPriceOneOnOne(courseData.priceOneOnOne != null ? String(courseData.priceOneOnOne) : "");
+      setMaxOneOnOneStudents(courseData.maxOneOnOneStudents != null ? String(courseData.maxOneOnOneStudents) : "");
       setCurriculum(courseData.curriculum || "");
       setOutcomes(courseData.outcomes || "");
     } catch (err) {
@@ -145,6 +151,11 @@ const TutorEditCourse = () => {
       setLoading(false);
       return;
     }
+    if (courseType === "BOTH" && (!priceOneOnOne || parseFloat(priceOneOnOne) <= 0)) {
+      setErrMsg("1:1 price is required when offering both group and 1:1");
+      setLoading(false);
+      return;
+    }
 
     try {
       const courseData: any = {};
@@ -153,10 +164,18 @@ const TutorEditCourse = () => {
       if (price) courseData.price = parseFloat(price);
       if (pricingModel) courseData.pricingModel = pricingModel;
       if (courseType) courseData.courseType = courseType;
-      if (courseType === "GROUP" && maxStudents) {
+      if ((courseType === "GROUP" || courseType === "BOTH") && maxStudents) {
         courseData.maxStudents = parseInt(maxStudents);
       } else if (courseType === "ONE_ON_ONE") {
         courseData.maxStudents = undefined;
+      }
+      if (courseType === "BOTH" && priceOneOnOne) {
+        courseData.priceOneOnOne = parseFloat(priceOneOnOne);
+      }
+      if (courseType === "BOTH" && maxOneOnOneStudents) {
+        courseData.maxOneOnOneStudents = parseInt(maxOneOnOneStudents);
+      } else if (courseType !== "BOTH") {
+        courseData.maxOneOnOneStudents = undefined;
       }
       if (curriculum.trim()) courseData.curriculum = curriculum.trim();
       if (outcomes.trim()) courseData.outcomes = outcomes.trim();
@@ -480,7 +499,7 @@ const TutorEditCourse = () => {
                   <Label htmlFor="courseType">Course Type</Label>
                   <Select
                     value={courseType}
-                    onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP")}
+                    onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP" | "BOTH")}
                   >
                     <SelectTrigger id="courseType">
                       <SelectValue />
@@ -488,12 +507,13 @@ const TutorEditCourse = () => {
                     <SelectContent>
                       <SelectItem value="ONE_ON_ONE">One-on-One</SelectItem>
                       <SelectItem value="GROUP">Group Class</SelectItem>
+                      <SelectItem value="BOTH">Both (Group &amp; 1:1)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* Max Students - only show for group classes */}
-                {courseType === "GROUP" && (
+                {/* Max Students - for group and both */}
+                {(courseType === "GROUP" || courseType === "BOTH") && (
                   <div className="space-y-2">
                     <Label htmlFor="maxStudents">Maximum Students</Label>
                     <Input
@@ -506,6 +526,35 @@ const TutorEditCourse = () => {
                     />
                     <p className="text-xs text-gray-500">Leave empty for unlimited</p>
                   </div>
+                )}
+
+                {/* 1:1 price & cap - only for BOTH */}
+                {courseType === "BOTH" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="priceOneOnOne">1:1 Price (₦)</Label>
+                      <Input
+                        id="priceOneOnOne"
+                        type="number"
+                        placeholder="Higher than group price"
+                        value={priceOneOnOne}
+                        onChange={(e) => setPriceOneOnOne(e.target.value)}
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="maxOneOnOneStudents">1:1: Max Students</Label>
+                      <Input
+                        id="maxOneOnOneStudents"
+                        type="number"
+                        placeholder="e.g., 3"
+                        value={maxOneOnOneStudents}
+                        onChange={(e) => setMaxOneOnOneStudents(e.target.value)}
+                        min="1"
+                      />
+                    </div>
+                  </>
                 )}
               </div>
 

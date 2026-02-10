@@ -102,7 +102,7 @@ export const Navigation = () => {
 
           {/* Right: Sign in (when logged out) or User dropdown (when logged in) */}
           <div className="hidden md:flex items-center shrink-0">
-            {!(auth.email && auth.accessToken) ? (
+            {!auth.email ? (
               <Link
                 href="/signin"
                 className={cn(

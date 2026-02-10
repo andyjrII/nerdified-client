@@ -22,15 +22,18 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Skip noisy logging for signout (local logout proceeds anyway)
+    // Skip noisy logging for expected failures
     const url = String(error?.config?.url ?? "");
-    if (!url.includes("signout")) {
+    const status = error?.response?.status;
+    const isSignout = url.includes("signout");
+    const isAuthMe401 = url.includes("auth/me") && status === 401; // Expected when not logged in
+    if (!isSignout && !isAuthMe401) {
       console.error("❌ API Error:", {
-        url: error.config?.url,
-        method: error.config?.method,
-        status: error.response?.status,
-        message: error.response?.data?.message || error.message,
-        data: error.response?.data,
+        url: error?.config?.url,
+        method: error?.config?.method,
+        status,
+        message: error?.response?.data?.message || error?.message,
+        data: error?.response?.data,
       });
     }
     return Promise.reject(error);

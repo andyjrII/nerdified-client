@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FaCalendarAlt, FaClock, FaVideo, FaExclamationCircle } from "react-icons/fa";
 import Moment from "react-moment";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 interface Session {
@@ -30,14 +30,10 @@ interface Session {
 const UpcomingSessionsWidget = () => {
   const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [upcomingSessions, setUpcomingSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  }, []);
 
   useEffect(() => {
     if (email) {

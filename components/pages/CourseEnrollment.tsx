@@ -10,7 +10,7 @@ import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { unformatCurrency } from "@/utils/unformatCurrency";
 import PaystackPop from "@paystack/inline-js";
 import Missing from "./Missing";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -35,17 +35,17 @@ const CourseEnrollment = () => {
   const params = useParams();
   const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const errRef = useRef<HTMLParagraphElement>(null);
   const [selectedDays, setSelectedDays] = useState<ClassDay[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("MORNING");
   const [selectedMode, setSelectedMode] = useState<string>("ONLINE");
+  const [deliveryMode, setDeliveryMode] = useState<"GROUP" | "ONE_ON_ONE" | null>(null);
   const [errMsg, setErrMsg] = useState<string>("");
   const [course, setCourse] = useState<any>(null);
 
   useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
     if (typeof window !== "undefined") {
       const storedCourse = localStorage.getItem("NERDVILLE_COURSE");
       if (storedCourse) setCourse(JSON.parse(storedCourse));
@@ -66,22 +66,34 @@ const CourseEnrollment = () => {
     }
   };
 
+  const getAmount = () => {
+    if (!course) return 0;
+    if (course.courseType === "BOTH" && deliveryMode === "ONE_ON_ONE" && course.priceOneOnOne != null) {
+      return unformatCurrency(String(course.priceOneOnOne));
+    }
+    return unformatCurrency(String(course.price));
+  };
+
   const savePaymentInfo = async (reference: string) => {
     if (!course) return;
 
     try {
-      const amount = unformatCurrency(String(course.price));
+      const amount = getAmount();
+      const payload: Record<string, unknown> = {
+        email,
+        courseId: course.id,
+        amount,
+        reference,
+        classDays: selectedDays,
+        preferredTime: selectedTime,
+        mode: selectedMode,
+      };
+      if (course.courseType === "BOTH" && deliveryMode) {
+        payload.deliveryMode = deliveryMode;
+      }
       await axiosPrivate.post(
         `students/enroll`,
-        JSON.stringify({
-          email,
-          courseId: course.id,
-          amount,
-          reference,
-          classDays: selectedDays,
-          preferredTime: selectedTime,
-          mode: selectedMode,
-        }),
+        JSON.stringify(payload),
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -109,9 +121,13 @@ const CourseEnrollment = () => {
 
   const handlePayment = async () => {
     if (!course || !email) return;
+    if (course.courseType === "BOTH" && !deliveryMode) {
+      setErrMsg("Please choose Group or 1:1");
+      return;
+    }
 
     const paystack = new PaystackPop();
-    const amount = unformatCurrency(String(course.price));
+    const amount = getAmount();
     const courseTitle = course.title;
 
     paystack.newTransaction({
@@ -183,6 +199,47 @@ const CourseEnrollment = () => {
               >
                 {errMsg}
               </p>
+
+              {/* Delivery Mode - only when course offers both */}
+              {course?.courseType === "BOTH" && (
+                <div className="space-y-4 mb-6">
+                  <Label className="flex items-center gap-2 text-lg">
+                    How do you want to take this course?
+                  </Label>
+                  <RadioGroup
+                    value={deliveryMode ?? ""}
+                    onValueChange={(v) => setDeliveryMode(v as "GROUP" | "ONE_ON_ONE")}
+                    className="flex flex-col gap-3"
+                  >
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="GROUP" id="group-mode" />
+                        <Label htmlFor="group-mode" className="cursor-pointer font-medium">
+                          Group Class
+                        </Label>
+                      </div>
+                      <span className="font-semibold text-green-700">
+                        ₦{course?.price != null ? String(course.price) : "—"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="ONE_ON_ONE" id="oneonone-mode" />
+                        <Label htmlFor="oneonone-mode" className="cursor-pointer font-medium">
+                          1:1 with tutor
+                        </Label>
+                      </div>
+                      <span className="font-semibold text-green-700">
+                        ₦{course?.priceOneOnOne != null ? String(course.priceOneOnOne) : "—"}
+                      </span>
+                    </div>
+                  </RadioGroup>
+                  <p className="text-xs text-gray-600 flex items-center gap-1">
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    Group: fixed schedule. 1:1: you and the tutor agree on times via chat.
+                  </p>
+                </div>
+              )}
 
               {/* Class Days Selection */}
               <div className="space-y-4 mb-6">
@@ -281,7 +338,12 @@ const CourseEnrollment = () => {
 
               <Button
                 onClick={handlePayment}
-                disabled={!selectedDays.length || !selectedTime || !selectedMode}
+                disabled={
+                  !selectedDays.length ||
+                  !selectedTime ||
+                  !selectedMode ||
+                  (course?.courseType === "BOTH" && !deliveryMode)
+                }
                 className="w-full bg-blue-900 hover:bg-blue-800 text-lg py-6"
                 size="lg"
               >

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { FaHeart } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import Moment from "react-moment";
 import { formatCurrency } from "@/utils/formatCurrency";
 import StarRating from "@/components/StarRating";
@@ -37,17 +37,9 @@ interface WishlistItem {
 const Wishlist = () => {
   const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
-
-  const fetchEmail = () => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
 
   useEffect(() => {
     if (email) getWishlist();

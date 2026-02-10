@@ -14,7 +14,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 ChartJS.register(
@@ -30,13 +30,9 @@ ChartJS.register(
 
 const SpendingChart = () => {
   const axiosPrivate = useAxiosPrivate();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [enrollmentData, setEnrollmentData] = useState<any[]>([]);
-
-  useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  }, []);
 
   useEffect(() => {
     if (email) {

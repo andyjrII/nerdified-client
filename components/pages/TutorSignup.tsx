@@ -18,7 +18,6 @@ import {
 } from "react-icons/fc";
 import axios from "@/lib/api/axios";
 import { useRouter } from "next/navigation";
-import { setAuthTutor } from "@/utils/authStorage";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
@@ -158,17 +157,14 @@ const TutorSignup = () => {
 
       console.log("Tutor signup response:", response);
 
-      // Validate response has access_token
-      // Tutor signup returns Tokens object (not [Tokens, boolean] like signin)
-      if (!response?.data?.access_token) {
-        console.error("No access_token in response:", response?.data);
-        throw new Error("Invalid response from server - no access token received");
+      const data = response?.data;
+      if (!data?.email || data?.role !== "TUTOR") {
+        console.error("Invalid tutor signup response:", response?.data);
+        throw new Error("Invalid response from server");
       }
 
-      const accessToken = response.data.access_token;
       const isApproved = false;
-      setAuthTutor({ email, accessToken });
-      setAuth({ email, accessToken });
+      setAuth({ email: data.email, role: data.role });
 
       Swal.fire({
         icon: "success",

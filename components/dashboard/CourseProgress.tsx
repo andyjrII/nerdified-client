@@ -4,18 +4,14 @@ import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import { FaBookOpen, FaCheckCircle, FaClock } from "react-icons/fa";
 
 const CourseProgress = () => {
   const axiosPrivate = useAxiosPrivate();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [enrollments, setEnrollments] = useState<any[]>([]);
-
-  useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  }, []);
 
   useEffect(() => {
     if (email) {

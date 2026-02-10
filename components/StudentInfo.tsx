@@ -5,7 +5,8 @@ import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import { FaClock, FaEnvelope, FaPhone, FaUserGraduate } from "react-icons/fa";
 import { IoLocation } from "react-icons/io5";
-import { getAuthStudent, getStudentProfile, setStudentProfile } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
+import { getStudentProfile, setStudentProfile } from "@/utils/authStorage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
@@ -21,17 +22,9 @@ interface Student {
 
 const StudentInfo = () => {
   const axiosPrivate = useAxiosPrivate();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [student, setStudent] = useState<Student>({});
-
-  const fetchEmail = () => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
 
   useEffect(() => {
     if (email) fetchStudent();

@@ -192,6 +192,9 @@ const TutorCoursesList = () => {
     if (courseType === "ONE_ON_ONE") {
       return <Badge className="bg-blue-100 text-blue-800">One-on-One</Badge>;
     }
+    if (courseType === "BOTH") {
+      return <Badge className="bg-indigo-100 text-indigo-800">Group &amp; 1:1</Badge>;
+    }
     return <Badge className="bg-purple-100 text-purple-800">Group Class</Badge>;
   };
 

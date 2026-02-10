@@ -18,7 +18,6 @@ import {
 } from "react-icons/fc";
 import axios from "@/lib/api/axios";
 import { useRouter } from "next/navigation";
-import { setAuthStudent } from "@/utils/authStorage";
 import { useAuth } from "@/hooks/useAuth";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
@@ -162,15 +161,13 @@ const Signup = () => {
 
       console.log("Signup response:", response);
 
-      // Validate response has access_token
-      if (!response?.data?.access_token) {
-        console.error("No access_token in response:", response?.data);
-        throw new Error("Invalid response from server - no access token received");
+      const data = response?.data;
+      if (!data?.email || data?.role !== "STUDENT") {
+        console.error("Invalid signup response:", response?.data);
+        throw new Error("Invalid response from server");
       }
 
-      const accessToken = response.data.access_token;
-      setAuthStudent({ email, accessToken });
-      setAuth({ email, accessToken });
+      setAuth({ email: data.email, role: data.role });
 
       // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)
       setAuthSessionCookie();

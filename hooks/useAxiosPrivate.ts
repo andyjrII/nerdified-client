@@ -1,34 +1,17 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
-import { useRefreshToken } from './useRefreshToken';
-import { axiosPrivate } from '@/lib/api/axios';
-import { getAuthStudent } from '@/utils/authStorage';
-import { useLogout } from './useLogout';
-import { AxiosInstance } from 'axios';
+import { useEffect, useRef } from "react";
+import { useRefreshToken } from "./useRefreshToken";
+import { axiosPrivate } from "@/lib/api/axios";
+import { useLogout } from "./useLogout";
+import { AxiosInstance } from "axios";
 
 export const useAxiosPrivate = (): AxiosInstance => {
   const refresh = useRefreshToken();
   const logout = useLogout();
-  const [token, setToken] = useState<string>('');
   const retryCountRef = useRef<number>(0);
 
   useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.accessToken) setToken(data.accessToken);
-  }, []);
-
-  useEffect(() => {
-    const requestIntercept = axiosPrivate.interceptors.request.use(
-      (config) => {
-        if (token && !config.headers['Authorization']) {
-          config.headers['Authorization'] = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => response,
       async (error) => {
@@ -40,19 +23,16 @@ export const useAxiosPrivate = (): AxiosInstance => {
         if (
           (error?.response?.status === 403 || error?.response?.status === 401) &&
           !prevRequest?.sent &&
-          token &&
           !isRefreshRequest
         ) {
           if (retryCountRef.current < maxRetries) {
             prevRequest.sent = true;
             retryCountRef.current += 1;
             try {
-              const newAccessToken = await refresh();
-              setToken(newAccessToken);
-              prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+              await refresh();
               return axiosPrivate(prevRequest);
             } catch (err) {
-              console.error('Error refreshing token:', err);
+              console.error("Error refreshing token:", err);
             }
           }
 
@@ -67,10 +47,9 @@ export const useAxiosPrivate = (): AxiosInstance => {
     );
 
     return () => {
-      axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [token, refresh, logout]);
+  }, [refresh, logout]);
 
   return axiosPrivate;
 };

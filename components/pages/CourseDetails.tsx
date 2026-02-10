@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import Moment from "react-moment";
 import { FaClock, FaMoneyBill, FaStar, FaHeart } from "react-icons/fa";
 import Missing from "./Missing";
@@ -19,6 +19,8 @@ interface Course {
   id: number;
   title: string;
   price: string | number;
+  priceOneOnOne?: string | number;
+  courseType?: string;
   updatedAt: string;
   averageRating: number;
 }
@@ -26,19 +28,11 @@ interface Course {
 const CourseDetails = () => {
   const params = useParams();
   const axiosPrivate = useAxiosPrivate();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [course, setCourse] = useState<Course | null>(null);
   const [courseEnrolled, setCourseEnrolled] = useState<any>(null);
   const [isInWishlist, setIsInWishlist] = useState<boolean>(false);
-
-  const fetchEmail = () => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
 
   useEffect(() => {
     if (email) {
@@ -198,7 +192,14 @@ const CourseDetails = () => {
                 <FaMoneyBill className="text-green-600 flex-shrink-0 text-xl mt-1" />
                 <div>
                   <h5 className="font-semibold mb-1">Price</h5>
-                  <span className="text-gray-600">{course.price}</span>
+                  {course.courseType === "BOTH" ? (
+                    <div className="space-y-1">
+                      <span className="text-gray-600 block">Group: {course.price}</span>
+                      <span className="text-gray-600 block">1:1: {course.priceOneOnOne ?? "—"}</span>
+                    </div>
+                  ) : (
+                    <span className="text-gray-600">{course.price}</span>
+                  )}
                 </div>
               </div>
 

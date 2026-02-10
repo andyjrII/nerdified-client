@@ -2,25 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 const CourseTotals = () => {
   const axiosPrivate = useAxiosPrivate();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [totalCourse, setTotalCourse] = useState<number>(0);
   const [totalWishes, setTotalWishes] = useState<number>(0);
   const [totalPaid, setTotalPaid] = useState<string | number>("₦0.00");
-
-  const fetchEmail = () => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
 
   useEffect(() => {
     if (email) {

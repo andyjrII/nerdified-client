@@ -5,11 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
-import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { FcLock, FcAddressBook } from "react-icons/fc";
 import {
-  setAuthStudent,
-  setAuthTutor,
   clearAuthStudent,
   clearStudentProfile,
   clearAuthTutor,
@@ -36,7 +33,6 @@ type UserRole = "student" | "tutor";
 
 const Signin = () => {
   const { setAuth } = useAuth();
-  const { setAuth: setTutorAuth } = useTutorAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const errRef = useRef<HTMLParagraphElement>(null);
@@ -93,32 +89,27 @@ const Signin = () => {
       console.log("Signin response:", response);
 
       const data = response?.data;
-      const accessToken = data?.access_token;
       const isApproved = data?.approved !== false;
+      const responseEmail = data?.email ?? email;
+      const responseRole = data?.role === "STUDENT" ? "STUDENT" : "TUTOR";
 
-      if (!accessToken) {
-        console.error("No access_token in response:", response?.data);
-        throw new Error("Invalid response from server - no access token received");
+      if (!responseEmail || !responseRole) {
+        console.error("Invalid signin response:", response?.data);
+        throw new Error("Invalid response from server");
       }
 
-      if (role === "student") {
-        setAuthStudent({ email, accessToken });
-        setAuth({ email, accessToken });
-      } else {
-        setAuthTutor({ email, accessToken });
-        setTutorAuth({ email, accessToken });
+      setAuth({ email: responseEmail, role: responseRole });
 
-        // Show approval status message for tutors
-        if (!isApproved) {
-          Swal.fire({
-            icon: "warning",
-            title: "Account Pending Approval",
-            text: "Your tutor account is pending admin approval. You'll be notified once approved.",
-            confirmButtonText: "OK",
-          });
-          setLoading(false);
-          return;
-        }
+      // Show approval status message for tutors
+      if (!isApproved) {
+        Swal.fire({
+          icon: "warning",
+          title: "Account Pending Approval",
+          text: "Your tutor account is pending admin approval. You'll be notified once approved.",
+          confirmButtonText: "OK",
+        });
+        setLoading(false);
+        return;
       }
 
       // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)
@@ -178,16 +169,11 @@ const Signin = () => {
         confirmButtonColor: "#ef4444",
       });
       errRef.current?.focus();
-      // Clear any stale auth so nav shows Sign In instead of profile
-      if (role === "student") {
-        setAuth({ email: null, accessToken: null });
-        clearAuthStudent();
-        clearStudentProfile();
-      } else {
-        setTutorAuth({ email: null, accessToken: null });
-        clearAuthTutor();
-        clearTutorProfile();
-      }
+      setAuth({ email: null, role: null });
+      clearAuthStudent();
+      clearStudentProfile();
+      clearAuthTutor();
+      clearTutorProfile();
     }
     setLoading(false);
   };

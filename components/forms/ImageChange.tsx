@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { FcImageFile } from "react-icons/fc";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import { getAuthStudent, getStudentProfile, setStudentProfile } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
+import { getStudentProfile, setStudentProfile } from "@/utils/authStorage";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
 import Image from "next/image";
@@ -16,21 +17,13 @@ const DPDefault = "/images/navpages/person_profile.jpg";
 
 const ImageChange = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [fileName, setFileName] = useState<string>("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePath, setImagePath] = useState<string>("");
   const [newImage, setNewImage] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
-
-  const fetchEmail = () => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
 
   useEffect(() => {
     if (email) fetchImage();

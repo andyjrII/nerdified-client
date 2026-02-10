@@ -3,10 +3,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
-import axios from "@/lib/api/axios";
+import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -15,7 +18,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FaArrowLeft, FaUsers, FaDollarSign, FaCalendarAlt } from "react-icons/fa";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { FaArrowLeft, FaUsers, FaDollarSign, FaCalendarAlt, FaCalendarPlus } from "react-icons/fa";
 import Link from "next/link";
 import Moment from "react-moment";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -25,6 +35,7 @@ interface Enrollment {
   status: string;
   paidAmount: number;
   dateEnrolled: string;
+  deliveryMode?: string;
   student: {
     id: number;
     name: string;
@@ -47,6 +58,12 @@ const TutorCourseEnrollments = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [oneOnOneModal, setOneOnOneModal] = useState<Enrollment | null>(null);
+  const [oneOnOneStart, setOneOnOneStart] = useState("");
+  const [oneOnOneEnd, setOneOnOneEnd] = useState("");
+  const [oneOnOneTitle, setOneOnOneTitle] = useState("");
+  const [oneOnOneDesc, setOneOnOneDesc] = useState("");
+  const [oneOnOneSubmitting, setOneOnOneSubmitting] = useState(false);
 
   useEffect(() => {
     if (courseId) {
@@ -59,7 +76,9 @@ const TutorCourseEnrollments = () => {
   const fetchCourse = async () => {
     if (!courseId) return;
     try {
-      const response = await axios.get(`courses/course/${courseId}`);
+      const response = await axiosPrivate.get(`courses/course/${courseId}/tutor`, {
+        withCredentials: true,
+      });
       setCourse(response.data);
     } catch (error) {
       console.error("Error fetching course:", error);
@@ -93,6 +112,7 @@ const TutorCourseEnrollments = () => {
           status: enrollment.status,
           paidAmount: parseFloat(String(enrollment.paidAmount || 0)),
           dateEnrolled: enrollment.dateEnrolled,
+          deliveryMode: enrollment.deliveryMode,
           student: enrollment.student || {
             id: enrollment.studentId,
             name: enrollment.student?.name || "Unknown",
@@ -104,6 +124,41 @@ const TutorCourseEnrollments = () => {
       console.error("Error fetching enrollments:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const submitOneOnOneSession = async () => {
+    if (!oneOnOneModal || !oneOnOneStart || !oneOnOneEnd) {
+      Swal.fire({ icon: "warning", title: "Fill start and end date/time", confirmButtonColor: "#f59e0b" });
+      return;
+    }
+    setOneOnOneSubmitting(true);
+    try {
+      await axiosPrivate.post(
+        "sessions/one-on-one",
+        {
+          enrollmentId: oneOnOneModal.id,
+          startTime: new Date(oneOnOneStart).toISOString(),
+          endTime: new Date(oneOnOneEnd).toISOString(),
+          title: oneOnOneTitle.trim() || undefined,
+          description: oneOnOneDesc.trim() || undefined,
+        },
+        { withCredentials: true }
+      );
+      Swal.fire({ icon: "success", title: "1:1 session created", confirmButtonColor: "#10b981" });
+      setOneOnOneModal(null);
+      setOneOnOneStart("");
+      setOneOnOneEnd("");
+      setOneOnOneTitle("");
+      setOneOnOneDesc("");
+      fetchEnrollments();
+    } catch (err: unknown) {
+      const msg = err && typeof err === "object" && "response" in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : "Failed to create session";
+      Swal.fire({ icon: "error", title: "Failed", text: msg, confirmButtonColor: "#ef4444" });
+    } finally {
+      setOneOnOneSubmitting(false);
     }
   };
 
@@ -216,7 +271,9 @@ const TutorCourseEnrollments = () => {
                     <TableHead>Email</TableHead>
                     <TableHead>Date Enrolled</TableHead>
                     <TableHead>Amount Paid</TableHead>
+                    <TableHead>Mode</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -232,7 +289,34 @@ const TutorCourseEnrollments = () => {
                       <TableCell className="font-semibold text-green-600">
                         {formatCurrency(enrollment.paidAmount)}
                       </TableCell>
+                      <TableCell>
+                        {enrollment.deliveryMode === "ONE_ON_ONE" ? (
+                          <Badge className="bg-purple-100 text-purple-800">1:1</Badge>
+                        ) : enrollment.deliveryMode === "GROUP" ? (
+                          <Badge className="bg-blue-100 text-blue-800">Group</Badge>
+                        ) : (
+                          <span className="text-gray-500">—</span>
+                        )}
+                      </TableCell>
                       <TableCell>{getStatusBadge(enrollment.status)}</TableCell>
+                      <TableCell>
+                        {enrollment.deliveryMode === "ONE_ON_ONE" && enrollment.status === "STARTED" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setOneOnOneModal(enrollment);
+                              setOneOnOneStart("");
+                              setOneOnOneEnd("");
+                              setOneOnOneTitle("");
+                              setOneOnOneDesc("");
+                            }}
+                          >
+                            <FaCalendarPlus className="w-3 h-3 mr-1" />
+                            Schedule 1:1
+                          </Button>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -240,6 +324,61 @@ const TutorCourseEnrollments = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* 1:1 session modal */}
+        <Dialog open={!!oneOnOneModal} onOpenChange={(open) => !open && setOneOnOneModal(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                Schedule 1:1 session: {oneOnOneModal?.student?.name || "Student"}
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-gray-600">
+              Agree on times via chat, then create the session here.
+            </p>
+            <div className="space-y-4 py-2">
+              <div>
+                <Label>Start (date &amp; time)</Label>
+                <Input
+                  type="datetime-local"
+                  value={oneOnOneStart}
+                  onChange={(e) => setOneOnOneStart(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>End (date &amp; time)</Label>
+                <Input
+                  type="datetime-local"
+                  value={oneOnOneEnd}
+                  onChange={(e) => setOneOnOneEnd(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Title (optional)</Label>
+                <Input
+                  value={oneOnOneTitle}
+                  onChange={(e) => setOneOnOneTitle(e.target.value)}
+                  placeholder="e.g., Intro to Topic"
+                />
+              </div>
+              <div>
+                <Label>Description (optional)</Label>
+                <Textarea
+                  value={oneOnOneDesc}
+                  onChange={(e) => setOneOnOneDesc(e.target.value)}
+                  placeholder="Brief description"
+                  rows={2}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setOneOnOneModal(null)}>Cancel</Button>
+              <Button onClick={submitOneOnOneSession} disabled={oneOnOneSubmitting}>
+                {oneOnOneSubmitting ? "Creating…" : "Create session"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

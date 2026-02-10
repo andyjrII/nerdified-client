@@ -1,34 +1,17 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTutorRefreshToken } from "./useTutorRefreshToken";
 import { axiosPrivate } from "@/lib/api/axios";
-import { getAuthTutor } from "@/utils/authStorage";
 import { useTutorLogout } from "./useTutorLogout";
 import { AxiosInstance } from "axios";
 
 export const useTutorAxiosPrivate = (): AxiosInstance => {
   const refresh = useTutorRefreshToken();
   const logout = useTutorLogout();
-  const [token, setToken] = useState<string>("");
   const retryCountRef = useRef<number>(0);
 
   useEffect(() => {
-    const data = getAuthTutor();
-    if (data?.accessToken) setToken(data.accessToken);
-  }, []);
-
-  useEffect(() => {
-    const requestIntercept = axiosPrivate.interceptors.request.use(
-      (config) => {
-        if (token && !config.headers["Authorization"]) {
-          config.headers["Authorization"] = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => response,
       async (error) => {
@@ -40,16 +23,13 @@ export const useTutorAxiosPrivate = (): AxiosInstance => {
         if (
           (error?.response?.status === 401 || error?.response?.status === 403) &&
           !prevRequest?.sent &&
-          token &&
           !isRefreshRequest
         ) {
           if (retryCountRef.current < maxRetries) {
             prevRequest.sent = true;
             retryCountRef.current += 1;
             try {
-              const newAccessToken = await refresh();
-              setToken(newAccessToken);
-              prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+              await refresh();
               return axiosPrivate(prevRequest);
             } catch (err) {
               console.error("Error refreshing tutor token:", err);
@@ -67,10 +47,9 @@ export const useTutorAxiosPrivate = (): AxiosInstance => {
     );
 
     return () => {
-      axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [token, refresh, logout]);
+  }, [refresh, logout]);
 
   return axiosPrivate;
 };

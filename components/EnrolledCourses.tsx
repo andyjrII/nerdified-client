@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import { FaCalendarAlt, FaVideo, FaBookOpen, FaSearch } from "react-icons/fa";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,18 +28,10 @@ interface EnrollmentDetail {
 const EnrolledCourses = () => {
   const axiosPrivate = useAxiosPrivate();
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [enrollmentDetails, setEnrollmentDetails] = useState<EnrollmentDetail[]>([]);
   const [sessionsCount, setSessionsCount] = useState<Record<number, number>>({});
-
-  const fetchEmail = () => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
 
   useEffect(() => {
     if (email) getEnrolledCourses();

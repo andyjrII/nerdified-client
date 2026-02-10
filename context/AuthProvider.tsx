@@ -2,21 +2,23 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
+export type AuthUser = {
+  email: string | null;
+  role: string | null;
+};
+
 interface AuthContextType {
-  auth: {
-    email: string | null;
-    accessToken: string | null;
-  };
-  setAuth: (auth: { email: string | null; accessToken: string | null }) => void;
+  auth: AuthUser;
+  setAuth: (auth: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [auth, setAuth] = useState<{
-    email: string | null;
-    accessToken: string | null;
-  }>({ email: null, accessToken: null });
+  const [auth, setAuth] = useState<AuthUser>({
+    email: null,
+    role: null,
+  });
 
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>

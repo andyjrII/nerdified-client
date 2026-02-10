@@ -14,11 +14,8 @@ import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { useStudent } from "@/hooks/useStudent";
 import { useLogout } from "@/hooks/useLogout";
 const DPDefault = "/images/navpages/person_profile.jpg";
-import {
-  getAuthStudent,
-  getStudentProfile,
-  setStudentProfile,
-} from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
+import { getStudentProfile, setStudentProfile } from "@/utils/authStorage";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,15 +28,11 @@ import { Button } from "@/components/ui/button";
 
 export const StudentDropdownMenu = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth();
   const { student, setStudent } = useStudent();
-  const [email, setEmail] = useState<string>("");
+  const email = auth.email ?? "";
   const [profileImageError, setProfileImageError] = useState(false);
   const logout = useLogout();
-
-  useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  }, []);
 
   useEffect(() => {
     if (!email) return;

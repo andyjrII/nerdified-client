@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import StarRating from "@/components/StarRating";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 import Swal from "sweetalert2";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,19 +29,11 @@ interface ReviewsProps {
 
 const Reviews = ({ courseId }: ReviewsProps) => {
   const axiosPrivate = useAxiosPrivate();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [reviews, setReviews] = useState<Review[]>([]);
   const [newReview, setNewReview] = useState({ rating: 0, comment: "" });
   const [imageUrls, setImageUrls] = useState<Map<string, string>>(new Map());
-
-  const fetchEmail = () => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
 
   useEffect(() => {
     if (email) fetchReviews();

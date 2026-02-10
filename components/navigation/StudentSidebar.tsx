@@ -18,11 +18,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { useLogout } from "@/hooks/useLogout";
-import {
-  getAuthStudent,
-  getStudentProfile,
-  setStudentProfile,
-} from "@/utils/authStorage";
+import { getStudentProfile, setStudentProfile } from "@/utils/authStorage";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -35,16 +31,11 @@ const StudentSidebar = () => {
   const pathname = usePathname();
   const { auth } = useAuth();
   const logout = useLogout();
-  const [email, setEmail] = useState<string>("");
+  const email = auth.email ?? "";
   const [student, setStudent] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [profileImageError, setProfileImageError] = useState(false);
-
-  useEffect(() => {
-    fetchEmail();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when email changes
-  }, []);
 
   useEffect(() => {
     if (email) {
@@ -57,11 +48,6 @@ const StudentSidebar = () => {
   useEffect(() => {
     setProfileImageError(false);
   }, [student?.imagePath]);
-
-  const fetchEmail = () => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  };
 
   const fetchStudent = async () => {
     try {

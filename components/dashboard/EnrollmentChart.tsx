@@ -13,7 +13,7 @@ import {
   Legend,
 } from "chart.js";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getAuthStudent } from "@/utils/authStorage";
+import { useAuth } from "@/hooks/useAuth";
 
 ChartJS.register(
   CategoryScale,
@@ -26,13 +26,9 @@ ChartJS.register(
 
 const EnrollmentChart = () => {
   const axiosPrivate = useAxiosPrivate();
-  const [email, setEmail] = useState<string>("");
+  const { auth } = useAuth();
+  const email = auth.email ?? "";
   const [enrollmentData, setEnrollmentData] = useState<any[]>([]);
-
-  useEffect(() => {
-    const data = getAuthStudent();
-    if (data?.email) setEmail(data.email);
-  }, []);
 
   useEffect(() => {
     if (email) {

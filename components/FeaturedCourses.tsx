@@ -70,12 +70,9 @@ const FeaturedCourses = () => {
       </h2>
       {courses.length === 0 ? (
         <div className="text-center max-w-xl mx-auto mb-8">
-          <p className="text-gray-600 mb-6">
-            Top-rated courses will appear here once students leave reviews. Browse all courses to find your next class.
+          <p className="text-white text-lg md:text-xl">
+            Top-rated courses will appear here once students leave reviews.
           </p>
-          <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
-            <Link href="/courses">Browse all courses</Link>
-          </Button>
         </div>
       ) : (
         <>
@@ -112,11 +109,6 @@ const FeaturedCourses = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
-          <div className="text-center mt-8">
-            <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white">
-              <Link href="/courses">Browse all courses</Link>
-            </Button>
           </div>
         </>
       )}

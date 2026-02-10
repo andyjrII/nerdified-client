@@ -19,11 +19,7 @@ import { IoSchool } from "react-icons/io5";
 import { useAdminLogout } from "@/hooks/useAdminLogout";
 import { useAdminAxiosPrivate } from "@/hooks/useAdminAxiosPrivate";
 import { useAdmin } from "@/hooks/useAdmin";
-import {
-  getAuthAdmin,
-  getAdminProfile,
-  setAdminProfile,
-} from "@/utils/authStorage";
+import { getAdminProfile, setAdminProfile } from "@/utils/authStorage";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,16 +35,7 @@ const AdminSidebar = () => {
   const { admin, setAdmin } = useAdmin();
   const router = useRouter();
   const logout = useAdminLogout();
-  const [email, setEmail] = useState<string>("");
-
-  const fetchEmail = () => {
-    const data = getAuthAdmin();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
+  const email = admin?.email ?? "";
 
   useEffect(() => {
     if (email) {

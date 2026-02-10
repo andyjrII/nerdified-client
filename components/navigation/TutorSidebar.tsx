@@ -19,11 +19,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { useTutorLogout } from "@/hooks/useTutorLogout";
-import {
-  getAuthTutor,
-  getTutorProfile,
-  setTutorProfile,
-} from "@/utils/authStorage";
+import { getTutorProfile, setTutorProfile } from "@/utils/authStorage";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -36,20 +32,11 @@ const TutorSidebar = () => {
   const pathname = usePathname();
   const { auth } = useTutorAuth();
   const logout = useTutorLogout();
-  const [email, setEmail] = useState<string>("");
+  const email = auth.email ?? "";
   const [tutor, setTutor] = useState<any>(null);
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [navLoading, setNavLoading] = useState(false);
-
-  const fetchEmail = () => {
-    const data = getAuthTutor();
-    if (data?.email) setEmail(data.email);
-  };
-
-  useEffect(() => {
-    fetchEmail();
-  }, []);
 
   useEffect(() => {
     if (email) {

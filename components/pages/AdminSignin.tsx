@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "@/lib/api/axios";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { FcLock, FcAddressBook } from "react-icons/fc";
-import { setAuthAdmin } from "@/utils/authStorage";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,10 +44,12 @@ const AdminSignin = () => {
           withCredentials: true,
         }
       );
-      const accessToken = response?.data[0]?.access_token;
-      const role = response?.data[1]; // SUPER_ADMIN | SUB_ADMIN
-      setAuthAdmin({ email, accessToken, role });
-      setAdmin({ email, accessToken, role });
+      const data = response?.data;
+      const role = data?.role;
+      if (!data?.email || !role) {
+        throw new Error("Invalid response from server");
+      }
+      setAdmin({ email: data.email, role });
 
       setAuthSessionCookie();
 

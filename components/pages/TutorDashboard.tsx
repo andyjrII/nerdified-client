@@ -15,7 +15,6 @@ import {
   FaExclamationTriangle,
   FaCheckCircle,
 } from "react-icons/fa";
-import { getAuthTutor } from "@/utils/authStorage";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -24,7 +23,7 @@ const TutorDashboard = () => {
   const axiosPrivate = useTutorAxiosPrivate();
   const { auth } = useTutorAuth();
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
+  const email = auth.email ?? "";
   const [tutor, setTutor] = useState<any>(null);
   const [stats, setStats] = useState({
     totalCourses: 0,
@@ -34,11 +33,6 @@ const TutorDashboard = () => {
     pendingApproval: false,
   });
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const data = getAuthTutor();
-    if (data?.email) setEmail(data.email);
-  }, []);
 
   useEffect(() => {
     if (email) {

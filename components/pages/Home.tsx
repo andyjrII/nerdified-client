@@ -51,7 +51,7 @@ const Home = () => {
         <section className="container mx-auto px-12 md:px-20 lg:px-32 xl:px-40 py-12">
           <h1 className="text-center mb-8">
             <span className="inline-block bg-orange-500 text-white px-6 py-2 rounded-lg text-xl md:text-2xl font-bold">
-              Why Enroll in Our Programming Classes?
+              Why Enroll with Nerdified?
             </span>
           </h1>
           <WhyEnrollFeatures />
