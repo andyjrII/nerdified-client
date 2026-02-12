@@ -10,7 +10,7 @@ import {
   IoCall,
 } from "react-icons/io5";
 import { FaBlogger, FaLock } from "react-icons/fa";
-import { StudentDropdownMenu } from "./DropdownMenu";
+import { StudentDropdownMenu, TutorDropdownMenu } from "./DropdownMenu";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -18,9 +18,9 @@ export const Navigation = () => {
   const { auth, loading } = useAuth();
   const pathname = usePathname();
 
-  if (loading) {
-    return null;
-  }
+  // Always render the nav so it appears on first load; only the right-side (Sign in vs dropdown) depends on auth.
+  // While auth is loading, show Sign in so the bar is never missing.
+  const showSignedIn = !loading && !!auth.email;
 
   // Navigation links configuration
   const navLinks = [
@@ -100,9 +100,9 @@ export const Navigation = () => {
             })}
           </div>
 
-          {/* Right: Sign in (when logged out) or User dropdown (when logged in) */}
+          {/* Right: Sign in (when logged out or still loading) or User dropdown (when logged in) */}
           <div className="hidden md:flex items-center shrink-0">
-            {!auth.email ? (
+            {!showSignedIn ? (
               <Link
                 href="/signin"
                 className={cn(
@@ -125,6 +125,8 @@ export const Navigation = () => {
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500" />
                 )}
               </Link>
+            ) : auth.role === "TUTOR" ? (
+              <TutorDropdownMenu />
             ) : (
               <StudentDropdownMenu />
             )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Hero from "@/components/Hero";
@@ -11,7 +12,16 @@ import FeaturedCourses from "@/components/FeaturedCourses";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
+const revealTransition = { type: "tween" as const, duration: 0.5 };
+
 const Home = () => {
+  // Fallback: reveal sections after delay so they show on first load even if whileInView doesn't fire
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setRevealed(true), 400);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div className="relative min-h-screen bg-white text-gray-900">
       <div className="relative min-h-screen">
@@ -37,10 +47,11 @@ const Home = () => {
               <div className="relative w-full flex items-start justify-center">
                 {/* Large background image - reduced to half size */}
                 <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "tween", duration: 0.5 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  animate={revealed ? { opacity: 1, scale: 1 } : undefined}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={revealTransition}
                   className="relative w-3/5 h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden"
                 >
                   {/* Dark overlay on image */}
@@ -56,10 +67,11 @@ const Home = () => {
 
                 {/* Overlapping card - Student enrollment CTA */}
                 <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "tween", duration: 0.5, delay: 0.2 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  animate={revealed ? { opacity: 1, scale: 1 } : undefined}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ ...revealTransition, delay: 0.2 }}
                   className="relative -ml-[12.5%] md:-ml-[12.5%] w-[85%] md:w-[50%] max-w-2xl z-20 mt-16 md:mt-20"
                 >
                   <Card className="bg-white shadow-xl">
@@ -96,10 +108,11 @@ const Home = () => {
               <div className="relative w-full flex items-start justify-center">
                 {/* Overlapping card - Tutor registration CTA */}
                 <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "tween", duration: 0.5, delay: 0.2 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  animate={revealed ? { opacity: 1, scale: 1 } : undefined}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ ...revealTransition, delay: 0.2 }}
                   className="relative -mr-[12.5%] md:-mr-[12.5%] w-[85%] md:w-[50%] max-w-2xl z-20 order-1 mt-16 md:mt-20"
                 >
                   <Card className="bg-white shadow-xl">
@@ -131,10 +144,11 @@ const Home = () => {
 
                 {/* Large background image - reduced to half size */}
                 <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "tween", duration: 0.5 }}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  animate={revealed ? { opacity: 1, scale: 1 } : undefined}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={revealTransition}
                   className="relative w-3/5 h-[400px] md:h-[450px] lg:h-[500px] rounded-lg overflow-hidden order-2"
                 >
                   {/* Dark overlay on image */}

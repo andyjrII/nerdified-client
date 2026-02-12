@@ -1,5 +1,5 @@
-import TutorSessionsList from "@/components/pages/tutor/TutorSessionsList";
+import { redirect } from "next/navigation";
 
 export default function TutorSessionsPage() {
-  return <TutorSessionsList />;
+  redirect("/tutor/courses");
 }

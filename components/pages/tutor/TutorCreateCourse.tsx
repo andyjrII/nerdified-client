@@ -17,8 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaBookOpen, FaArrowLeft } from "react-icons/fa";
+import { FaBookOpen, FaArrowLeft, FaCalendarAlt, FaPlus, FaTrash } from "react-icons/fa";
 import Link from "next/link";
+
+interface SessionRow {
+  start: string;
+  end: string;
+  title: string;
+}
 
 const TutorCreateCourse = () => {
   const axiosPrivate = useTutorAxiosPrivate();
@@ -28,15 +34,20 @@ const TutorCreateCourse = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<string>("0");
-  const [pricingModel, setPricingModel] = useState<"PER_COURSE" | "PER_SESSION">("PER_COURSE");
   const [courseType, setCourseType] = useState<"ONE_ON_ONE" | "GROUP" | "BOTH">("ONE_ON_ONE");
   const [maxStudents, setMaxStudents] = useState<string>("");
   const [priceOneOnOne, setPriceOneOnOne] = useState<string>("");
   const [maxOneOnOneStudents, setMaxOneOnOneStudents] = useState<string>("");
   const [curriculum, setCurriculum] = useState("");
   const [outcomes, setOutcomes] = useState("");
+  const [sessions, setSessions] = useState<SessionRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+
+  const addSessionRow = () => setSessions((prev) => [...prev, { start: "", end: "", title: "" }]);
+  const removeSessionRow = (i: number) => setSessions((prev) => prev.filter((_, idx) => idx !== i));
+  const updateSessionRow = (i: number, field: keyof SessionRow, value: string) =>
+    setSessions((prev) => prev.map((row, idx) => (idx === i ? { ...row, [field]: value } : row)));
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
@@ -54,7 +65,6 @@ const TutorCreateCourse = () => {
         title: title.trim(),
         description: description.trim() || undefined,
         price: parseFloat(price) || 0,
-        pricingModel,
         courseType,
         maxStudents: (courseType === "GROUP" || courseType === "BOTH") && maxStudents ? parseInt(maxStudents) : undefined,
         curriculum: curriculum.trim() || undefined,
@@ -74,17 +84,38 @@ const TutorCreateCourse = () => {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
+      const newCourseId = response?.data?.id;
+      if (!newCourseId) throw new Error("Course created but no id returned");
+
+      for (const row of sessions) {
+        if (!row.start || !row.end) continue;
+        const startDate = new Date(row.start);
+        const endDate = new Date(row.end);
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || endDate <= startDate) continue;
+        await axiosPrivate.post(
+          "sessions",
+          {
+            courseId: newCourseId,
+            startTime: startDate.toISOString(),
+            endTime: endDate.toISOString(),
+            title: row.title.trim() || undefined,
+          },
+          { withCredentials: true }
+        );
+      }
 
       Swal.fire({
         icon: "success",
         title: "Course Created",
-        text: `${title} has been created successfully!`,
+        text: sessions.length > 0
+          ? `${title} has been created with ${sessions.length} session(s). You can add more sessions when editing.`
+          : `${title} has been created. Add sessions on the next page to publish.`,
         confirmButtonText: "OK",
         showConfirmButton: true,
         confirmButtonColor: "#10b981",
       });
 
-      startTransition(() => router.push("/tutor/courses"));
+      startTransition(() => router.push(newCourseId ? `/tutor/courses/${newCourseId}/edit` : "/tutor/courses"));
     } catch (err: any) {
       console.error("Course creation error:", err);
       let errorMessage = "Course creation failed";
@@ -178,23 +209,6 @@ const TutorCreateCourse = () => {
                     min="0"
                     step="0.01"
                   />
-                </div>
-
-                {/* Pricing Model */}
-                <div className="space-y-2">
-                  <Label htmlFor="pricingModel">Pricing Model</Label>
-                  <Select
-                    value={pricingModel}
-                    onValueChange={(value) => setPricingModel(value as "PER_COURSE" | "PER_SESSION")}
-                  >
-                    <SelectTrigger id="pricingModel">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="PER_COURSE">Per Course</SelectItem>
-                      <SelectItem value="PER_SESSION">Per Session</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 {/* Course Type */}
@@ -298,6 +312,54 @@ const TutorCreateCourse = () => {
                   rows={4}
                   className="resize-none"
                 />
+              </div>
+
+              {/* Sessions (optional) */}
+              <div className="space-y-3 border-t pt-6">
+                <div className="flex items-center justify-between">
+                  <Label className="flex items-center gap-2">
+                    <FaCalendarAlt className="w-4 h-4 text-purple-600" />
+                    Sessions (optional)
+                  </Label>
+                  <Button type="button" variant="outline" size="sm" onClick={addSessionRow}>
+                    <FaPlus className="w-3 h-3 mr-1" />
+                    Add session
+                  </Button>
+                </div>
+                <p className="text-sm text-gray-500">
+                  Add sessions now or later from the course edit page. You need at least one session to publish.
+                </p>
+                {sessions.map((row, i) => (
+                  <div key={i} className="flex flex-wrap items-end gap-3 p-3 bg-gray-50 rounded-lg border">
+                    <div className="flex-1 min-w-[140px] space-y-1">
+                      <Label className="text-xs">Start</Label>
+                      <Input
+                        type="datetime-local"
+                        value={row.start}
+                        onChange={(e) => updateSessionRow(i, "start", e.target.value)}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-[140px] space-y-1">
+                      <Label className="text-xs">End</Label>
+                      <Input
+                        type="datetime-local"
+                        value={row.end}
+                        onChange={(e) => updateSessionRow(i, "end", e.target.value)}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-[120px] space-y-1">
+                      <Label className="text-xs">Title (optional)</Label>
+                      <Input
+                        placeholder="e.g. Week 1"
+                        value={row.title}
+                        onChange={(e) => updateSessionRow(i, "title", e.target.value)}
+                      />
+                    </div>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeSessionRow(i)} aria-label="Remove session">
+                      <FaTrash className="w-4 h-4 text-red-500" />
+                    </Button>
+                  </div>
+                ))}
               </div>
 
               {/* Submit Button */}

@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaBookOpen, FaArrowLeft, FaCalendarAlt, FaPlus, FaEdit } from "react-icons/fa";
+import { FaBookOpen, FaArrowLeft, FaCalendarAlt, FaPlus, FaEdit, FaCopy } from "react-icons/fa";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -43,7 +43,6 @@ interface Course {
   description?: string;
   price: number;
   priceOneOnOne?: number;
-  pricingModel: string;
   courseType: string;
   maxStudents?: number;
   maxOneOnOneStudents?: number;
@@ -64,7 +63,6 @@ const TutorEditCourse = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<string>("0");
-  const [pricingModel, setPricingModel] = useState<"PER_COURSE" | "PER_SESSION">("PER_COURSE");
   const [courseType, setCourseType] = useState<"ONE_ON_ONE" | "GROUP" | "BOTH">("ONE_ON_ONE");
   const [maxStudents, setMaxStudents] = useState<string>("");
   const [priceOneOnOne, setPriceOneOnOne] = useState<string>("");
@@ -87,6 +85,7 @@ const TutorEditCourse = () => {
   const [addSessionEnd, setAddSessionEnd] = useState("");
   const [addSessionReason, setAddSessionReason] = useState("");
   const [addSessionSubmitting, setAddSessionSubmitting] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
 
   useEffect(() => {
     if (courseId) {
@@ -119,7 +118,7 @@ const TutorEditCourse = () => {
       setTitle(courseData.title || "");
       setDescription(courseData.description || "");
       setPrice(String(courseData.price || 0));
-      setPricingModel(courseData.pricingModel || "PER_COURSE");
+      // Pricing is always per course (per-session option removed)
       setCourseType(courseData.courseType || "ONE_ON_ONE");
       setMaxStudents(courseData.maxStudents ? String(courseData.maxStudents) : "");
       setPriceOneOnOne(courseData.priceOneOnOne != null ? String(courseData.priceOneOnOne) : "");
@@ -162,7 +161,6 @@ const TutorEditCourse = () => {
       if (title.trim()) courseData.title = title.trim();
       if (description.trim()) courseData.description = description.trim();
       if (price) courseData.price = parseFloat(price);
-      if (pricingModel) courseData.pricingModel = pricingModel;
       if (courseType) courseData.courseType = courseType;
       if ((courseType === "GROUP" || courseType === "BOTH") && maxStudents) {
         courseData.maxStudents = parseInt(maxStudents);
@@ -290,40 +288,62 @@ const TutorEditCourse = () => {
     }
   };
 
-  const submitAddSessionRequest = async () => {
-    if (!courseId || addSessionReason.trim().length < 10) {
-      Swal.fire({ icon: "warning", title: "Reason required", text: "Please provide a reason (at least 10 characters).", confirmButtonColor: "#f59e0b" });
+  const submitAddSession = async () => {
+    if (!courseId || !addSessionStart || !addSessionEnd) {
+      Swal.fire({ icon: "warning", title: "Dates required", text: "Please set start and end date/time.", confirmButtonColor: "#f59e0b" });
       return;
     }
-    if (!addSessionStart || !addSessionEnd) {
-      Swal.fire({ icon: "warning", title: "Dates required", text: "Please set start and end date/time.", confirmButtonColor: "#f59e0b" });
+    const start = new Date(addSessionStart);
+    const end = new Date(addSessionEnd);
+    if (end <= start) {
+      Swal.fire({ icon: "warning", title: "Invalid times", text: "End must be after start.", confirmButtonColor: "#f59e0b" });
       return;
     }
     setAddSessionSubmitting(true);
     try {
       await axiosPrivate.post(
-        "sessions/add-session-requests",
+        "sessions",
         {
           courseId,
-          startTime: new Date(addSessionStart).toISOString(),
-          endTime: new Date(addSessionEnd).toISOString(),
+          startTime: start.toISOString(),
+          endTime: end.toISOString(),
           title: addSessionTitle.trim() || undefined,
           description: addSessionDesc.trim() || undefined,
-          reason: addSessionReason.trim(),
         },
         { withCredentials: true }
       );
-      Swal.fire({ icon: "success", title: "Request submitted", text: "Admin will review your add-session request.", confirmButtonColor: "#10b981" });
+      Swal.fire({ icon: "success", title: "Session added", text: "The session has been added to this course.", confirmButtonColor: "#10b981" });
       setAddSessionModal(false);
       setAddSessionTitle("");
       setAddSessionDesc("");
       setAddSessionStart("");
       setAddSessionEnd("");
       setAddSessionReason("");
+      fetchCourse();
     } catch (err: any) {
-      Swal.fire({ icon: "error", title: "Failed", text: err.response?.data?.message || "Could not submit request.", confirmButtonColor: "#ef4444" });
+      Swal.fire({ icon: "error", title: "Failed", text: err.response?.data?.message || "Could not add session.", confirmButtonColor: "#ef4444" });
     } finally {
       setAddSessionSubmitting(false);
+    }
+  };
+
+  const handleDuplicateCourse = async () => {
+    if (!courseId) return;
+    setDuplicating(true);
+    try {
+      const response = await axiosPrivate.post(`courses/duplicate/${courseId}`, {}, { withCredentials: true });
+      const newCourse = response?.data;
+      const newId = newCourse?.id;
+      if (newId) {
+        Swal.fire({ icon: "success", title: "Course duplicated", text: "You can edit the copy below.", confirmButtonColor: "#10b981" });
+        router.push(`/tutor/courses/${newId}/edit`);
+      } else {
+        Swal.fire({ icon: "error", title: "Failed", text: "Could not duplicate course.", confirmButtonColor: "#ef4444" });
+      }
+    } catch (err: any) {
+      Swal.fire({ icon: "error", title: "Failed", text: err.response?.data?.message || "Could not duplicate course.", confirmButtonColor: "#ef4444" });
+    } finally {
+      setDuplicating(false);
     }
   };
 
@@ -357,9 +377,21 @@ const TutorEditCourse = () => {
             <h1 className="text-3xl font-bold text-gray-900">Edit Course</h1>
             <p className="text-gray-600 mt-1">Update your course information</p>
           </div>
-          <Badge className={isDraft ? "bg-amber-100 text-amber-800" : "bg-green-100 text-green-800"}>
-            {isDraft ? "Draft" : "Published"}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleDuplicateCourse}
+              disabled={duplicating}
+            >
+              <FaCopy className="w-3 h-3 mr-1" />
+              {duplicating ? "Duplicating…" : "Duplicate course"}
+            </Button>
+            <Badge className={isDraft ? "bg-amber-100 text-amber-800" : "bg-green-100 text-green-800"}>
+              {isDraft ? "Draft" : "Published"}
+            </Badge>
+          </div>
         </div>
 
         {/* Schedule & Publish */}
@@ -401,35 +433,26 @@ const TutorEditCourse = () => {
             ) : (
               <p className="text-gray-500">No sessions yet.</p>
             )}
-            {isDraft ? (
-              <div className="flex flex-wrap gap-2 pt-2">
-                <Link href={`/tutor/sessions/new?courseId=${courseId}`}>
-                  <Button variant="outline" size="sm">
-                    <FaPlus className="w-3 h-3 mr-2" />
-                    Schedule session
-                  </Button>
-                </Link>
-                <Button
-                  onClick={handlePublish}
-                  disabled={publishing || sessionCount < 1}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  {publishing ? "Publishing…" : "Publish course"}
-                </Button>
-                {sessionCount < 1 && (
-                  <span className="text-sm text-amber-600">Add at least one session to publish.</span>
-                )}
-              </div>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setAddSessionModal(true)}
-              >
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setAddSessionModal(true)}>
                 <FaPlus className="w-3 h-3 mr-2" />
-                Request to add session
+                Add session
               </Button>
-            )}
+              {isDraft && (
+                <>
+                  <Button
+                    onClick={handlePublish}
+                    disabled={publishing || sessionCount < 1}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    {publishing ? "Publishing…" : "Publish course"}
+                  </Button>
+                  {sessionCount < 1 && (
+                    <span className="text-sm text-amber-600">Add at least one session to publish.</span>
+                  )}
+                </>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -475,23 +498,6 @@ const TutorEditCourse = () => {
                     min="0"
                     step="0.01"
                   />
-                </div>
-
-                {/* Pricing Model */}
-                <div className="space-y-2">
-                  <Label htmlFor="pricingModel">Pricing Model</Label>
-                  <Select
-                    value={pricingModel}
-                    onValueChange={(value) => setPricingModel(value as "PER_COURSE" | "PER_SESSION")}
-                  >
-                    <SelectTrigger id="pricingModel">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="PER_COURSE">Per Course</SelectItem>
-                      <SelectItem value="PER_SESSION">Per Session</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 {/* Course Type */}
@@ -658,11 +664,11 @@ const TutorEditCourse = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Add session request modal */}
+        {/* Add session modal */}
         <Dialog open={addSessionModal} onOpenChange={setAddSessionModal}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Request to add session</DialogTitle>
+              <DialogTitle>Add session</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-2">
               <div>
@@ -681,15 +687,11 @@ const TutorEditCourse = () => {
                 <Label>End (date & time)</Label>
                 <Input type="datetime-local" value={addSessionEnd} onChange={(e) => setAddSessionEnd(e.target.value)} />
               </div>
-              <div>
-                <Label>Reason (min 10 characters)</Label>
-                <Textarea value={addSessionReason} onChange={(e) => setAddSessionReason(e.target.value)} placeholder="Why add this session?" rows={3} />
-              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setAddSessionModal(false)}>Cancel</Button>
-              <Button onClick={submitAddSessionRequest} disabled={addSessionSubmitting}>
-                {addSessionSubmitting ? "Submitting…" : "Submit request"}
+              <Button onClick={submitAddSession} disabled={addSessionSubmitting}>
+                {addSessionSubmitting ? "Adding…" : "Add session"}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -21,24 +21,32 @@ const LatestBlogs = () => {
   const [imagePaths, setImagePaths] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchLatestBlogs = async () => {
+    let cancelled = false;
+    const fetchLatestBlogs = async (retry = false) => {
       try {
         const response = await axios.get("blog/posts/latest");
+        if (cancelled) return;
         // Ensure we always have an array
-        const blogsData = Array.isArray(response.data) 
-          ? response.data 
+        const blogsData = Array.isArray(response.data)
+          ? response.data
           : (response.data?.blogs || response.data?.posts || []);
         setBlogs(blogsData);
         if (blogsData.length > 0) {
           await fetchImages();
         }
       } catch (error) {
+        if (!retry) {
+          // Retry once after a short delay (helps when server is cold or first request fails)
+          setTimeout(() => fetchLatestBlogs(true), 800);
+          return;
+        }
         console.error("Error fetching latest blogs:", error);
-        setBlogs([]); // Ensure blogs is always an array
+        if (!cancelled) setBlogs([]);
       }
     };
 
     fetchLatestBlogs();
+    return () => { cancelled = true; };
   }, []);
 
   const fetchImages = async () => {
@@ -108,7 +116,7 @@ const LatestBlogs = () => {
           </Card>
         ))
         ) : (
-          <div className="col-span-full text-center py-8 text-white text-lg md:text-xl">
+          <div className="col-span-full text-center py-8 text-gray-600 text-lg md:text-xl">
             No blog posts available
           </div>
         )}

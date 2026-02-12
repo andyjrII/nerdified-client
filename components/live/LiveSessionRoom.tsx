@@ -92,7 +92,7 @@ export default function LiveSessionRoom({
 
   const goBack = () => {
     if (effectiveAudience === "tutor") {
-      router.push("/tutor/sessions");
+      router.push("/tutor/courses");
     } else {
       router.push("/student/sessions");
     }

@@ -218,9 +218,9 @@ const TutorDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stats.upcomingSessions}</div>
-              <Link href="/tutor/sessions">
+              <Link href="/tutor/courses">
                 <Button variant="ghost" className="mt-2 text-white hover:bg-orange-700">
-                  View Sessions →
+                  My Courses →
                 </Button>
               </Link>
             </CardContent>
@@ -240,10 +240,10 @@ const TutorDashboard = () => {
                   Create New Course
                 </Button>
               </Link>
-              <Link href="/tutor/sessions/new">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+              <Link href="/tutor/courses">
+                <Button variant="outline" className="w-full">
                   <FaCalendarAlt className="w-4 h-4 mr-2" />
-                  Schedule Session
+                  My Courses & Sessions
                 </Button>
               </Link>
               <Link href="/tutor/availability">

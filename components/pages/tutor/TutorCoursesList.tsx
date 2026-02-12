@@ -23,6 +23,7 @@ import {
   FaDollarSign,
   FaPlus,
   FaSearch,
+  FaCopy,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -34,7 +35,6 @@ interface Course {
   title: string;
   description?: string;
   price: number;
-  pricingModel: string;
   courseType: string;
   maxStudents?: number;
   status?: string;
@@ -62,6 +62,7 @@ const TutorCoursesList = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [enrollmentsMap, setEnrollmentsMap] = useState<Record<number, CourseEnrollment[]>>({});
+  const [duplicatingId, setDuplicatingId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchCourses();
@@ -198,16 +199,28 @@ const TutorCoursesList = () => {
     return <Badge className="bg-purple-100 text-purple-800">Group Class</Badge>;
   };
 
-  const getPricingModelBadge = (pricingModel: string) => {
-    if (pricingModel === "PER_COURSE") {
-      return <Badge className="bg-green-100 text-green-800">Per Course</Badge>;
-    }
-    return <Badge className="bg-orange-100 text-orange-800">Per Session</Badge>;
-  };
-
   const filteredCourses = courses.filter((course) =>
     course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleDuplicateCourse = async (courseId: number) => {
+    setDuplicatingId(courseId);
+    try {
+      const response = await axiosPrivate.post(`courses/duplicate/${courseId}`, {}, { withCredentials: true });
+      const newCourse = response?.data;
+      const newId = newCourse?.id;
+      if (newId) {
+        Swal.fire({ icon: "success", title: "Course duplicated", text: "Opening the copy for editing.", confirmButtonColor: "#10b981" });
+        router.push(`/tutor/courses/${newId}/edit`);
+      } else {
+        Swal.fire({ icon: "error", title: "Failed", text: "Could not duplicate course.", confirmButtonColor: "#ef4444" });
+      }
+    } catch (err: any) {
+      Swal.fire({ icon: "error", title: "Failed", text: err.response?.data?.message || "Could not duplicate course.", confirmButtonColor: "#ef4444" });
+    } finally {
+      setDuplicatingId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -312,7 +325,6 @@ const TutorCoursesList = () => {
                         <Badge className="bg-green-100 text-green-800">Published</Badge>
                       )}
                       {getCourseTypeBadge(course.courseType)}
-                      {getPricingModelBadge(course.pricingModel)}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -355,14 +367,24 @@ const TutorCoursesList = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 pt-4 border-t">
-                      <Link href={`/tutor/courses/${course.id}/enrollments`} className="flex-1">
+                    <div className="flex flex-wrap gap-2 pt-4 border-t">
+                      <Link href={`/tutor/courses/${course.id}/enrollments`} className="flex-1 min-w-[100px]">
                         <Button variant="outline" className="w-full" size="sm">
                           <FaUsers className="w-3 h-3 mr-2" />
                           View Enrollments
                         </Button>
                       </Link>
-                      <Link href={`/tutor/courses/${course.id}/edit`} className="flex-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 min-w-[100px]"
+                        onClick={() => handleDuplicateCourse(course.id)}
+                        disabled={duplicatingId === course.id}
+                      >
+                        <FaCopy className="w-3 h-3 mr-2" />
+                        {duplicatingId === course.id ? "Duplicating…" : "Duplicate"}
+                      </Button>
+                      <Link href={`/tutor/courses/${course.id}/edit`} className="flex-1 min-w-[100px]">
                         <Button className="w-full bg-purple-600 hover:bg-purple-700" size="sm">
                           <FaEdit className="w-3 h-3 mr-2" />
                           Edit

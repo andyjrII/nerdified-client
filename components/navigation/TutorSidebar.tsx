@@ -101,11 +101,6 @@ const TutorSidebar = () => {
       href: "/tutor/courses",
     },
     {
-      label: "Sessions",
-      icon: FaCalendarAlt,
-      href: "/tutor/sessions",
-    },
-    {
       label: "Availability",
       icon: FaCalendarAlt,
       href: "/tutor/availability",

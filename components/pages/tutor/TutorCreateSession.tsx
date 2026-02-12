@@ -90,12 +90,11 @@ const TutorCreateSession = () => {
         withCredentials: true,
       });
       const allCourses = Array.isArray(response?.data?.courses) ? response.data.courses : [];
-      const draftCourses = allCourses.filter((c: Course) => c.status === "DRAFT");
-      setCourses(draftCourses);
-      if (draftCourses.length > 0) {
+      setCourses(allCourses);
+      if (allCourses.length > 0) {
         const fromUrl = searchParams.get("courseId");
-        const match = fromUrl && draftCourses.find((c: Course) => String(c.id) === fromUrl);
-        setCourseId(match ? String(match.id) : String(draftCourses[0].id));
+        const match = fromUrl && allCourses.find((c: Course) => String(c.id) === fromUrl);
+        setCourseId(match ? String(match.id) : String(allCourses[0].id));
       }
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -248,9 +247,9 @@ const TutorCreateSession = () => {
           <Card>
             <CardContent className="pt-12 pb-12 text-center">
               <FaCalendarAlt className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No draft courses</h3>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">No courses yet</h3>
               <p className="text-gray-500 mb-6">
-                Sessions can only be added to draft courses. Create a course or open a draft course, add sessions here, then publish. For published courses, use &quot;Request to add session&quot; on the course edit page.
+                Create a course first, then you can schedule sessions for it from here.
               </p>
               <Link href="/tutor/courses/new">
                 <Button className="bg-purple-600 hover:bg-purple-700">
@@ -315,6 +314,7 @@ const TutorCreateSession = () => {
                     {courses.map((course) => (
                       <SelectItem key={course.id} value={String(course.id)}>
                         {course.title}
+                        {course.status === "DRAFT" ? " (Draft)" : " (Published)"}
                       </SelectItem>
                     ))}
                   </SelectContent>

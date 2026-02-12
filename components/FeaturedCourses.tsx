@@ -23,18 +23,25 @@ const FeaturedCourses = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchFeatured = async () => {
+    let cancelled = false;
+    const fetchFeatured = async (retry = false) => {
       try {
         const { data } = await axios.get<FeaturedCourse[]>("/courses/featured");
-        setCourses(Array.isArray(data) ? data : []);
+        if (!cancelled) setCourses(Array.isArray(data) ? data : []);
       } catch (error) {
+        if (!retry) {
+          // Retry once after a short delay (helps when server is cold or first request fails)
+          setTimeout(() => fetchFeatured(true), 800);
+          return;
+        }
         console.error("Error fetching featured courses:", error);
-        setCourses([]);
+        if (!cancelled) setCourses([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
     fetchFeatured();
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) {

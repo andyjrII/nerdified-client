@@ -44,7 +44,7 @@ export default function TutorLiveSessionPage() {
   }, [sessionId, axiosPrivate]);
 
   if (!sessionId) {
-    router.replace("/tutor/sessions");
+    router.replace("/tutor/courses");
     return null;
   }
 
@@ -54,7 +54,7 @@ export default function TutorLiveSessionPage() {
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <Link
-            href="/tutor/sessions"
+            href="/tutor/courses"
             className="text-blue-600 hover:underline"
           >
             Back to Sessions
@@ -77,7 +77,7 @@ export default function TutorLiveSessionPage() {
       token={data.token}
       serverUrl={data.url}
       sessionTitle={data.session?.title}
-      backHref="/tutor/sessions"
+      backHref="/tutor/courses"
     />
   );
 }

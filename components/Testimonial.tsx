@@ -118,7 +118,7 @@ const Testimonial = () => {
                   </div>
                   {/* Quote / what was said - white background, slightly wider, content centered */}
                   <div className="md:col-span-2 flex flex-col justify-center items-center w-full md:pr-4">
-                    <div className="bg-white rounded-2xl md:rounded-l-none md:rounded-r-2xl rounded-b-2xl md:rounded-b-2xl p-6 max-w-lg w-full flex flex-col justify-center text-center">
+                    <div className="bg-white rounded-2xl md:rounded-l-none md:rounded-r-2xl rounded-b-2xl md:rounded-b-2xl p-6 max-w-lg w-full flex flex-col justify-center text-center border border-gray-200 shadow-lg">
                       <h3 className="text-2xl font-bold mb-4 text-gray-900">
                         {testimonial.name}
                       </h3>

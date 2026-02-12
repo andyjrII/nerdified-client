@@ -1,5 +1,5 @@
-import TutorCreateSession from "@/components/pages/tutor/TutorCreateSession";
+import { redirect } from "next/navigation";
 
 export default function TutorCreateSessionPage() {
-  return <TutorCreateSession />;
+  redirect("/tutor/courses");
 }
