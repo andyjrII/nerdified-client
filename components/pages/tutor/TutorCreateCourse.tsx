@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaBookOpen, FaArrowLeft, FaCalendarAlt, FaPlus, FaTrash } from "react-icons/fa";
+import { FaBookOpen, FaArrowLeft, FaCalendarAlt, FaPlus, FaTrash, FaImage } from "react-icons/fa";
+import Image from "next/image";
 import Link from "next/link";
+
+export const DEFAULT_COURSE_IMAGE = "/images/course.jpeg";
+
+/** Current local date-time in YYYY-MM-DDTHH:mm for datetime-local min (no past dates). */
+function getMinDatetimeLocal(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}T${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
 
 interface SessionRow {
   start: string;
@@ -41,6 +50,8 @@ const TutorCreateCourse = () => {
   const [curriculum, setCurriculum] = useState("");
   const [outcomes, setOutcomes] = useState("");
   const [sessions, setSessions] = useState<SessionRow[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
@@ -86,6 +97,14 @@ const TutorCreateCourse = () => {
       });
       const newCourseId = response?.data?.id;
       if (!newCourseId) throw new Error("Course created but no id returned");
+
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        await axiosPrivate.patch(`courses/course/${newCourseId}/upload-image`, formData, {
+          withCredentials: true,
+        });
+      }
 
       for (const row of sessions) {
         if (!row.start || !row.end) continue;
@@ -145,58 +164,124 @@ const TutorCreateCourse = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6">
-      <div className="max-w-4xl mx-auto w-full space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <Link href="/tutor/courses">
-            <Button variant="ghost" size="sm">
-              <FaArrowLeft className="w-4 h-4 mr-2" />
-              Back to Courses
-            </Button>
+    <div className="min-h-screen bg-slate-100/80 dark:bg-slate-900/50">
+      {/* Header banner */}
+      <div className="bg-gradient-to-r from-purple-700 via-purple-600 to-indigo-600 text-white shadow-lg">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+          <Link
+            href="/tutor/courses"
+            className="inline-flex items-center text-white/90 hover:text-white text-sm font-medium mb-6 transition-colors"
+          >
+            <FaArrowLeft className="w-4 h-4 mr-2" />
+            Back to Courses
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Create New Course</h1>
-            <p className="text-gray-600 mt-1">Fill in the details to create your course</p>
-          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Create a new course</h1>
+          <p className="mt-2 text-purple-100 text-lg max-w-xl">
+            Set up your course details, pricing, and optional sessions. You can add or change sessions anytime from the course edit page.
+          </p>
         </div>
+      </div>
 
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FaBookOpen className="w-5 h-5 text-purple-600" />
-              Course Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p
-              ref={errRef}
-              className={`text-center text-sm text-red-600 mb-4 ${errMsg ? "block" : "hidden"}`}
-              aria-live="assertive"
-            >
-              {errMsg}
-            </p>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 -mt-2 relative z-10">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <p
+            ref={errRef}
+            className={`text-center text-sm text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg py-2 px-3 ${errMsg ? "block" : "hidden"}`}
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Title */}
-                <div className="md:col-span-2 space-y-2">
-                  <Label htmlFor="title">
-                    Course Title <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="title"
-                    type="text"
-                    placeholder="e.g., Introduction to Web Development"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                  />
+          {/* Section: Cover & basics */}
+          <Card className="shadow-md border-0 bg-white dark:bg-slate-800/80 overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-600/10 to-indigo-600/10 dark:from-purple-500/10 dark:to-indigo-500/10 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <FaBookOpen className="w-5 h-5 text-purple-600" />
+                Cover & basics
+              </CardTitle>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              {/* Course image */}
+              <div className="space-y-3">
+                <Label className="text-slate-700 dark:text-slate-300 font-medium flex items-center gap-2">
+                  <FaImage className="w-4 h-4 text-purple-500" />
+                  Course image
+                </Label>
+                <div className="flex flex-wrap items-start gap-6">
+                  <label className="cursor-pointer group">
+                    <div className="relative w-40 h-28 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 group-hover:border-purple-400 dark:group-hover:border-purple-500 overflow-hidden transition-colors bg-slate-50 dark:bg-slate-700/50">
+                      {imagePreview ? (
+                        <Image src={imagePreview} alt="Preview" fill className="object-cover" unoptimized />
+                      ) : (
+                        <Image src={DEFAULT_COURSE_IMAGE} alt="Default" fill className="object-cover" unoptimized />
+                      )}
+                    </div>
+                    <Input
+                      id="course-image"
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setImageFile(file);
+                          setImagePreview(URL.createObjectURL(file));
+                        } else {
+                          setImageFile(null);
+                          setImagePreview(null);
+                        }
+                      }}
+                    />
+                    <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">Click to change</p>
+                  </label>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
+                    Shown on the course card. Default image is used if you don’t upload one.
+                  </p>
                 </div>
+              </div>
 
-                {/* Price */}
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-slate-700 dark:text-slate-300 font-medium">
+                  Course title <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="title"
+                  type="text"
+                  placeholder="e.g., Introduction to Web Development"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500/20"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-slate-700 dark:text-slate-300 font-medium">
+                  Short description
+                </Label>
+                <Textarea
+                  id="description"
+                  placeholder="What will students learn? Who is this for?"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  className="resize-none bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500/20"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Section: Pricing & format */}
+          <Card className="shadow-md border-0 bg-white dark:bg-slate-800/80 overflow-hidden">
+            <div className="bg-gradient-to-r from-emerald-600/10 to-teal-600/10 dark:from-emerald-500/10 dark:to-teal-500/10 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+                Pricing & format
+              </CardTitle>
+            </div>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="price">
+                  <Label htmlFor="price" className="text-slate-700 dark:text-slate-300 font-medium">
                     Price (₦) <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -208,60 +293,64 @@ const TutorCreateCourse = () => {
                     required
                     min="0"
                     step="0.01"
+                    className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
                   />
                 </div>
-
-                {/* Course Type */}
                 <div className="space-y-2">
-                  <Label htmlFor="courseType">Course Type</Label>
+                  <Label htmlFor="courseType" className="text-slate-700 dark:text-slate-300 font-medium">
+                    Course type
+                  </Label>
                   <Select
                     value={courseType}
                     onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP" | "BOTH")}
                   >
-                    <SelectTrigger id="courseType">
+                    <SelectTrigger id="courseType" className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ONE_ON_ONE">One-on-One</SelectItem>
                       <SelectItem value="GROUP">Group Class</SelectItem>
-                      <SelectItem value="BOTH">Both (Group &amp; 1:1)</SelectItem>
+                      <SelectItem value="BOTH">Both (Group & 1:1)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-
-                {/* Max Students - for group and both */}
                 {(courseType === "GROUP" || courseType === "BOTH") && (
-                  <div className="space-y-2">
-                    <Label htmlFor="maxStudents">Group: Max Students</Label>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="maxStudents" className="text-slate-700 dark:text-slate-300 font-medium">
+                      Group: max students
+                    </Label>
                     <Input
                       id="maxStudents"
                       type="number"
-                      placeholder="e.g., 10"
+                      placeholder="e.g., 10 (leave empty for unlimited)"
                       value={maxStudents}
                       onChange={(e) => setMaxStudents(e.target.value)}
                       min="1"
+                      className="max-w-xs bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
                     />
-                    <p className="text-xs text-gray-500">Leave empty for unlimited</p>
                   </div>
                 )}
-
-                {/* 1:1 price & cap - only for BOTH */}
                 {courseType === "BOTH" && (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor="priceOneOnOne">1:1 Price (₦) <span className="text-red-500">*</span></Label>
+                      <Label htmlFor="priceOneOnOne" className="text-slate-700 dark:text-slate-300 font-medium">
+                        1:1 price (₦) <span className="text-red-500">*</span>
+                      </Label>
                       <Input
                         id="priceOneOnOne"
                         type="number"
-                        placeholder="Higher than group price"
+                        placeholder="Higher than group"
                         value={priceOneOnOne}
                         onChange={(e) => setPriceOneOnOne(e.target.value)}
                         min="0"
                         step="0.01"
+                        className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="maxOneOnOneStudents">1:1: Max Students</Label>
+                      <Label htmlFor="maxOneOnOneStudents" className="text-slate-700 dark:text-slate-300 font-medium">
+                        1:1: max students
+                      </Label>
                       <Input
                         id="maxOneOnOneStudents"
                         type="number"
@@ -269,121 +358,149 @@ const TutorCreateCourse = () => {
                         value={maxOneOnOneStudents}
                         onChange={(e) => setMaxOneOnOneStudents(e.target.value)}
                         min="1"
+                        className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
                       />
                     </div>
                   </>
                 )}
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Description - Full Width */}
+          {/* Section: Content */}
+          <Card className="shadow-md border-0 bg-white dark:bg-slate-800/80 overflow-hidden">
+            <div className="bg-gradient-to-r from-amber-600/10 to-orange-600/10 dark:from-amber-500/10 dark:to-orange-500/10 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+                Curriculum & outcomes
+              </CardTitle>
+            </div>
+            <CardContent className="p-6 space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="description">Description (Optional)</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe what students will learn in this course..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  className="resize-none"
-                />
-              </div>
-
-              {/* Curriculum - Full Width */}
-              <div className="space-y-2">
-                <Label htmlFor="curriculum">Curriculum (Optional)</Label>
+                <Label htmlFor="curriculum" className="text-slate-700 dark:text-slate-300 font-medium">
+                  Curriculum outline
+                </Label>
                 <Textarea
                   id="curriculum"
-                  placeholder="Outline the course curriculum, topics, and modules..."
+                  placeholder="Topics, modules, and what you’ll cover..."
                   value={curriculum}
                   onChange={(e) => setCurriculum(e.target.value)}
-                  rows={5}
-                  className="resize-none"
+                  rows={4}
+                  className="resize-none bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500/20"
                 />
               </div>
-
-              {/* Learning Outcomes - Full Width */}
               <div className="space-y-2">
-                <Label htmlFor="outcomes">Learning Outcomes (Optional)</Label>
+                <Label htmlFor="outcomes" className="text-slate-700 dark:text-slate-300 font-medium">
+                  Learning outcomes
+                </Label>
                 <Textarea
                   id="outcomes"
-                  placeholder="What will students be able to do after completing this course?"
+                  placeholder="What will students be able to do after this course?"
                   value={outcomes}
                   onChange={(e) => setOutcomes(e.target.value)}
-                  rows={4}
-                  className="resize-none"
+                  rows={3}
+                  className="resize-none bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500/20"
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Sessions (optional) */}
-              <div className="space-y-3 border-t pt-6">
-                <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2">
-                    <FaCalendarAlt className="w-4 h-4 text-purple-600" />
-                    Sessions (optional)
-                  </Label>
-                  <Button type="button" variant="outline" size="sm" onClick={addSessionRow}>
-                    <FaPlus className="w-3 h-3 mr-1" />
-                    Add session
+          {/* Section: Sessions */}
+          <Card className="shadow-md border-0 bg-white dark:bg-slate-800/80 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 dark:from-blue-500/10 dark:to-indigo-500/10 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
+              <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <FaCalendarAlt className="w-5 h-5 text-indigo-600" />
+                Sessions
+              </CardTitle>
+              <Button type="button" variant="outline" size="sm" onClick={addSessionRow} className="border-indigo-300 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-600 dark:text-indigo-300 dark:hover:bg-indigo-900/30">
+                <FaPlus className="w-3 h-3 mr-2" />
+                Add session
+              </Button>
+            </div>
+            <CardContent className="p-6">
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                Optional: add sessions now or from the course edit page later. You’ll need at least one session to publish.
+              </p>
+              {sessions.length === 0 ? (
+                <div className="rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-700/30 p-8 text-center">
+                  <FaCalendarAlt className="w-10 h-10 mx-auto text-slate-400 dark:text-slate-500 mb-3" />
+                  <p className="text-slate-600 dark:text-slate-400 text-sm">No sessions added yet</p>
+                  <Button type="button" variant="outline" size="sm" onClick={addSessionRow} className="mt-3">
+                    Add your first session
                   </Button>
                 </div>
-                <p className="text-sm text-gray-500">
-                  Add sessions now or later from the course edit page. You need at least one session to publish.
-                </p>
-                {sessions.map((row, i) => (
-                  <div key={i} className="flex flex-wrap items-end gap-3 p-3 bg-gray-50 rounded-lg border">
-                    <div className="flex-1 min-w-[140px] space-y-1">
-                      <Label className="text-xs">Start</Label>
-                      <Input
-                        type="datetime-local"
-                        value={row.start}
-                        onChange={(e) => updateSessionRow(i, "start", e.target.value)}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-[140px] space-y-1">
-                      <Label className="text-xs">End</Label>
-                      <Input
-                        type="datetime-local"
-                        value={row.end}
-                        onChange={(e) => updateSessionRow(i, "end", e.target.value)}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-[120px] space-y-1">
-                      <Label className="text-xs">Title (optional)</Label>
-                      <Input
-                        placeholder="e.g. Week 1"
-                        value={row.title}
-                        onChange={(e) => updateSessionRow(i, "title", e.target.value)}
-                      />
-                    </div>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removeSessionRow(i)} aria-label="Remove session">
-                      <FaTrash className="w-4 h-4 text-red-500" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
+              ) : (
+                <ul className="space-y-3">
+                  {sessions.map((row, i) => (
+                    <li
+                      key={i}
+                      className="flex flex-wrap items-end gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600"
+                    >
+                      <div className="flex-1 min-w-[140px] space-y-1">
+                        <Label className="text-xs text-slate-500">Start</Label>
+                        <Input
+                          type="datetime-local"
+                          min={getMinDatetimeLocal()}
+                          value={row.start}
+                          onChange={(e) => updateSessionRow(i, "start", e.target.value)}
+                          className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-[140px] space-y-1">
+                        <Label className="text-xs text-slate-500">End</Label>
+                        <Input
+                          type="datetime-local"
+                          min={row.start || getMinDatetimeLocal()}
+                          value={row.end}
+                          onChange={(e) => updateSessionRow(i, "end", e.target.value)}
+                          className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-[120px] space-y-1">
+                        <Label className="text-xs text-slate-500">Title (optional)</Label>
+                        <Input
+                          placeholder="e.g. Week 1"
+                          value={row.title}
+                          onChange={(e) => updateSessionRow(i, "title", e.target.value)}
+                          className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeSessionRow(i)}
+                        aria-label="Remove session"
+                        className="text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      >
+                        <FaTrash className="w-4 h-4" />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
 
-              {/* Submit Button */}
-              <div className="flex gap-4 pt-4">
-                <Link href="/tutor/courses" className="flex-1">
-                  <Button type="button" variant="outline" className="w-full">
-                    Cancel
-                  </Button>
-                </Link>
-                <Button
-                  type="submit"
-                  className="flex-1 bg-purple-600 hover:bg-purple-700"
-                  disabled={loading || !title.trim()}
-                >
-                  {loading ? (
-                    <SyncLoader size={8} color="#ffffff" />
-                  ) : (
-                    "Create Course"
-                  )}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+          {/* Actions */}
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end pt-4">
+            <Link href="/tutor/courses" className="sm:w-auto w-full">
+              <Button type="button" variant="outline" className="w-full sm:min-w-[120px] border-slate-300 dark:border-slate-600">
+                Cancel
+              </Button>
+            </Link>
+            <Button
+              type="submit"
+              className="w-full sm:w-auto sm:min-w-[180px] bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-md hover:shadow-lg transition-shadow"
+              disabled={loading || !title.trim()}
+            >
+              {loading ? (
+                <SyncLoader size={8} color="#ffffff" />
+              ) : (
+                "Create course"
+              )}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

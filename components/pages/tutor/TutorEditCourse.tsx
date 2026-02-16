@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FaBookOpen, FaArrowLeft, FaCalendarAlt, FaPlus, FaEdit, FaCopy } from "react-icons/fa";
+import { FaBookOpen, FaArrowLeft, FaCalendarAlt, FaPlus, FaEdit, FaCopy, FaImage } from "react-icons/fa";
+import Image from "next/image";
 import Link from "next/link";
+import { DEFAULT_COURSE_IMAGE } from "./TutorCreateCourse";
 import { Badge } from "@/components/ui/badge";
+
+/** Current local date-time in YYYY-MM-DDTHH:mm for datetime-local min (no past dates). */
+function getMinDatetimeLocal(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}T${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
 import {
   Dialog,
   DialogContent,
@@ -41,6 +49,7 @@ interface Course {
   id: number;
   title: string;
   description?: string;
+  imagePath?: string | null;
   price: number;
   priceOneOnOne?: number;
   courseType: string;
@@ -86,6 +95,7 @@ const TutorEditCourse = () => {
   const [addSessionReason, setAddSessionReason] = useState("");
   const [addSessionSubmitting, setAddSessionSubmitting] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (courseId) {
@@ -327,6 +337,29 @@ const TutorEditCourse = () => {
     }
   };
 
+  const handleCourseImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !courseId) return;
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const response = await axiosPrivate.patch(
+        `courses/course/${courseId}/upload-image`,
+        formData,
+        { withCredentials: true }
+      );
+      const newPath = response?.data?.imagePath;
+      if (newPath && course) setCourse({ ...course, imagePath: newPath });
+      Swal.fire({ icon: "success", title: "Image updated", confirmButtonColor: "#10b981" });
+    } catch (err: any) {
+      Swal.fire({ icon: "error", title: "Upload failed", text: err.response?.data?.message || "Could not upload image.", confirmButtonColor: "#ef4444" });
+    } finally {
+      setUploadingImage(false);
+      e.target.value = "";
+    }
+  };
+
   const handleDuplicateCourse = async () => {
     if (!courseId) return;
     setDuplicating(true);
@@ -352,8 +385,8 @@ const TutorEditCourse = () => {
 
   if (fetching) {
     return (
-      <div className="min-h-screen bg-gray-50 px-4 py-6 flex items-center justify-center">
-        <div className="animate-pulse text-gray-400">Loading course...</div>
+      <div className="min-h-screen bg-slate-100/80 px-4 py-6 flex items-center justify-center">
+        <div className="animate-pulse text-slate-500">Loading course...</div>
       </div>
     );
   }
@@ -363,55 +396,297 @@ const TutorEditCourse = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6">
-      <div className="max-w-4xl mx-auto w-full space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <Link href="/tutor/courses">
-            <Button variant="ghost" size="sm">
-              <FaArrowLeft className="w-4 h-4 mr-2" />
-              Back to Courses
-            </Button>
-          </Link>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900">Edit Course</h1>
-            <p className="text-gray-600 mt-1">Update your course information</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleDuplicateCourse}
-              disabled={duplicating}
-            >
-              <FaCopy className="w-3 h-3 mr-1" />
-              {duplicating ? "Duplicating…" : "Duplicate course"}
-            </Button>
-            <Badge className={isDraft ? "bg-amber-100 text-amber-800" : "bg-green-100 text-green-800"}>
-              {isDraft ? "Draft" : "Published"}
-            </Badge>
+    <div className="min-h-screen bg-slate-100/80 dark:bg-slate-900/50">
+      {/* Header banner */}
+      <div className="bg-gradient-to-r from-purple-700 via-purple-600 to-indigo-600 text-white shadow-lg">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <Link
+                href="/tutor/courses"
+                className="inline-flex items-center text-white/90 hover:text-white text-sm font-medium mb-4 transition-colors"
+              >
+                <FaArrowLeft className="w-4 h-4 mr-2" />
+                Back to Courses
+              </Link>
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Edit course</h1>
+              <p className="mt-2 text-purple-100 text-lg max-w-xl">
+                Update your course details, pricing, and sessions.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleDuplicateCourse}
+                disabled={duplicating}
+                className="border-white/50 text-white hover:bg-white/10 bg-white/5"
+              >
+                <FaCopy className="w-3 h-3 mr-1" />
+                {duplicating ? "Duplicating…" : "Duplicate course"}
+              </Button>
+              <Badge className={isDraft ? "bg-amber-400/90 text-white border-0" : "bg-green-400/90 text-white border-0"}>
+                {isDraft ? "Draft" : "Published"}
+              </Badge>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Schedule & Publish */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FaCalendarAlt className="w-5 h-5 text-purple-600" />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 -mt-2 relative z-10 space-y-8">
+        <p
+          ref={errRef}
+          className={`text-center text-sm text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg py-2 px-3 ${errMsg ? "block" : "hidden"}`}
+          aria-live="assertive"
+        >
+          {errMsg}
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Section: Cover & basics */}
+          <Card className="shadow-md border-0 bg-white dark:bg-slate-800/80 overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-600/10 to-indigo-600/10 dark:from-purple-500/10 dark:to-indigo-500/10 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <FaBookOpen className="w-5 h-5 text-purple-600" />
+                Cover & basics
+              </CardTitle>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-3">
+                <Label className="text-slate-700 dark:text-slate-300 font-medium flex items-center gap-2">
+                  <FaImage className="w-4 h-4 text-purple-500" />
+                  Course image
+                </Label>
+                <div className="flex flex-wrap items-start gap-6">
+                  <label className="cursor-pointer group">
+                    <div className="relative w-40 h-28 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 group-hover:border-purple-400 overflow-hidden transition-colors bg-slate-50 dark:bg-slate-700/50">
+                      <Image
+                        src={course?.imagePath || DEFAULT_COURSE_IMAGE}
+                        alt="Course"
+                        fill
+                        className="object-cover"
+                        unoptimized={!!course?.imagePath}
+                      />
+                    </div>
+                    <Input
+                      id="edit-course-image"
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      disabled={uploadingImage}
+                      onChange={handleCourseImageChange}
+                    />
+                    <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                      {uploadingImage ? "Uploading…" : "Click to replace"}
+                    </p>
+                  </label>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
+                    {uploadingImage ? "Uploading…" : "Upload a new image to replace. Old image is removed from Cloudinary."}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-slate-700 dark:text-slate-300 font-medium">
+                  Course title <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="title"
+                  type="text"
+                  placeholder="e.g., Introduction to Web Development"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500/20"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-slate-700 dark:text-slate-300 font-medium">
+                  Short description
+                </Label>
+                <Textarea
+                  id="description"
+                  placeholder="What will students learn? Who is this for?"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  className="resize-none bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500/20"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Section: Pricing & format */}
+          <Card className="shadow-md border-0 bg-white dark:bg-slate-800/80 overflow-hidden">
+            <div className="bg-gradient-to-r from-emerald-600/10 to-teal-600/10 dark:from-emerald-500/10 dark:to-teal-500/10 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+                Pricing & format
+              </CardTitle>
+            </div>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="price" className="text-slate-700 dark:text-slate-300 font-medium">
+                    Price (₦) <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    placeholder="0.00"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    min="0"
+                    step="0.01"
+                    className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="courseType" className="text-slate-700 dark:text-slate-300 font-medium">
+                    Course type
+                  </Label>
+                  <Select
+                    value={courseType}
+                    onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP" | "BOTH")}
+                  >
+                    <SelectTrigger id="courseType" className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ONE_ON_ONE">One-on-One</SelectItem>
+                      <SelectItem value="GROUP">Group Class</SelectItem>
+                      <SelectItem value="BOTH">Both (Group & 1:1)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {(courseType === "GROUP" || courseType === "BOTH") && (
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="maxStudents" className="text-slate-700 dark:text-slate-300 font-medium">
+                      Group: max students
+                    </Label>
+                    <Input
+                      id="maxStudents"
+                      type="number"
+                      placeholder="e.g., 10 (leave empty for unlimited)"
+                      value={maxStudents}
+                      onChange={(e) => setMaxStudents(e.target.value)}
+                      min="1"
+                      className="max-w-xs bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
+                    />
+                  </div>
+                )}
+                {courseType === "BOTH" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="priceOneOnOne" className="text-slate-700 dark:text-slate-300 font-medium">
+                        1:1 price (₦) <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="priceOneOnOne"
+                        type="number"
+                        placeholder="Higher than group"
+                        value={priceOneOnOne}
+                        onChange={(e) => setPriceOneOnOne(e.target.value)}
+                        min="0"
+                        step="0.01"
+                        className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="maxOneOnOneStudents" className="text-slate-700 dark:text-slate-300 font-medium">
+                        1:1: max students
+                      </Label>
+                      <Input
+                        id="maxOneOnOneStudents"
+                        type="number"
+                        placeholder="e.g., 3"
+                        value={maxOneOnOneStudents}
+                        onChange={(e) => setMaxOneOnOneStudents(e.target.value)}
+                        min="1"
+                        className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Section: Curriculum & outcomes */}
+          <Card className="shadow-md border-0 bg-white dark:bg-slate-800/80 overflow-hidden">
+            <div className="bg-gradient-to-r from-amber-600/10 to-orange-600/10 dark:from-amber-500/10 dark:to-orange-500/10 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+                Curriculum & outcomes
+              </CardTitle>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="curriculum" className="text-slate-700 dark:text-slate-300 font-medium">
+                  Curriculum outline
+                </Label>
+                <Textarea
+                  id="curriculum"
+                  placeholder="Topics, modules, and what you’ll cover..."
+                  value={curriculum}
+                  onChange={(e) => setCurriculum(e.target.value)}
+                  rows={4}
+                  className="resize-none bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500/20"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="outcomes" className="text-slate-700 dark:text-slate-300 font-medium">
+                  Learning outcomes
+                </Label>
+                <Textarea
+                  id="outcomes"
+                  placeholder="What will students be able to do after this course?"
+                  value={outcomes}
+                  onChange={(e) => setOutcomes(e.target.value)}
+                  rows={3}
+                  className="resize-none bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-purple-500/20"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Form actions */}
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end pt-4">
+            <Link href="/tutor/courses" className="sm:w-auto w-full">
+              <Button type="button" variant="outline" className="w-full sm:min-w-[120px] border-slate-300 dark:border-slate-600">
+                Cancel
+              </Button>
+            </Link>
+            <Button
+              type="submit"
+              className="w-full sm:w-auto sm:min-w-[180px] bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-md hover:shadow-lg transition-shadow"
+              disabled={loading}
+            >
+              {loading ? <SyncLoader size={8} color="#ffffff" /> : "Update course"}
+            </Button>
+          </div>
+        </form>
+
+        {/* Sessions */}
+        <Card className="shadow-md border-0 bg-white dark:bg-slate-800/80 overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 dark:from-blue-500/10 dark:to-indigo-500/10 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
+            <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <FaCalendarAlt className="w-5 h-5 text-indigo-600" />
               Sessions
             </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            <Button variant="outline" size="sm" onClick={() => setAddSessionModal(true)} className="border-indigo-300 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-600 dark:text-indigo-300 dark:hover:bg-indigo-900/30">
+              <FaPlus className="w-3 h-3 mr-2" />
+              Add session
+            </Button>
+          </div>
+          <CardContent className="p-6 space-y-4">
             {course.sessions && course.sessions.length > 0 ? (
               <ul className="space-y-2">
                 {course.sessions.map((s) => (
                   <li
                     key={s.id}
-                    className="flex flex-wrap items-center gap-x-4 gap-y-2 py-2 border-b border-gray-100 last:border-0"
+                    className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3 px-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600"
                   >
                     <span className="font-medium min-w-0">{s.title || "Session"}</span>
-                    <span className="text-sm text-gray-500 shrink-0">
+                    <span className="text-sm text-slate-500 shrink-0">
                       <Moment format="MMM D, YYYY • h:mm A">{s.startTime}</Moment>
                       {" → "}
                       <Moment format="h:mm A">{s.endTime}</Moment>
@@ -431,194 +706,22 @@ const TutorEditCourse = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500">No sessions yet.</p>
+              <p className="text-slate-500 dark:text-slate-400">No sessions yet. Add one to publish.</p>
             )}
-            <div className="flex flex-wrap gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => setAddSessionModal(true)}>
-                <FaPlus className="w-3 h-3 mr-2" />
-                Add session
-              </Button>
-              {isDraft && (
-                <>
-                  <Button
-                    onClick={handlePublish}
-                    disabled={publishing || sessionCount < 1}
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    {publishing ? "Publishing…" : "Publish course"}
-                  </Button>
-                  {sessionCount < 1 && (
-                    <span className="text-sm text-amber-600">Add at least one session to publish.</span>
-                  )}
-                </>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FaBookOpen className="w-5 h-5 text-purple-600" />
-              Course Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p
-              ref={errRef}
-              className={`text-center text-sm text-red-600 mb-4 ${errMsg ? "block" : "hidden"}`}
-              aria-live="assertive"
-            >
-              {errMsg}
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Title */}
-                <div className="md:col-span-2 space-y-2">
-                  <Label htmlFor="title">Course Title</Label>
-                  <Input
-                    id="title"
-                    type="text"
-                    placeholder="e.g., Introduction to Web Development"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                </div>
-
-                {/* Price */}
-                <div className="space-y-2">
-                  <Label htmlFor="price">Price (₦)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    placeholder="0.00"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-
-                {/* Course Type */}
-                <div className="space-y-2">
-                  <Label htmlFor="courseType">Course Type</Label>
-                  <Select
-                    value={courseType}
-                    onValueChange={(value) => setCourseType(value as "ONE_ON_ONE" | "GROUP" | "BOTH")}
-                  >
-                    <SelectTrigger id="courseType">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ONE_ON_ONE">One-on-One</SelectItem>
-                      <SelectItem value="GROUP">Group Class</SelectItem>
-                      <SelectItem value="BOTH">Both (Group &amp; 1:1)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Max Students - for group and both */}
-                {(courseType === "GROUP" || courseType === "BOTH") && (
-                  <div className="space-y-2">
-                    <Label htmlFor="maxStudents">Maximum Students</Label>
-                    <Input
-                      id="maxStudents"
-                      type="number"
-                      placeholder="e.g., 10"
-                      value={maxStudents}
-                      onChange={(e) => setMaxStudents(e.target.value)}
-                      min="1"
-                    />
-                    <p className="text-xs text-gray-500">Leave empty for unlimited</p>
-                  </div>
-                )}
-
-                {/* 1:1 price & cap - only for BOTH */}
-                {courseType === "BOTH" && (
-                  <>
-                    <div className="space-y-2">
-                      <Label htmlFor="priceOneOnOne">1:1 Price (₦)</Label>
-                      <Input
-                        id="priceOneOnOne"
-                        type="number"
-                        placeholder="Higher than group price"
-                        value={priceOneOnOne}
-                        onChange={(e) => setPriceOneOnOne(e.target.value)}
-                        min="0"
-                        step="0.01"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="maxOneOnOneStudents">1:1: Max Students</Label>
-                      <Input
-                        id="maxOneOnOneStudents"
-                        type="number"
-                        placeholder="e.g., 3"
-                        value={maxOneOnOneStudents}
-                        onChange={(e) => setMaxOneOnOneStudents(e.target.value)}
-                        min="1"
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Description - Full Width */}
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe what students will learn in this course..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  className="resize-none"
-                />
-              </div>
-
-              {/* Curriculum - Full Width */}
-              <div className="space-y-2">
-                <Label htmlFor="curriculum">Curriculum</Label>
-                <Textarea
-                  id="curriculum"
-                  placeholder="Outline the course curriculum, topics, and modules..."
-                  value={curriculum}
-                  onChange={(e) => setCurriculum(e.target.value)}
-                  rows={5}
-                  className="resize-none"
-                />
-              </div>
-
-              {/* Learning Outcomes - Full Width */}
-              <div className="space-y-2">
-                <Label htmlFor="outcomes">Learning Outcomes</Label>
-                <Textarea
-                  id="outcomes"
-                  placeholder="What will students be able to do after completing this course?"
-                  value={outcomes}
-                  onChange={(e) => setOutcomes(e.target.value)}
-                  rows={4}
-                  className="resize-none"
-                />
-              </div>
-
-              {/* Submit Button */}
-              <div className="flex gap-4 pt-4">
-                <Link href="/tutor/courses" className="flex-1">
-                  <Button type="button" variant="outline" className="w-full">
-                    Cancel
-                  </Button>
-                </Link>
+            {isDraft && (
+              <div className="flex flex-wrap items-center gap-2 pt-2">
                 <Button
-                  type="submit"
-                  className="flex-1 bg-purple-600 hover:bg-purple-700"
-                  disabled={loading}
+                  onClick={handlePublish}
+                  disabled={publishing || sessionCount < 1}
+                  className="bg-green-600 hover:bg-green-700"
                 >
-                  {loading ? <SyncLoader size={8} color="#ffffff" /> : "Update Course"}
+                  {publishing ? "Publishing…" : "Publish course"}
                 </Button>
+                {sessionCount < 1 && (
+                  <span className="text-sm text-amber-600 dark:text-amber-400">Add at least one session to publish.</span>
+                )}
               </div>
-            </form>
+            )}
           </CardContent>
         </Card>
 
@@ -633,6 +736,7 @@ const TutorEditCourse = () => {
                 <Label>New start (date & time)</Label>
                 <Input
                   type="datetime-local"
+                  min={getMinDatetimeLocal()}
                   value={rescheduleStart}
                   onChange={(e) => setRescheduleStart(e.target.value)}
                 />
@@ -641,6 +745,7 @@ const TutorEditCourse = () => {
                 <Label>New end (date & time)</Label>
                 <Input
                   type="datetime-local"
+                  min={rescheduleStart || getMinDatetimeLocal()}
                   value={rescheduleEnd}
                   onChange={(e) => setRescheduleEnd(e.target.value)}
                 />
@@ -681,11 +786,21 @@ const TutorEditCourse = () => {
               </div>
               <div>
                 <Label>Start (date & time)</Label>
-                <Input type="datetime-local" value={addSessionStart} onChange={(e) => setAddSessionStart(e.target.value)} />
+                <Input
+                  type="datetime-local"
+                  min={getMinDatetimeLocal()}
+                  value={addSessionStart}
+                  onChange={(e) => setAddSessionStart(e.target.value)}
+                />
               </div>
               <div>
                 <Label>End (date & time)</Label>
-                <Input type="datetime-local" value={addSessionEnd} onChange={(e) => setAddSessionEnd(e.target.value)} />
+                <Input
+                  type="datetime-local"
+                  min={addSessionStart || getMinDatetimeLocal()}
+                  value={addSessionEnd}
+                  onChange={(e) => setAddSessionEnd(e.target.value)}
+                />
               </div>
             </div>
             <DialogFooter>

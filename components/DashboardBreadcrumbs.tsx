@@ -124,6 +124,9 @@ function buildCrumbs(
   let path = basePath;
   segments.forEach((seg, i) => {
     path = path + "/" + seg;
+    if (type === "tutor" && /^\d+$/.test(seg) && segments[i + 1] === "edit") {
+      return;
+    }
     const label = getSegmentLabel(seg, segments, i, config, type);
     crumbs.push({ href: path, label });
   });

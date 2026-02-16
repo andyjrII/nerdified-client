@@ -1,59 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  FaBookOpen,
-  FaEdit,
-  FaTrash,
-  FaUsers,
-  FaDollarSign,
-  FaPlus,
-  FaSearch,
-  FaCopy,
-} from "react-icons/fa";
+import { FaBookOpen, FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
-import { formatCurrency } from "@/utils/formatCurrency";
-import Moment from "react-moment";
 import Link from "next/link";
-
-interface Course {
-  id: number;
-  title: string;
-  description?: string;
-  price: number;
-  courseType: string;
-  maxStudents?: number;
-  status?: string;
-  createdAt: string;
-  updatedAt: string;
-  enrollments?: CourseEnrollment[];
-}
-
-interface CourseEnrollment {
-  id: number;
-  status: string;
-  paidAmount: number;
-  dateEnrolled: string;
-  student: {
-    id: number;
-    name: string;
-    email: string;
-  };
-}
+import {
+  TutorCoursesFilters,
+  TutorCourseRow,
+  TutorCourseDetailPanel,
+  type Course,
+  type CourseEnrollment,
+  type StatusFilter,
+} from "./courses";
 
 const TutorCoursesList = () => {
   const axiosPrivate = useTutorAxiosPrivate();
@@ -61,25 +24,15 @@ const TutorCoursesList = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
+  const [selectedCourseDetail, setSelectedCourseDetail] = useState<Course | null | undefined>(undefined);
   const [enrollmentsMap, setEnrollmentsMap] = useState<Record<number, CourseEnrollment[]>>({});
   const [duplicatingId, setDuplicatingId] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetchCourses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
-  }, []);
-
-  useEffect(() => {
-    if (courses.length > 0) {
-      fetchAllEnrollments();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when courses list changes
-  }, [courses]);
-
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       setLoading(true);
-      // Fetch tutor profile which includes courses
       const response = await axiosPrivate.get(`tutors/me`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
@@ -99,30 +52,32 @@ const TutorCoursesList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axiosPrivate]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
+  useEffect(() => {
+    if (courses.length > 0) {
+      fetchAllEnrollments();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when courses list changes
+  }, [courses]);
 
   const fetchAllEnrollments = async () => {
     const enrollments: Record<number, CourseEnrollment[]> = {};
-    
-    // Use coursePayments endpoint to get enrollments and filter by course
     try {
       const response = await axiosPrivate.get(`courses/payments/1`, {
         params: {},
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-      
-      const allEnrollments = Array.isArray(response?.data?.payments) 
-        ? response.data.payments 
-        : [];
-      
-      // Group enrollments by courseId
+      const allEnrollments = Array.isArray(response?.data?.payments) ? response.data.payments : [];
       allEnrollments.forEach((enrollment: any) => {
         const courseId = enrollment.courseId || enrollment.course?.id;
         if (courseId) {
-          if (!enrollments[courseId]) {
-            enrollments[courseId] = [];
-          }
+          if (!enrollments[courseId]) enrollments[courseId] = [];
           enrollments[courseId].push({
             id: enrollment.id,
             status: enrollment.status,
@@ -139,9 +94,30 @@ const TutorCoursesList = () => {
     } catch (error) {
       console.error("Error fetching enrollments:", error);
     }
-    
     setEnrollmentsMap(enrollments);
   };
+
+  useEffect(() => {
+    if (selectedCourseId == null) {
+      setSelectedCourseDetail(undefined);
+      return;
+    }
+    let cancelled = false;
+    setSelectedCourseDetail(undefined);
+    (async () => {
+      try {
+        const response = await axiosPrivate.get(`courses/course/${selectedCourseId}/tutor`, {
+          withCredentials: true,
+        });
+        if (!cancelled && response?.data) setSelectedCourseDetail(response.data);
+      } catch {
+        if (!cancelled) setSelectedCourseDetail(null);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCourseId, axiosPrivate]);
 
   const handleDelete = async (courseId: number, courseTitle: string) => {
     const result = await Swal.fire({
@@ -154,15 +130,12 @@ const TutorCoursesList = () => {
       confirmButtonColor: "#ef4444",
       cancelButtonColor: "#6b7280",
     });
-
     if (!result.isConfirmed) return;
-
     try {
       await axiosPrivate.delete(`courses/${courseId}`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-
       Swal.fire({
         icon: "success",
         title: "Course Deleted",
@@ -171,13 +144,10 @@ const TutorCoursesList = () => {
         showConfirmButton: true,
         confirmButtonColor: "#10b981",
       });
-
+      if (selectedCourseId === courseId) setSelectedCourseId(null);
       fetchCourses();
     } catch (error: any) {
-      console.error("Error deleting course:", error);
-      const errorMessage =
-        error.response?.data?.message || "Failed to delete course. Please try again.";
-      
+      const errorMessage = error.response?.data?.message || "Failed to delete course. Please try again.";
       Swal.fire({
         icon: "error",
         title: "Delete Failed",
@@ -189,20 +159,6 @@ const TutorCoursesList = () => {
     }
   };
 
-  const getCourseTypeBadge = (courseType: string) => {
-    if (courseType === "ONE_ON_ONE") {
-      return <Badge className="bg-blue-100 text-blue-800">One-on-One</Badge>;
-    }
-    if (courseType === "BOTH") {
-      return <Badge className="bg-indigo-100 text-indigo-800">Group &amp; 1:1</Badge>;
-    }
-    return <Badge className="bg-purple-100 text-purple-800">Group Class</Badge>;
-  };
-
-  const filteredCourses = courses.filter((course) =>
-    course.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const handleDuplicateCourse = async (courseId: number) => {
     setDuplicatingId(courseId);
     try {
@@ -210,16 +166,57 @@ const TutorCoursesList = () => {
       const newCourse = response?.data;
       const newId = newCourse?.id;
       if (newId) {
-        Swal.fire({ icon: "success", title: "Course duplicated", text: "Opening the copy for editing.", confirmButtonColor: "#10b981" });
+        Swal.fire({
+          icon: "success",
+          title: "Course duplicated",
+          text: "Opening the copy for editing.",
+          confirmButtonColor: "#10b981",
+        });
         router.push(`/tutor/courses/${newId}/edit`);
       } else {
         Swal.fire({ icon: "error", title: "Failed", text: "Could not duplicate course.", confirmButtonColor: "#ef4444" });
       }
     } catch (err: any) {
-      Swal.fire({ icon: "error", title: "Failed", text: err.response?.data?.message || "Could not duplicate course.", confirmButtonColor: "#ef4444" });
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: err.response?.data?.message || "Could not duplicate course.",
+        confirmButtonColor: "#ef4444",
+      });
     } finally {
       setDuplicatingId(null);
     }
+  };
+
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "draft" && course.status === "DRAFT") ||
+      (statusFilter === "published" && course.status === "PUBLISHED");
+    return matchesSearch && matchesStatus;
+  });
+
+  useEffect(() => {
+    if (filteredCourses.length > 0) {
+      const selectionInList = selectedCourseId != null && filteredCourses.some((c) => c.id === selectedCourseId);
+      if (!selectionInList) {
+        setSelectedCourseId(filteredCourses[0].id);
+      }
+    } else {
+      setSelectedCourseId(null);
+    }
+  }, [filteredCourses, selectedCourseId]);
+
+  const filterCounts = {
+    all: courses.length,
+    draft: courses.filter((c) => c.status === "DRAFT").length,
+    published: courses.filter((c) => c.status === "PUBLISHED").length,
+  };
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
   };
 
   if (loading) {
@@ -231,9 +228,8 @@ const TutorCoursesList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6">
-      <div className="w-full space-y-6">
-        {/* Header */}
+    <div className="min-h-screen bg-gray-50 px-3 sm:px-4 lg:px-6 py-6">
+      <div className="w-full max-w-[1400px] mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">My Courses</h1>
@@ -247,33 +243,30 @@ const TutorCoursesList = () => {
           </Link>
         </div>
 
-        {/* Search */}
         <Card>
           <CardContent className="pt-6">
-            <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Search courses..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+            <TutorCoursesFilters
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              statusFilter={statusFilter}
+              onStatusFilterChange={setStatusFilter}
+              counts={filterCounts}
+              onClearAll={clearFilters}
+            />
           </CardContent>
         </Card>
 
-        {/* Courses List */}
         {filteredCourses.length === 0 ? (
           <Card>
             <CardContent className="pt-12 pb-12 text-center">
               <FaBookOpen className="w-16 h-16 mx-auto text-gray-300 mb-4" />
               <h3 className="text-xl font-semibold text-gray-700 mb-2">No Courses Yet</h3>
               <p className="text-gray-500 mb-6">
-                {searchQuery
-                  ? "No courses match your search."
+                {searchQuery || statusFilter !== "all"
+                  ? "No courses match your filters."
                   : "Create your first course to start teaching!"}
               </p>
-              {!searchQuery && (
+              {!searchQuery && statusFilter === "all" && (
                 <Link href="/tutor/courses/new">
                   <Button className="bg-purple-600 hover:bg-purple-700">
                     <FaPlus className="w-4 h-4 mr-2" />
@@ -284,117 +277,60 @@ const TutorCoursesList = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCourses.map((course) => {
-              const enrollments = enrollmentsMap[course.id] || [];
-              const totalRevenue = enrollments.reduce(
-                (sum, enrollment) => sum + parseFloat(String(enrollment.paidAmount || 0)),
-                0
-              );
+          <div
+            className={
+              selectedCourseId != null
+                ? "lg:flex lg:gap-6 lg:items-start"
+                : ""
+            }
+          >
+            <div
+              className={
+                selectedCourseId != null
+                  ? "lg:min-w-0 lg:max-w-md lg:flex-shrink-0"
+                  : ""
+              }
+            >
+              <Card className="overflow-hidden">
+                <div className="divide-y divide-slate-200">
+                  {filteredCourses.map((course) => {
+                    const enrollments = enrollmentsMap[course.id] || [];
+                    const totalRevenue = enrollments.reduce(
+                      (sum, e) => sum + parseFloat(String(e.paidAmount || 0)),
+                      0
+                    );
+                    return (
+                    <TutorCourseRow
+                      key={course.id}
+                      course={course}
+                      enrollmentsCount={enrollments.length}
+                      totalRevenue={totalRevenue}
+                      isSelected={selectedCourseId === course.id}
+                      onSelect={() => setSelectedCourseId(course.id)}
+                    />
+                    );
+                  })}
+                </div>
+              </Card>
+            </div>
 
+            {selectedCourseId != null && (() => {
+              const course = courses.find((c) => c.id === selectedCourseId);
+              if (!course) return null;
               return (
-                <Card key={course.id} className="shadow-lg hover:shadow-xl transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <CardTitle className="text-lg font-bold line-clamp-2">
-                        {course.title}
-                      </CardTitle>
-                      <div className="flex gap-2 ml-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => router.push(`/tutor/courses/${course.id}/edit`)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <FaEdit className="w-4 h-4 text-blue-600" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(course.id, course.title)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <FaTrash className="w-4 h-4 text-red-600" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {course.status === "DRAFT" ? (
-                        <Badge className="bg-amber-100 text-amber-800">Draft</Badge>
-                      ) : (
-                        <Badge className="bg-green-100 text-green-800">Published</Badge>
-                      )}
-                      {getCourseTypeBadge(course.courseType)}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {course.description && (
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                        {course.description}
-                      </p>
-                    )}
-
-                    <div className="space-y-3 mb-4">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Price:</span>
-                        <span className="font-semibold text-gray-900">
-                          {formatCurrency(course.price)}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600 flex items-center gap-1">
-                          <FaUsers className="w-3 h-3" />
-                          Enrollments:
-                        </span>
-                        <span className="font-semibold text-gray-900">{enrollments.length}</span>
-                      </div>
-                      {totalRevenue > 0 && (
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 flex items-center gap-1">
-                            <FaDollarSign className="w-3 h-3" />
-                            Revenue:
-                          </span>
-                          <span className="font-semibold text-green-600">
-                            {formatCurrency(totalRevenue)}
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Created:</span>
-                        <span className="text-gray-500">
-                          <Moment format="MMM D, YYYY">{course.createdAt}</Moment>
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 pt-4 border-t">
-                      <Link href={`/tutor/courses/${course.id}/enrollments`} className="flex-1 min-w-[100px]">
-                        <Button variant="outline" className="w-full" size="sm">
-                          <FaUsers className="w-3 h-3 mr-2" />
-                          View Enrollments
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 min-w-[100px]"
-                        onClick={() => handleDuplicateCourse(course.id)}
-                        disabled={duplicatingId === course.id}
-                      >
-                        <FaCopy className="w-3 h-3 mr-2" />
-                        {duplicatingId === course.id ? "Duplicating…" : "Duplicate"}
-                      </Button>
-                      <Link href={`/tutor/courses/${course.id}/edit`} className="flex-1 min-w-[100px]">
-                        <Button className="w-full bg-purple-600 hover:bg-purple-700" size="sm">
-                          <FaEdit className="w-3 h-3 mr-2" />
-                          Edit
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="mt-6 lg:mt-0 lg:flex-1 lg:min-w-0">
+                <TutorCourseDetailPanel
+                  course={course}
+                  courseDetail={selectedCourseDetail}
+                  enrollments={enrollmentsMap[selectedCourseId] ?? []}
+                  onClose={() => setSelectedCourseId(null)}
+                  onDuplicate={() => handleDuplicateCourse(course.id)}
+                  onDelete={() => handleDelete(course.id, course.title)}
+                  duplicating={duplicatingId === course.id}
+                />
+                </div>
               );
-            })}
+            })()}
           </div>
         )}
       </div>
