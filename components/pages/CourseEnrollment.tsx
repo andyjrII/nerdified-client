@@ -100,19 +100,27 @@ const CourseEnrollment = () => {
         }
       );
     } catch (err: any) {
+      const serverMessage = err?.response?.data?.message;
+      let message: string;
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        message = "No Server Response";
+      } else if (err.response?.status === 409) {
+        message = "This payment has already been used to enroll.";
       } else if (err.response?.status === 400) {
-        setErrMsg("Missing Credentials");
+        // Server could not verify the payment with Paystack.
+        message =
+          serverMessage ||
+          "We couldn't verify your payment. If you were charged, contact support with your reference.";
       } else if (err.response?.status === 401) {
-        setErrMsg("Unauthorized");
+        message = "Unauthorized";
       } else {
-        setErrMsg("Enrollment Failed");
+        message = "Enrollment Failed";
       }
+      setErrMsg(message);
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: errMsg || "Something went wrong!",
+        text: message,
         confirmButtonText: "OK",
       });
       errRef.current?.focus();

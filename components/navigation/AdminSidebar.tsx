@@ -7,6 +7,7 @@ import {
   FaUserAlt,
   FaLock,
   FaDollarSign,
+  FaMoneyBillWave,
   FaLaughWink,
   FaBinoculars,
   FaPenAlt,
@@ -164,6 +165,14 @@ const AdminSidebar = () => {
         >
           <FaDollarSign className="h-5 w-5" />
           <span>Payments</span>
+        </Link>
+
+        <Link
+          href="/admin/payouts"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 rounded-lg transition-colors"
+        >
+          <FaMoneyBillWave className="h-5 w-5" />
+          <span>Tutor Payouts</span>
         </Link>
 
         <Link

@@ -17,6 +17,7 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
+import { useNotifications } from "@/hooks/useNotifications";
 import { useLogout } from "@/hooks/useLogout";
 import { getStudentProfile, setStudentProfile } from "@/utils/authStorage";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ const StudentSidebar = () => {
   const logout = useLogout();
   const email = auth.email ?? "";
   const [student, setStudent] = useState<any>(null);
-  const [notificationCount, setNotificationCount] = useState<number>(0);
+  const { unread: notificationCount } = useNotifications(axiosPrivate);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [profileImageError, setProfileImageError] = useState(false);
 
@@ -109,6 +110,11 @@ const StudentSidebar = () => {
       label: "Messages",
       icon: FaComments,
       href: "/student/messages",
+    },
+    {
+      label: "Notifications",
+      icon: FaBell,
+      href: "/student/notifications",
       badge: notificationCount > 0 ? notificationCount : undefined,
     },
     {

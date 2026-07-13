@@ -51,7 +51,7 @@ const AdminSignin = () => {
       }
       setAdmin({ email: data.email, role });
 
-      setAuthSessionCookie();
+      setAuthSessionCookie(role);
 
       Swal.fire({
         icon: "success",

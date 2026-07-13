@@ -18,6 +18,7 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
+import { useNotifications } from "@/hooks/useNotifications";
 import { useTutorLogout } from "@/hooks/useTutorLogout";
 import { getTutorProfile, setTutorProfile } from "@/utils/authStorage";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ const TutorSidebar = () => {
   const logout = useTutorLogout();
   const email = auth.email ?? "";
   const [tutor, setTutor] = useState<any>(null);
-  const [notificationCount, setNotificationCount] = useState<number>(0);
+  const { unread: notificationCount } = useNotifications(axiosPrivate);
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [navLoading, setNavLoading] = useState(false);
 
@@ -109,6 +110,11 @@ const TutorSidebar = () => {
       label: "Messages",
       icon: FaComments,
       href: "/tutor/messages",
+    },
+    {
+      label: "Notifications",
+      icon: FaBell,
+      href: "/tutor/notifications",
       badge: notificationCount > 0 ? notificationCount : undefined,
     },
     {

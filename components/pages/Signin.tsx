@@ -113,7 +113,7 @@ const Signin = () => {
       }
 
       // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)
-      setAuthSessionCookie();
+      setAuthSessionCookie(responseRole);
 
       // Handle redirect
       const course = searchParams.get("course")

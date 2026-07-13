@@ -9,10 +9,16 @@ const AUTH_SESSION_COOKIE = "auth_session";
 const MAX_AGE_DAYS = 3;
 const MAX_AGE_SECONDS = MAX_AGE_DAYS * 24 * 60 * 60;
 
-export function setAuthSessionCookie(): void {
+/**
+ * Sets the frontend auth session cookie. Pass the user's role (STUDENT, TUTOR,
+ * SUPER_ADMIN, SUB_ADMIN) so middleware can enforce role-based route access at
+ * the edge. Falls back to "1" (presence only) when no role is provided.
+ */
+export function setAuthSessionCookie(role?: string): void {
   if (typeof document === "undefined") return;
   const secure = typeof location !== "undefined" && location?.protocol === "https:";
-  let cookie = `${AUTH_SESSION_COOKIE}=1; path=/; max-age=${MAX_AGE_SECONDS}; samesite=lax`;
+  const value = role ?? "1";
+  let cookie = `${AUTH_SESSION_COOKIE}=${value}; path=/; max-age=${MAX_AGE_SECONDS}; samesite=lax`;
   if (secure) cookie += "; secure";
   document.cookie = cookie;
 }

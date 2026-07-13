@@ -177,7 +177,7 @@ const TutorSignup = () => {
         confirmButtonColor: "#a855f7",
       });
 
-      if (isApproved) setAuthSessionCookie();
+      if (isApproved) setAuthSessionCookie("TUTOR");
 
       startTransition(() => {
         if (isApproved) {

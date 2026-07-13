@@ -9,7 +9,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FcLock } from "react-icons/fc";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
-import { useStudent } from "@/hooks/useStudent";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,8 +21,6 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
 const PasswordChange = () => {
   const axiosPrivate = useAxiosPrivate();
   const errRef = useRef<HTMLParagraphElement>(null);
-  const { student, setStudent } = useStudent();
-  const studentId = student.id;
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -59,10 +56,9 @@ const PasswordChange = () => {
     }
 
     try {
-      const response = await axiosPrivate.patch(
-        "auth/password",
+      await axiosPrivate.patch(
+        "auth/me/password",
         JSON.stringify({
-          studentId,
           oldPassword,
           newPassword,
         }),
@@ -71,7 +67,6 @@ const PasswordChange = () => {
           withCredentials: true,
         }
       );
-      setStudent(response?.data);
       Swal.fire({
         icon: "success",
         title: "Password Changed",

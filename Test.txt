@@ -1,6 +1,12 @@
 STUDENTS
 email: ajsly87@gmail.com,
 password: SlyF0x@87
+(seeded: "Test Student", enrolled in "Reminder Test Course")
+
+TUTORS
+email: ajsly87+tutor@gmail.com,
+password: SlyF0x@87
+(seeded: "Test Tutor", approved; owns "Reminder Test Course" with one scheduled test session)
 
 SUPER ADMIN
 email: enehizenajames@gmail.com,

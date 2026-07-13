@@ -170,7 +170,7 @@ const Signup = () => {
       setAuth({ email: data.email, role: data.role });
 
       // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)
-      setAuthSessionCookie();
+      setAuthSessionCookie(data.role);
 
       Swal.fire({
         icon: "success",

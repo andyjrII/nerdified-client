@@ -46,13 +46,41 @@ interface EarningsData {
   recentEnrollments: RecentEnrollment[];
 }
 
+interface PayoutBalance {
+  commissionRate: number;
+  grossRevenue: number;
+  netEarned: number;
+  totalPaidOut: number;
+  pendingNet: number;
+  availableGross: number;
+  availableNet: number;
+}
+
+interface Payout {
+  id: number;
+  amount: number;
+  commission: number;
+  netAmount: number;
+  status: string;
+  paymentReference: string | null;
+  paidAt: string | null;
+  createdAt: string;
+}
+
+interface PayoutsData {
+  payouts: Payout[];
+  balance: PayoutBalance;
+}
+
 const TutorEarnings = () => {
   const axiosPrivate = useTutorAxiosPrivate();
   const [data, setData] = useState<EarningsData | null>(null);
+  const [payoutsData, setPayoutsData] = useState<PayoutsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchEarnings();
+    fetchPayouts();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
@@ -69,6 +97,29 @@ const TutorEarnings = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchPayouts = async () => {
+    try {
+      const response = await axiosPrivate.get("payouts/me");
+      setPayoutsData(response?.data ?? null);
+    } catch (error) {
+      console.error("Error fetching payouts:", error);
+    }
+  };
+
+  const payoutStatusBadge = (status: string) => {
+    const colors: Record<string, string> = {
+      PENDING: "bg-yellow-100 text-yellow-800",
+      PROCESSING: "bg-blue-100 text-blue-800",
+      COMPLETED: "bg-green-100 text-green-800",
+      FAILED: "bg-red-100 text-red-800",
+    };
+    return (
+      <Badge className={colors[status] || "bg-gray-100 text-gray-800"}>
+        {status}
+      </Badge>
+    );
   };
 
   const getStatusBadge = (status: string) => {
@@ -148,6 +199,95 @@ const TutorEarnings = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Payout balance summary */}
+        {payoutsData?.balance && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FaDollarSign className="w-5 h-5 text-green-600" />
+                Payout Balance
+              </CardTitle>
+              <p className="text-sm text-gray-500">
+                Platform commission:{" "}
+                {Math.round(payoutsData.balance.commissionRate * 100)}% — you keep the rest.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 rounded-lg bg-green-50 border border-green-100">
+                  <p className="text-xs font-medium text-gray-500">Available to withdraw</p>
+                  <p className="text-xl font-bold text-green-700">
+                    {formatCurrency(payoutsData.balance.availableNet)}
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-gray-50 border border-gray-100">
+                  <p className="text-xs font-medium text-gray-500">Net earned (after commission)</p>
+                  <p className="text-xl font-bold text-gray-900">
+                    {formatCurrency(payoutsData.balance.netEarned)}
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-blue-50 border border-blue-100">
+                  <p className="text-xs font-medium text-gray-500">Paid out</p>
+                  <p className="text-xl font-bold text-blue-700">
+                    {formatCurrency(payoutsData.balance.totalPaidOut)}
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-100">
+                  <p className="text-xs font-medium text-gray-500">Pending</p>
+                  <p className="text-xl font-bold text-yellow-700">
+                    {formatCurrency(payoutsData.balance.pendingNet)}
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-3">
+                Payouts are initiated by the Nerdified team. You&apos;ll be notified when one is on the way.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Payout history */}
+        {payoutsData?.payouts && payoutsData.payouts.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FaDollarSign className="w-5 h-5 text-green-600" />
+                Payout History
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Gross</TableHead>
+                    <TableHead>Commission</TableHead>
+                    <TableHead>You receive</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {payoutsData.payouts.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell>
+                        <Moment format="MMM D, YYYY">{p.createdAt}</Moment>
+                      </TableCell>
+                      <TableCell>{formatCurrency(p.amount)}</TableCell>
+                      <TableCell className="text-gray-500">
+                        {formatCurrency(p.commission)}
+                      </TableCell>
+                      <TableCell className="font-semibold">
+                        {formatCurrency(p.netAmount)}
+                      </TableCell>
+                      <TableCell>{payoutStatusBadge(p.status)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
 
         {data?.byCourse && data.byCourse.length > 0 && (
           <Card>

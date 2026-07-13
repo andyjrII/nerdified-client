@@ -60,26 +60,26 @@ const TutorDashboard = () => {
         ? tutorResponse.data.courses
         : [];
 
-      // Calculate total students (from enrollments) - TODO: Create backend endpoint for this
-      let totalStudents = 0;
-      let totalEarnings = 0;
-      
-      // For now, we'll calculate this from the courses data if available
-      // In the future, create a /tutors/stats endpoint
-      if (courses.length > 0) {
-        // Note: This is a placeholder - we'll need backend endpoints for:
-        // - GET /tutors/stats (courses, students, earnings)
-        // - GET /tutors/courses (all courses for tutor)
-        // For now, just show course count
-        totalStudents = 0; // Will be calculated when backend endpoints are ready
-        totalEarnings = 0; // Will be calculated when backend endpoints are ready
-      }
+      // Fetch earnings, students, and upcoming sessions in parallel
+      const [earningsResponse, studentsResponse, sessionsResponse] = await Promise.all([
+        axiosPrivate.get(`tutors/me/earnings`, {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }),
+        axiosPrivate.get(`tutors/me/students`, {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }),
+        axiosPrivate.get(`sessions/tutor`, {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }),
+      ]);
 
-      // Fetch upcoming sessions
-      const sessionsResponse = await axiosPrivate.get(`sessions/tutor`, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
+      const totalEarnings = Number(earningsResponse?.data?.totalEarnings) || 0;
+      const totalStudents = Array.isArray(studentsResponse?.data)
+        ? studentsResponse.data.length
+        : 0;
       const sessions = Array.isArray(sessionsResponse?.data) ? sessionsResponse.data : [];
       const now = new Date();
       const upcomingSessions = sessions.filter(

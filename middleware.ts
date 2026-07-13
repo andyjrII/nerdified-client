@@ -51,6 +51,18 @@ function isAdminRoute(pathname: string): boolean {
   return adminRoutes.some((route) => pathname.startsWith(route));
 }
 
+const ADMIN_ROLES = ['SUPER_ADMIN', 'SUB_ADMIN'];
+
+/**
+ * Reads the role from the auth_session cookie. Returns null for legacy/presence
+ * cookies ("1") so callers can fall back to authentication-only checks instead
+ * of locking out sessions created before role was stored.
+ */
+function getSessionRole(authSession?: string): string | null {
+  if (!authSession || authSession === '1') return null;
+  return authSession;
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -63,34 +75,40 @@ export function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refresh_token')?.value;
   const authSession = request.cookies.get('auth_session')?.value;
   const isAuthenticated = !!refreshToken || !!authSession;
+  const role = getSessionRole(authSession);
+
+  const redirectToSignin = (signinPath: string) => {
+    const url = new URL(signinPath, request.url);
+    url.searchParams.set('from', pathname);
+    return NextResponse.redirect(url);
+  };
+
+  // Wrong-role access → send to the unauthorized page (only enforced when the
+  // role is known; legacy cookies fall through to auth-only behavior).
+  const unauthorized = () =>
+    NextResponse.redirect(new URL('/unauthorized', request.url));
 
   // Handle student routes and course payment routes
-  if (isStudentRoute(pathname) || (pathname.includes('/courses/') && pathname.includes('/payment'))) {
-    if (!isAuthenticated) {
-      const signinUrl = new URL('/signin', request.url);
-      signinUrl.searchParams.set('from', pathname);
-      return NextResponse.redirect(signinUrl);
-    }
+  if (
+    isStudentRoute(pathname) ||
+    (pathname.includes('/courses/') && pathname.includes('/payment'))
+  ) {
+    if (!isAuthenticated) return redirectToSignin('/signin');
+    if (role && role !== 'STUDENT') return unauthorized();
     return NextResponse.next();
   }
 
   // Handle tutor routes
   if (tutorRoutes.some((route) => pathname.startsWith(route))) {
-    if (!isAuthenticated) {
-      const signinUrl = new URL('/signin', request.url);
-      signinUrl.searchParams.set('from', pathname);
-      return NextResponse.redirect(signinUrl);
-    }
+    if (!isAuthenticated) return redirectToSignin('/signin');
+    if (role && role !== 'TUTOR') return unauthorized();
     return NextResponse.next();
   }
 
   // Handle admin routes (excluding /admin/signin which is public)
   if (isAdminRoute(pathname)) {
-    if (!isAuthenticated) {
-      const adminSigninUrl = new URL('/admin/signin', request.url);
-      adminSigninUrl.searchParams.set('from', pathname);
-      return NextResponse.redirect(adminSigninUrl);
-    }
+    if (!isAuthenticated) return redirectToSignin('/admin/signin');
+    if (role && !ADMIN_ROLES.includes(role)) return unauthorized();
     return NextResponse.next();
   }
 
