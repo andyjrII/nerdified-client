@@ -6,6 +6,7 @@ import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import EmailVerificationBanner from "@/components/EmailVerificationBanner";
 import {
   FaBookOpen,
   FaUsers,
@@ -134,6 +135,8 @@ const TutorDashboard = () => {
             )}
           </div>
         </div>
+
+        <EmailVerificationBanner axiosPrivate={axiosPrivate} />
 
         {/* Approval Warning */}
         {stats.pendingApproval && (

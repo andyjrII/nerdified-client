@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import CourseTotals from "@/components/CourseTotals";
+import EmailVerificationBanner from "@/components/EmailVerificationBanner";
 import EnrollmentChart from "@/components/dashboard/EnrollmentChart";
 import SpendingChart from "@/components/dashboard/SpendingChart";
 import CourseProgress from "@/components/dashboard/CourseProgress";
@@ -41,6 +42,8 @@ const Student = () => {
             {studentName ? `Welcome back, ${studentName}! Here's your learning overview and statistics.` : "Welcome back! Here's your learning overview and statistics."}
           </p>
         </div>
+
+        <EmailVerificationBanner axiosPrivate={axiosPrivate} />
 
         {/* Statistics Cards */}
         <CourseTotals />

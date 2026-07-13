@@ -12,6 +12,7 @@ const publicRoutes = [
   '/contact',
   '/admin/signin',
   '/unauthorized',
+  '/verify-email',
 ];
 
 // Student protected routes (require student authentication)
