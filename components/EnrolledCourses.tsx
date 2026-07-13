@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
-import { FaCalendarAlt, FaVideo, FaBookOpen, FaSearch, FaComments } from "react-icons/fa";
+import { FaCalendarAlt, FaVideo, FaBookOpen, FaSearch, FaComments, FaAward } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ interface EnrollmentDetail {
   courseId: number;
   dateEnrolled: string;
   status: string;
+  certificateUrl?: string | null;
   course: {
     id: number;
     title: string;
@@ -32,6 +33,9 @@ const EnrolledCourses = () => {
   const email = auth.email ?? "";
   const [enrollmentDetails, setEnrollmentDetails] = useState<EnrollmentDetail[]>([]);
   const [sessionsCount, setSessionsCount] = useState<Record<number, number>>({});
+  // Certificate URL per enrollment id (seeded from the enrollment, filled on issue).
+  const [certUrls, setCertUrls] = useState<Record<number, string>>({});
+  const [issuingCert, setIssuingCert] = useState<number | null>(null);
 
   useEffect(() => {
     if (email) getEnrolledCourses();
@@ -73,6 +77,11 @@ const EnrolledCourses = () => {
       // Ensure response.data is an array
       const enrollmentsData = Array.isArray(response?.data) ? response.data : [];
       setEnrollmentDetails(enrollmentsData);
+      const seeded: Record<number, string> = {};
+      for (const e of enrollmentsData as EnrollmentDetail[]) {
+        if (e.certificateUrl) seeded[e.id] = e.certificateUrl;
+      }
+      setCertUrls(seeded);
     } catch (error) {
       console.error("Error fetching Courses:", error);
       setEnrollmentDetails([]); // Set empty array on error
@@ -95,11 +104,39 @@ const EnrolledCourses = () => {
     router.push(`/student/sessions?courseId=${courseId}`);
   };
 
+  const openCertificate = async (enrollmentId: number) => {
+    // Already have the URL — just open it.
+    const existing = certUrls[enrollmentId];
+    if (existing) {
+      window.open(existing, "_blank", "noopener,noreferrer");
+      return;
+    }
+    // Otherwise issue it on demand (idempotent server-side).
+    setIssuingCert(enrollmentId);
+    try {
+      const res = await axiosPrivate.post(
+        `certificates/enrollment/${enrollmentId}/issue`
+      );
+      const url = res?.data?.certificateUrl as string | null;
+      if (url) {
+        setCertUrls((prev) => ({ ...prev, [enrollmentId]: url }));
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    } catch (error) {
+      console.error("Error issuing certificate:", error);
+    } finally {
+      setIssuingCert(null);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusColors: Record<string, string> = {
       PENDING: "bg-yellow-100 text-yellow-800",
+      STARTED: "bg-green-100 text-green-800",
       ACTIVE: "bg-green-100 text-green-800",
+      FINISHED: "bg-blue-100 text-blue-800",
       COMPLETED: "bg-blue-100 text-blue-800",
+      DROPPED: "bg-red-100 text-red-800",
       CANCELLED: "bg-red-100 text-red-800",
     };
     return (
@@ -212,6 +249,20 @@ const EnrolledCourses = () => {
                     <FaComments className="w-4 h-4 mr-2" />
                     Course Chat
                   </Button>
+                  {enrollmentDetail.status === "FINISHED" && (
+                    <Button
+                      onClick={() => openCertificate(enrollmentDetail.id)}
+                      disabled={issuingCert === enrollmentDetail.id}
+                      className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+                    >
+                      <FaAward className="w-4 h-4 mr-2" />
+                      {issuingCert === enrollmentDetail.id
+                        ? "Preparing…"
+                        : certUrls[enrollmentDetail.id]
+                        ? "Download Certificate"
+                        : "Get Certificate"}
+                    </Button>
+                  )}
                   <Button
                     onClick={() => getCourse(enrollmentDetail.courseId)}
                     variant="outline"
