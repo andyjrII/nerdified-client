@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
-import { FaCalendarAlt, FaVideo, FaBookOpen, FaSearch } from "react-icons/fa";
+import { FaCalendarAlt, FaVideo, FaBookOpen, FaSearch, FaComments } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -203,6 +203,15 @@ const EnrolledCourses = () => {
                       View Sessions
                     </Button>
                   )}
+                  <Button
+                    onClick={() =>
+                      router.push(`/student/courses/${enrollmentDetail.courseId}/chat`)
+                    }
+                    className="w-full bg-blue-700 hover:bg-blue-600 text-white"
+                  >
+                    <FaComments className="w-4 h-4 mr-2" />
+                    Course Chat
+                  </Button>
                   <Button
                     onClick={() => getCourse(enrollmentDetail.courseId)}
                     variant="outline"

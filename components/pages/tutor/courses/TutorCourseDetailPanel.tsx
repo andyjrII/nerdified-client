@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import Moment from "react-moment";
-import { FaEdit, FaUsers, FaCalendarAlt, FaExternalLinkAlt, FaCopy, FaTrash } from "react-icons/fa";
+import { FaEdit, FaUsers, FaCalendarAlt, FaExternalLinkAlt, FaCopy, FaTrash, FaComments } from "react-icons/fa";
 import { formatCurrency } from "@/utils/formatCurrency";
 import type { Course, CourseEnrollment, SessionStub } from "./types";
 
@@ -55,6 +55,12 @@ export function TutorCourseDetailPanel({
             <Button variant="outline" size="sm" className="bg-white">
               <FaEdit className="w-3 h-3 mr-1" />
               Edit
+            </Button>
+          </Link>
+          <Link href={`/tutor/courses/${course.id}/chat`}>
+            <Button variant="outline" size="sm" className="bg-white">
+              <FaComments className="w-3 h-3 mr-1" />
+              Chat
             </Button>
           </Link>
           <Button
