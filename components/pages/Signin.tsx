@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
-import { FcLock, FcAddressBook } from "react-icons/fc";
+import { FcLock, FcAddressBook, FcGoogle } from "react-icons/fc";
 import {
   clearAuthStudent,
   clearStudentProfile,
@@ -47,6 +47,29 @@ const Signin = () => {
   useEffect(() => {
     emailRef.current?.focus();
   }, []);
+
+  // Surface errors from an aborted/failed Google sign-in redirect.
+  useEffect(() => {
+    const oauthError = searchParams.get("oauth_error");
+    if (!oauthError) return;
+    const messages: Record<string, string> = {
+      unavailable: "Google sign-in isn't configured yet. Please use email and password.",
+      cancelled: "Google sign-in was cancelled.",
+      invalid_role: "Google sign-in failed: invalid account type.",
+      invalid_state: "Google sign-in expired. Please try again.",
+      google_failed: "Google sign-in failed. Please try again.",
+      email_unverified: "Your Google email address isn't verified.",
+      session_failed: "Couldn't complete Google sign-in. Please try again.",
+    };
+    setErrMsg(messages[oauthError] ?? "Google sign-in failed. Please try again.");
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+  }, []);
+
+  const handleGoogleSignin = () => {
+    const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3100/api";
+    const apiRole = role === "student" ? "STUDENT" : "TUTOR";
+    window.location.href = `${base}/auth/google?role=${apiRole}`;
+  };
 
   useEffect(() => {
     setErrMsg("");
@@ -287,6 +310,26 @@ const Signin = () => {
                 )}
               </Button>
             </form>
+
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-white px-2 text-gray-500">or</span>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleSignin}
+              disabled={loading}
+            >
+              <FcGoogle className="w-5 h-5 mr-2" />
+              Continue with Google as {role === "student" ? "Student" : "Tutor"}
+            </Button>
 
             <div className="mt-4 text-center text-sm">
               <p className="text-gray-600">
