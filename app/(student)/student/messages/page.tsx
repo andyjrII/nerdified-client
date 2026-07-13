@@ -1,21 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
 
-export default function MessagesPage() {
+import { Suspense } from "react";
+import DirectMessagesPage from "@/components/pages/DirectMessagesPage";
+import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
+
+function StudentMessages() {
+  const axiosPrivate = useAxiosPrivate();
+  return <DirectMessagesPage axiosPrivate={axiosPrivate} role="STUDENT" />;
+}
+
+export default function StudentMessagesPage() {
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6">
-      <div className="w-full">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Messages</h1>
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold">Direct Messages</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-500 text-center py-8">
-              Your messages with tutors will appear here.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <Suspense>
+      <StudentMessages />
+    </Suspense>
   );
 }

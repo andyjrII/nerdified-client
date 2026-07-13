@@ -12,8 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FaUserFriends, FaSearch, FaBookOpen, FaDollarSign, FaCalendarAlt } from "react-icons/fa";
+import { FaUserFriends, FaSearch, FaBookOpen, FaComments } from "react-icons/fa";
 import Moment from "react-moment";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 interface StudentRow {
@@ -104,6 +106,7 @@ const TutorStudents = () => {
                     <TableHead className="text-center">Courses</TableHead>
                     <TableHead className="text-right">Total paid</TableHead>
                     <TableHead>Last enrolled</TableHead>
+                    <TableHead className="text-center">Contact</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -126,6 +129,14 @@ const TutorStudents = () => {
                       </TableCell>
                       <TableCell className="text-gray-600">
                         <Moment format="MMM D, YYYY">{s.lastEnrolled}</Moment>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Link href={`/tutor/messages?partner=${s.studentId}`}>
+                          <Button variant="outline" size="sm">
+                            <FaComments className="w-4 h-4 mr-1.5" />
+                            Message
+                          </Button>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
