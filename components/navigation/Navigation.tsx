@@ -1,155 +1,157 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import {
-  IoHomeSharp,
-  IoBook,
-  IoInformationCircle,
-  IoCall,
-} from "react-icons/io5";
-import { FaBlogger, FaLock } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { StudentDropdownMenu, TutorDropdownMenu } from "./DropdownMenu";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/courses", label: "Courses" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "About Us" },
+  { href: "/contact", label: "Contact" },
+];
+
 export const Navigation = () => {
   const { auth, loading } = useAuth();
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
-  // Always render the nav so it appears on first load; only the right-side (Sign in vs dropdown) depends on auth.
-  // While auth is loading, show Sign in so the bar is never missing.
   const showSignedIn = !loading && !!auth.email;
 
-  // Navigation links configuration
-  const navLinks = [
-    { href: "/", label: "HOME", icon: IoHomeSharp },
-    { href: "/courses", label: "COURSES", icon: IoBook },
-    { href: "/blog", label: "BLOG", icon: FaBlogger },
-    { href: "/about", label: "ABOUT US", icon: IoInformationCircle },
-    { href: "/contact", label: "CONTACT US", icon: IoCall },
-  ];
-
-  const isActive = (href: string) => {
-    if (href === "/") {
-      return pathname === "/";
-    }
-    return pathname?.startsWith(href);
-  };
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname?.startsWith(href);
 
   return (
-    <nav className="bg-blue-900 text-white shadow-md relative z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center h-20 md:h-24">
-          {/* Left: Logo and Brand */}
-          <Link href="/" className="flex items-center space-x-3 shrink-0">
-            <Image
-              src="/images/logo.png"
-              alt="<Nerdified />"
-              width={50}
-              height={50}
-              className="rounded-full object-cover aspect-square"
-              unoptimized
-            />
-            <div className="flex flex-col">
-              <span className="text-xl font-bold">
-                Nerdified{" "}
-                <span className="text-green-500">Afri</span>
-                <span className="text-orange-500">ca</span>
-              </span>
-              <span className="text-xs text-gray-300">
-                Educate. Empower. Nerdify.
-              </span>
-            </div>
-          </Link>
+    <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+        {/* Brand */}
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
+          <Image
+            src="/images/logo.png"
+            alt="Nerdified"
+            width={40}
+            height={40}
+            className="aspect-square rounded-full object-cover"
+            unoptimized
+          />
+          <span className="flex flex-col leading-none">
+            <span className="text-lg font-extrabold tracking-tight text-slate-900">
+              Nerdified <span className="text-emerald-600">Africa</span>
+            </span>
+            <span className="mt-0.5 text-[10px] font-medium text-slate-400">
+              Educate. Empower. Nerdify.
+            </span>
+          </span>
+        </Link>
 
-          {/* Center: Navigation Links */}
-          <div className="hidden md:flex flex-1 justify-center items-center space-x-6">
-            {navLinks.map(({ href, label, icon: Icon }) => {
-              const active = isActive(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={cn(
-                    "relative flex items-center space-x-2 px-2 py-3 transition-colors duration-200 group",
-                    active
-                      ? "text-orange-500"
-                      : "text-white hover:text-orange-500"
-                  )}
-                >
-                  <Icon
-                    className={cn(
-                      "h-5 w-5 transition-colors duration-200",
-                      active ? "text-orange-500" : "text-white group-hover:text-orange-500"
-                    )}
-                  />
-                  <span className="text-sm font-medium">{label}</span>
-                  {/* Active/Hover Underline */}
-                  <span
-                    className={cn(
-                      "absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-200",
-                      active
-                        ? "bg-orange-500"
-                        : "bg-transparent group-hover:bg-orange-500"
-                    )}
-                  />
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Right: Sign in (when logged out or still loading) or User dropdown (when logged in) */}
-          <div className="hidden md:flex items-center shrink-0">
-            {!showSignedIn ? (
+        {/* Center links */}
+        <div className="hidden flex-1 items-center justify-center gap-1 md:flex">
+          {navLinks.map(({ href, label }) => {
+            const active = isActive(href);
+            return (
               <Link
-                href="/signin"
+                key={href}
+                href={href}
                 className={cn(
-                  "relative flex items-center space-x-2 px-2 py-3 transition-colors duration-200 group",
-                  pathname === "/signin"
-                    ? "text-orange-500"
-                    : "text-white hover:text-orange-500"
+                  "relative px-3 py-2 text-sm font-medium transition-colors",
+                  active
+                    ? "text-blue-600"
+                    : "text-slate-600 hover:text-slate-900",
                 )}
               >
-                <FaLock
-                  className={cn(
-                    "h-5 w-5 transition-colors duration-200",
-                    pathname === "/signin"
-                      ? "text-orange-500"
-                      : "text-white group-hover:text-orange-500"
-                  )}
-                />
-                <span className="text-sm font-medium">SIGN IN</span>
-                {pathname === "/signin" && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500" />
+                {label}
+                {active && (
+                  <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-blue-600" />
                 )}
               </Link>
-            ) : auth.role === "TUTOR" ? (
+            );
+          })}
+        </div>
+
+        {/* Right actions */}
+        <div className="ml-auto hidden shrink-0 items-center gap-2 md:flex">
+          {showSignedIn ? (
+            auth.role === "TUTOR" ? (
               <TutorDropdownMenu />
             ) : (
               <StudentDropdownMenu />
+            )
+          ) : (
+            <>
+              <Link
+                href="/signin"
+                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Mobile toggle */}
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="ml-auto inline-flex items-center justify-center rounded-lg p-2 text-slate-700 hover:bg-slate-100 md:hidden"
+          aria-label="Toggle menu"
+          aria-expanded={open}
+        >
+          {open ? <FaTimes className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile panel */}
+      {open && (
+        <div className="border-t border-slate-200 bg-white md:hidden">
+          <div className="space-y-1 px-4 py-3">
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "block rounded-lg px-3 py-2 text-sm font-medium",
+                  isActive(href)
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-slate-700 hover:bg-slate-50",
+                )}
+              >
+                {label}
+              </Link>
+            ))}
+            {!showSignedIn && (
+              <div className="flex gap-2 pt-2">
+                <Link
+                  href="/signin"
+                  onClick={() => setOpen(false)}
+                  className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-center text-sm font-semibold text-slate-700"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/signup"
+                  onClick={() => setOpen(false)}
+                  className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white"
+                >
+                  Sign Up
+                </Link>
+              </div>
             )}
           </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button className="text-white p-2" type="button" aria-label="Menu">
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
-            </button>
-          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 };
