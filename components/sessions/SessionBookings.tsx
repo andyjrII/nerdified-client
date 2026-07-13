@@ -5,7 +5,7 @@ import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FaCalendarAlt, FaClock, FaVideo, FaTimes, FaCheckCircle } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaVideo, FaTimes, FaCheckCircle, FaPlayCircle } from "react-icons/fa";
 import Moment from "react-moment";
 import { useAuth } from "@/hooks/useAuth";
 import Swal from "sweetalert2";
@@ -19,6 +19,7 @@ interface Session {
   endTime: string;
   status: string;
   meetingUrl?: string;
+  recordingUrl?: string | null;
   maxStudents?: number;
   course: {
     id: number;
@@ -359,6 +360,17 @@ const SessionBookings = () => {
                               >
                                 <FaVideo className="w-4 h-4 mr-2" />
                                 Join Now
+                              </Button>
+                            )}
+                            {session.recordingUrl && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => window.open(session.recordingUrl!, "_blank")}
+                                className="flex-1"
+                              >
+                                <FaPlayCircle className="w-4 h-4 mr-2" />
+                                Watch Recording
                               </Button>
                             )}
                           </>

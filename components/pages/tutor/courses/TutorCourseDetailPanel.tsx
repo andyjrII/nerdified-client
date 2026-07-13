@@ -187,6 +187,17 @@ export function TutorCourseDetailPanel({
                       {" → "}
                       <Moment format="h:mm A">{s.endTime}</Moment>
                     </span>
+                    {s.recordingUrl && (
+                      <a
+                        href={s.recordingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1"
+                      >
+                        <FaExternalLinkAlt className="w-3 h-3" />
+                        Recording
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

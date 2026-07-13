@@ -33,6 +33,7 @@ export interface SessionStub {
   startTime: string;
   endTime: string;
   status: string;
+  recordingUrl?: string | null;
 }
 
 export type StatusFilter = "all" | "draft" | "published";

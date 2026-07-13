@@ -8,7 +8,7 @@ import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import { useTutorAxiosPrivate } from "@/hooks/useTutorAxiosPrivate";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FaArrowLeft, FaRedo } from "react-icons/fa";
+import { FaArrowLeft, FaCircle, FaRedo, FaStop } from "react-icons/fa";
 
 type ParticipantRole = "student" | "tutor";
 
@@ -26,6 +26,10 @@ interface LiveSessionPayload {
     startTime: string;
     endTime: string;
     status: string;
+  };
+  recording?: {
+    available: boolean;
+    active: boolean;
   };
 }
 
@@ -55,6 +59,8 @@ export default function LiveSessionRoom({
     error?: string;
     payload?: LiveSessionPayload;
   }>({ loading: true });
+  const [recording, setRecording] = useState(false);
+  const [recordingBusy, setRecordingBusy] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,6 +77,7 @@ export default function LiveSessionRoom({
         );
         if (!cancelled) {
           setState({ loading: false, payload: response.data });
+          setRecording(response.data?.recording?.active ?? false);
         }
       } catch (error: any) {
         console.error("Failed to request LiveKit token", error);
@@ -136,6 +143,29 @@ export default function LiveSessionRoom({
   const { token, url, session } = state.payload;
   const sessionTitle =
     session.title || `Session #${session.id.toString().padStart(4, "0")}`;
+  const canRecord =
+    effectiveAudience === "tutor" && (state.payload.recording?.available ?? false);
+
+  const toggleRecording = async () => {
+    if (recordingBusy) return;
+    setRecordingBusy(true);
+    try {
+      const action = recording ? "stop" : "start";
+      await axios.post(`/sessions/${session.id}/recording/${action}`, null, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      setRecording(!recording);
+    } catch (error: any) {
+      console.error("Recording toggle failed:", error);
+      alert(
+        error?.response?.data?.message ||
+          "Could not update the recording. Please try again.",
+      );
+    } finally {
+      setRecordingBusy(false);
+    }
+  };
 
   return (
     <div className="flex h-screen flex-col bg-slate-950 text-white">
@@ -149,10 +179,42 @@ export default function LiveSessionRoom({
             {effectiveAudience === "tutor" ? "Tutor" : "Student"} view
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={goBack}>
-          <FaArrowLeft className="mr-2 h-4 w-4" />
-          Leave Session
-        </Button>
+        <div className="flex items-center gap-2">
+          {recording && (
+            <span className="flex items-center gap-1.5 text-xs text-red-400">
+              <FaCircle className="h-2 w-2 animate-pulse" />
+              Recording
+            </span>
+          )}
+          {canRecord && (
+            <Button
+              size="sm"
+              onClick={toggleRecording}
+              disabled={recordingBusy}
+              className={
+                recording
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-red-700/80 hover:bg-red-700"
+              }
+            >
+              {recording ? (
+                <>
+                  <FaStop className="mr-2 h-3 w-3" />
+                  {recordingBusy ? "Stopping…" : "Stop Recording"}
+                </>
+              ) : (
+                <>
+                  <FaCircle className="mr-2 h-3 w-3" />
+                  {recordingBusy ? "Starting…" : "Record"}
+                </>
+              )}
+            </Button>
+          )}
+          <Button variant="outline" size="sm" onClick={goBack}>
+            <FaArrowLeft className="mr-2 h-4 w-4" />
+            Leave Session
+          </Button>
+        </div>
       </header>
 
       <div className="relative flex-1">
