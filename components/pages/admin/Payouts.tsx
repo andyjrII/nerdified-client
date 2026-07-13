@@ -119,6 +119,42 @@ const AdminPayouts = () => {
     }
   };
 
+  const disburse = async (p: Payout) => {
+    const { isConfirmed } = await Swal.fire({
+      icon: "question",
+      title: "Disburse this payout?",
+      html: `This will transfer <b>${formatCurrency(
+        p.netAmount
+      )}</b> to ${p.tutor?.name ?? `Tutor #${p.tutorId}`}'s bank account via Paystack.`,
+      showCancelButton: true,
+      confirmButtonText: "Send transfer",
+      confirmButtonColor: "#16a34a",
+    });
+    if (!isConfirmed) return;
+    try {
+      const res = await axiosPrivate.post(`payouts/${p.id}/disburse`);
+      const status = res?.data?.status;
+      Swal.fire({
+        icon: "success",
+        title:
+          status === "COMPLETED" ? "Payout completed" : "Transfer initiated",
+        text:
+          status === "COMPLETED"
+            ? "The transfer settled immediately."
+            : "The transfer is processing; it will be confirmed shortly.",
+        timer: 2200,
+        showConfirmButton: false,
+      });
+      await fetchPayouts();
+    } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Disbursement failed",
+        text: err?.response?.data?.message || "Something went wrong.",
+      });
+    }
+  };
+
   const updateStatus = async (id: number, status: string) => {
     let paymentReference: string | undefined;
     if (status === "COMPLETED") {
@@ -256,21 +292,32 @@ const AdminPayouts = () => {
                     <TableCell>{formatCurrency(p.amount)}</TableCell>
                     <TableCell className="text-gray-500">{formatCurrency(p.commission)}</TableCell>
                     <TableCell className="font-semibold">{formatCurrency(p.netAmount)}</TableCell>
-                    <TableCell>{statusBadge(p.status)}</TableCell>
+                    <TableCell>
+                      {statusBadge(p.status)}
+                      {p.paymentReference && (
+                        <p className="text-[10px] text-gray-400 mt-1 max-w-[140px] truncate">
+                          {p.paymentReference}
+                        </p>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Moment format="MMM D, YYYY">{p.createdAt}</Moment>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {(p.status === "PENDING") && (
-                          <Button size="sm" variant="outline" onClick={() => updateStatus(p.id, "PROCESSING")}>
-                            Processing
+                        {(p.status === "PENDING" || p.status === "FAILED") && (
+                          <Button
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={() => disburse(p)}
+                          >
+                            {p.status === "FAILED" ? "Retry transfer" : "Disburse"}
                           </Button>
                         )}
                         {(p.status === "PENDING" || p.status === "PROCESSING") && (
                           <>
-                            <Button size="sm" onClick={() => updateStatus(p.id, "COMPLETED")}>
-                              Complete
+                            <Button size="sm" variant="outline" onClick={() => updateStatus(p.id, "COMPLETED")}>
+                              Mark paid
                             </Button>
                             <Button
                               size="sm"

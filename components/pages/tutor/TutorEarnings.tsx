@@ -22,6 +22,7 @@ import {
 import Moment from "react-moment";
 import { formatCurrency } from "@/utils/formatCurrency";
 import Link from "next/link";
+import BankDetailsCard from "@/components/pages/tutor/BankDetailsCard";
 
 interface ByCourse {
   courseId: number;
@@ -241,11 +242,15 @@ const TutorEarnings = () => {
                 </div>
               </div>
               <p className="text-xs text-gray-400 mt-3">
-                Payouts are initiated by the Nerdified team. You&apos;ll be notified when one is on the way.
+                Payouts are initiated by the Nerdified team and sent to your
+                saved bank account. You&apos;ll be notified when one is on the way.
               </p>
             </CardContent>
           </Card>
         )}
+
+        {/* Payout bank account */}
+        <BankDetailsCard axiosPrivate={axiosPrivate} />
 
         {/* Payout history */}
         {payoutsData?.payouts && payoutsData.payouts.length > 0 && (
