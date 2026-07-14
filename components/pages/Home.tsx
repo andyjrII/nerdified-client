@@ -91,7 +91,7 @@ const Home = () => {
     <div className="bg-white text-slate-900">
       {/* ===================== HERO ===================== */}
       <section className="relative">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-12">
           {/* Left */}
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
@@ -99,7 +99,7 @@ const Home = () => {
               <span className="text-blue-300">•</span>{" "}
               <span className="text-slate-400">Personalized</span>
             </span>
-            <h1 className="mt-5 text-4xl font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-4 text-3xl font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
               Learn Real Skills.
               <br />
               From Real People.
@@ -123,41 +123,41 @@ const Home = () => {
                 </svg>
               </span>
             </h1>
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-slate-600 sm:text-lg">
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">
               Join live, instructor-led classes with expert tutors — one-on-one
               or in small groups. No prerecorded lectures. Just real teaching,
               real interaction, and real growth.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="/courses"
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
               >
                 Explore Live Courses <FaArrowRight className="h-3.5 w-3.5" />
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
               >
                 <FaPlay className="h-3 w-3 text-blue-600" /> How It Works
               </Link>
             </div>
 
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-6 flex items-center gap-3">
               <div className="flex -space-x-3">
                 {heroAvatars.map((a) => (
                   <Image
                     key={a}
                     src={`/images/landing/${a}.jpg`}
                     alt="Nerdified student"
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 rounded-full border-2 border-white object-cover"
+                    width={36}
+                    height={36}
+                    className="h-9 w-9 rounded-full border-2 border-white object-cover"
                   />
                 ))}
               </div>
-              <div className="text-sm">
+              <div className="text-xs sm:text-sm">
                 <p className="font-semibold text-slate-800">
                   1,200+ students already learning with Nerdified
                 </p>
