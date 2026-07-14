@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   FaVideo,
   FaUsers,
@@ -25,14 +26,6 @@ import {
 
 /* ---------- small helpers ---------- */
 
-const Avatar = ({ label, className = "" }: { label: string; className?: string }) => (
-  <span
-    className={`inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-white text-xs font-bold text-white ${className}`}
-  >
-    {label}
-  </span>
-);
-
 const Stars = () => (
   <span className="inline-flex text-amber-400">
     {Array.from({ length: 5 }).map((_, i) => (
@@ -42,6 +35,8 @@ const Stars = () => (
 );
 
 /* ---------- data ---------- */
+
+const heroAvatars = ["avatar-1", "avatar-2", "avatar-3", "avatar-4"];
 
 const whyCards = [
   { icon: FaVideo, tint: "bg-blue-100 text-blue-600", title: "Live Interactive Sessions", body: "Learn in real time with expert tutors and ask questions as you go." },
@@ -81,9 +76,9 @@ const heroFeatures = [
 ];
 
 const testimonials = [
-  { name: "Chinoye", role: "Frontend Developer", tint: "bg-blue-500", initials: "CH", quote: "I used to watch recorded videos and still feel stuck. With Nerdified, I can ask questions in real time and actually understand. It changed how I learn." },
-  { name: "Fatima", role: "UI/UX Design Student", tint: "bg-violet-500", initials: "FA", quote: "Nerdified gave me the confidence and skills I needed to start my design career. The mentors are amazing and very supportive." },
-  { name: "Tunde", role: "Digital Marketing Student", tint: "bg-emerald-500", initials: "TU", quote: "The live classes and hands-on practice made all the difference. I'm now managing social media for real clients!" },
+  { name: "Chinoye", role: "Frontend Developer", image: "/images/landing/testimonial-chinoye.jpg", quote: "I used to watch recorded videos and still feel stuck. With Nerdified, I can ask questions in real time and actually understand. It changed how I learn." },
+  { name: "Fatima", role: "UI/UX Design Student", image: "/images/landing/testimonial-fatima.jpg", quote: "Nerdified gave me the confidence and skills I needed to start my design career. The mentors are amazing and very supportive." },
+  { name: "Tunde", role: "Digital Marketing Student", image: "/images/landing/testimonial-tunde.jpg", quote: "The live classes and hands-on practice made all the difference. I'm now managing social media for real clients!" },
 ];
 
 /* ---------- page ---------- */
@@ -96,7 +91,7 @@ const Home = () => {
     <div className="bg-white text-slate-900">
       {/* ===================== HERO ===================== */}
       <section className="relative">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-24">
           {/* Left */}
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
@@ -150,11 +145,17 @@ const Home = () => {
             </div>
 
             <div className="mt-8 flex items-center gap-3">
-              <div className="flex -space-x-2">
-                <Avatar label="A" className="bg-blue-500" />
-                <Avatar label="K" className="bg-violet-500" />
-                <Avatar label="M" className="bg-emerald-500" />
-                <Avatar label="T" className="bg-amber-500" />
+              <div className="flex -space-x-3">
+                {heroAvatars.map((a) => (
+                  <Image
+                    key={a}
+                    src={`/images/landing/${a}.jpg`}
+                    alt="Nerdified student"
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full border-2 border-white object-cover"
+                  />
+                ))}
               </div>
               <div className="text-sm">
                 <p className="font-semibold text-slate-800">
@@ -165,45 +166,25 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Right — designed live-session stage */}
+          {/* Right — hero photo with live badge + floating feature card */}
           <div className="relative">
-            <div className="relative rounded-3xl bg-gradient-to-br from-blue-600 via-blue-600 to-indigo-700 p-6 shadow-2xl sm:p-8">
-              <span className="absolute right-4 top-4 z-10 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow">
+            <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+              <Image
+                src="/images/landing/hero-student.jpg"
+                alt="Student waving during a live online class"
+                width={1200}
+                height={900}
+                priority
+                className="h-full w-full object-cover"
+              />
+              <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-slate-700 shadow backdrop-blur">
                 <span className="h-2 w-2 rounded-full bg-emerald-500" /> Live &
                 Interactive
               </span>
-
-              {/* mock live call */}
-              <div className="mt-8 rounded-2xl bg-white/10 p-4 backdrop-blur">
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500 px-2.5 py-1 text-[11px] font-semibold text-white">
-                    <span className="h-1.5 w-1.5 rounded-full bg-white" /> LIVE
-                    NOW
-                  </span>
-                  <span className="text-xs text-white/70">Group session</span>
-                </div>
-                <p className="mt-3 text-lg font-bold text-white">
-                  UI/UX Design with Figma
-                </p>
-                <p className="text-sm text-white/70">
-                  Interactive workshop · 8 of 12 joined
-                </p>
-                <div className="mt-4 flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    <Avatar label="R" className="bg-rose-400" />
-                    <Avatar label="J" className="bg-amber-400" />
-                    <Avatar label="S" className="bg-emerald-400" />
-                    <Avatar label="N" className="bg-sky-400" />
-                  </div>
-                  <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs font-medium text-white">
-                    +4
-                  </span>
-                </div>
-              </div>
             </div>
 
             {/* floating feature card */}
-            <div className="absolute -bottom-6 -left-2 w-64 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl sm:-left-6">
+            <div className="absolute -bottom-6 -left-2 w-60 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl sm:-left-6 sm:w-64">
               <ul className="space-y-2.5">
                 {heroFeatures.map((f) => (
                   <li key={f} className="flex items-center gap-2.5 text-sm font-medium text-slate-700">
@@ -299,65 +280,91 @@ const Home = () => {
       <section className="pb-4">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           {/* Learners */}
-          <div className="relative overflow-hidden rounded-3xl bg-blue-50 p-8 sm:p-10">
-            <p className="text-xs font-bold uppercase tracking-wide text-blue-600">
-              For Learners
-            </p>
-            <h3 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-              Learn skills
-              <br /> that matter
-            </h3>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-600">
-              From tech to business, design to personal development — find the
-              right tutor and learn in a way that works for you.
-            </p>
-            <Link
-              href="/courses"
-              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-            >
-              Explore Courses <FaArrowRight className="h-3.5 w-3.5" />
-            </Link>
-            <div className="mt-8 inline-flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-md">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                <FaCode className="h-4 w-4" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-slate-800">
-                  Python for Beginners
+          <div className="rounded-3xl bg-blue-50 p-8 sm:p-10">
+            <div className="grid gap-8 sm:grid-cols-2 sm:items-center">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-blue-600">
+                  For Learners
                 </p>
-                <p className="text-xs text-slate-500">Today · 7:00 PM</p>
+                <h3 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+                  Learn skills
+                  <br /> that matter
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                  From tech to business, design to personal development — find
+                  the right tutor and learn in a way that works for you.
+                </p>
+                <Link
+                  href="/courses"
+                  className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                >
+                  Explore Courses <FaArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              <div className="relative">
+                <Image
+                  src="/images/landing/for-learners.jpg"
+                  alt="A learner studying online"
+                  width={800}
+                  height={1000}
+                  className="h-64 w-full rounded-2xl object-cover sm:h-80"
+                />
+                <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-xl bg-white/95 px-3 py-2 shadow-lg backdrop-blur">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                    <FaCode className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">
+                      Python for Beginners
+                    </p>
+                    <p className="text-xs text-slate-500">Today · 7:00 PM</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Tutors */}
-          <div className="relative overflow-hidden rounded-3xl bg-violet-50 p-8 sm:p-10">
-            <p className="text-xs font-bold uppercase tracking-wide text-violet-600">
-              For Tutors
-            </p>
-            <h3 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-              Teach what
-              <br /> you love
-            </h3>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-600">
-              Share your knowledge, inspire learners, and build a flexible
-              online teaching business with Nerdified.
-            </p>
-            <Link
-              href="/signup/tutor"
-              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-700"
-            >
-              Become a Tutor <FaArrowRight className="h-3.5 w-3.5" />
-            </Link>
-            <div className="mt-8 inline-flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-md">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                <FaChartLine className="h-4 w-4" />
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-slate-800">
-                  You earned ₦250,000
+          <div className="rounded-3xl bg-violet-50 p-8 sm:p-10">
+            <div className="grid gap-8 sm:grid-cols-2 sm:items-center">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-violet-600">
+                  For Tutors
                 </p>
-                <p className="text-xs text-slate-500">This month</p>
+                <h3 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+                  Teach what
+                  <br /> you love
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                  Share your knowledge, inspire learners, and build a flexible
+                  online teaching business with Nerdified.
+                </p>
+                <Link
+                  href="/signup/tutor"
+                  className="mt-6 inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-700"
+                >
+                  Become a Tutor <FaArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              <div className="relative">
+                <Image
+                  src="/images/landing/for-tutors.jpg"
+                  alt="A tutor ready to teach online"
+                  width={800}
+                  height={1000}
+                  className="h-64 w-full rounded-2xl object-cover sm:h-80"
+                />
+                <div className="absolute bottom-3 left-3 flex items-center gap-3 rounded-xl bg-white/95 px-3 py-2 shadow-lg backdrop-blur">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                    <FaChartLine className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">
+                      You earned ₦250,000
+                    </p>
+                    <p className="text-xs text-slate-500">This month</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -413,7 +420,13 @@ const Home = () => {
               <div className="rounded-2xl bg-white p-6 shadow-xl">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <Avatar label={t.initials} className={`${t.tint} h-11 w-11 text-sm`} />
+                    <Image
+                      src={t.image}
+                      alt={t.name}
+                      width={44}
+                      height={44}
+                      className="h-11 w-11 rounded-full object-cover"
+                    />
                     <div>
                       <p className="font-bold text-slate-900">{t.name}</p>
                       <p className="text-xs text-slate-500">{t.role}</p>
