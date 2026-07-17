@@ -149,12 +149,20 @@ const TutorSignup = () => {
   const canSubmit = validName && validEmail && validPassword && validConfirm && validPhone;
 
   return (
-    <AuthShell altText="Already have an account?" altLabel="Sign in" altHref="/signin" wide fitViewport>
-      <div>
+    <AuthShell
+      altText="Already have an account?"
+      altLabel="Sign in"
+      altHref="/signin"
+      wide
+      fitViewport
+      topLeft={
         <Link href="/signup" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700">
           <FaArrowLeft className="h-3 w-3" /> Change account type
         </Link>
-        <h1 className="mt-1.5 text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
+      }
+    >
+      <div>
+        <h1 className="text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
           Create your tutor account
         </h1>
         <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-slate-500">
@@ -255,12 +263,12 @@ const TutorSignup = () => {
               </div>
             </div>
 
-            {/* Right: image */}
-            <div>
+            {/* Right: image (grows to fill) + phone pinned to the bottom, aligning with Confirm password */}
+            <div className="flex flex-col">
               <Label className="text-sm font-medium text-slate-700">
                 Profile picture <span className="font-normal text-slate-400">(optional)</span>
               </Label>
-              <div className="relative mt-1 h-28 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+              <div className="relative mt-1 w-full flex-1 min-h-[7rem] overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
                 <Image
                   src={imagePreview || DPDefault}
                   alt="Profile preview"

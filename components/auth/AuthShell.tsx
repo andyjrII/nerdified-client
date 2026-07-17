@@ -19,6 +19,8 @@ interface AuthShellProps {
   altHref: string;
   /** Widen the form column for multi-field signup forms. */
   wide?: boolean;
+  /** Optional node rendered on the left of the top row, sharing the line with the cross-link. */
+  topLeft?: React.ReactNode;
   /**
    * Compact mode: tighter padding so the (already-compacted) form fits within
    * one viewport height on a standard laptop. Uses min-height + vertical
@@ -28,7 +30,7 @@ interface AuthShellProps {
   fitViewport?: boolean;
 }
 
-export function AuthShell({ children, altText, altLabel, altHref, wide, fitViewport }: AuthShellProps) {
+export function AuthShell({ children, altText, altLabel, altHref, wide, topLeft, fitViewport }: AuthShellProps) {
   return (
     <div
       className={`flex min-h-screen flex-col justify-center bg-gradient-to-br from-indigo-50 via-white to-violet-100 px-4 sm:px-6 ${
@@ -78,12 +80,15 @@ export function AuthShell({ children, altText, altLabel, altHref, wide, fitViewp
 
           {/* Form column */}
           <div className="p-4 sm:p-5">
-            <p className="mb-2 text-right text-sm text-slate-500">
-              {altText}{" "}
-              <Link href={altHref} className="font-semibold text-indigo-600 hover:text-indigo-700">
-                {altLabel}
-              </Link>
-            </p>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              {topLeft ?? <span />}
+              <p className="text-right text-sm text-slate-500">
+                {altText}{" "}
+                <Link href={altHref} className="font-semibold text-indigo-600 hover:text-indigo-700">
+                  {altLabel}
+                </Link>
+              </p>
+            </div>
             {children}
           </div>
         </div>
