@@ -10,7 +10,6 @@ import {
   FaYoutube,
   FaEnvelope,
   FaPhoneAlt,
-  FaMapMarkerAlt,
 } from "react-icons/fa";
 
 const quickLinks = [
@@ -125,10 +124,6 @@ export const Footer = () => {
                 <a href="tel:+2349063368647" className="hover:text-white">
                   +234 906 336 8647
                 </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <FaMapMarkerAlt className="h-4 w-4 shrink-0 text-slate-500" />
-                <span>Lagos, Nigeria</span>
               </li>
               <li className="pt-1 text-slate-500">We&apos;re here to help!</li>
             </ul>
