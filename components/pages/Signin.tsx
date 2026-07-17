@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
-import { FcLock, FcAddressBook, FcGoogle } from "react-icons/fc";
 import {
   clearAuthStudent,
   clearStudentProfile,
@@ -15,21 +14,25 @@ import {
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
 import { SyncLoader } from "react-spinners";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { FcGoogle } from "react-icons/fc";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { FaUserGraduate, FaChalkboardTeacher } from "react-icons/fa";
+  FaEnvelope,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaUserGraduate,
+  FaChalkboardTeacher,
+} from "react-icons/fa";
+import { AuthShell } from "@/components/auth/AuthShell";
+import { AuthField } from "@/components/auth/AuthField";
+import { Label } from "@/components/ui/label";
 
 type UserRole = "student" | "tutor";
+
+const roles: { value: UserRole; label: string; icon: typeof FaUserGraduate }[] = [
+  { value: "student", label: "Student", icon: FaUserGraduate },
+  { value: "tutor", label: "Tutor", icon: FaChalkboardTeacher },
+];
 
 const Signin = () => {
   const { setAuth } = useAuth();
@@ -40,6 +43,8 @@ const Signin = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [role, setRole] = useState<UserRole>("student");
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -79,26 +84,13 @@ const Signin = () => {
     setLoading(true);
     e.preventDefault();
 
-    // Validate inputs
     if (!email || !password) {
       setErrMsg("Email and password are required");
-      Swal.fire({
-        icon: "error",
-        title: "Validation Error",
-        text: "Email and password are required",
-        confirmButtonText: "OK",
-        showConfirmButton: true,
-        confirmButtonColor: "#3b82f6",
-      });
       setLoading(false);
       return;
     }
 
     try {
-      console.log(`Attempting ${role} signin for:`, email);
-      console.log("API Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
-
-      // Unified sign-in: single endpoint with role in body
       const apiRole = role === "student" ? "STUDENT" : "TUTOR";
       const response = await axios.post(
         "auth/signin",
@@ -109,21 +101,17 @@ const Signin = () => {
         }
       );
 
-      console.log("Signin response:", response);
-
       const data = response?.data;
       const isApproved = data?.approved !== false;
       const responseEmail = data?.email ?? email;
       const responseRole = data?.role === "STUDENT" ? "STUDENT" : "TUTOR";
 
       if (!responseEmail || !responseRole) {
-        console.error("Invalid signin response:", response?.data);
         throw new Error("Invalid response from server");
       }
 
       setAuth({ email: responseEmail, role: responseRole });
 
-      // Show approval status message for tutors
       if (!isApproved) {
         Swal.fire({
           icon: "warning",
@@ -135,10 +123,8 @@ const Signin = () => {
         return;
       }
 
-      // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)
       setAuthSessionCookie(responseRole);
 
-      // Handle redirect
       const course = searchParams.get("course")
         ? JSON.parse(searchParams.get("course")!)
         : null;
@@ -146,51 +132,24 @@ const Signin = () => {
       if (course) {
         router.back();
       } else {
-        Swal.fire({
-          icon: "success",
-          title: "Signin Success",
-          text: `You have successfully signed in as a ${role}!`,
-          confirmButtonText: "OK",
-          showConfirmButton: true,
-          confirmButtonColor: "#3b82f6",
-        });
-        
-        // Redirect based on role (startTransition keeps UI responsive)
         startTransition(() => {
-          if (role === "student") {
-            router.push("/student");
-          } else {
-            router.push("/tutor");
-          }
+          router.push(role === "student" ? "/student" : "/tutor");
         });
       }
     } catch (err: any) {
-      console.error("Sign-in error:", err);
       let errorMessage = "Signin Failed";
-
       if (!err?.response) {
         errorMessage = "No Server Response - Check your connection";
       } else if (err.response?.status === 400) {
-        errorMessage =
-          err.response?.data?.message || "Missing Email or Password";
+        errorMessage = err.response?.data?.message || "Missing Email or Password";
       } else if (err.response?.status === 401) {
-        errorMessage =
-          err.response?.data?.message || "Invalid email or password";
+        errorMessage = err.response?.data?.message || "Invalid email or password";
       } else if (err.response?.status === 404) {
         errorMessage = `${role === "student" ? "Student" : "Tutor"} not found`;
       } else {
         errorMessage = err.response?.data?.message || "Signin Failed";
       }
-
       setErrMsg(errorMessage);
-      Swal.fire({
-        icon: "error",
-        title: "Signin Failed",
-        text: errorMessage,
-        confirmButtonText: "OK",
-        showConfirmButton: true,
-        confirmButtonColor: "#ef4444",
-      });
       errRef.current?.focus();
       setAuth({ email: null, role: null });
       clearAuthStudent();
@@ -202,152 +161,135 @@ const Signin = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-      <div className="max-w-md w-full">
-        <Card className="shadow-lg">
-          <CardHeader className="space-y-1 text-center">
-            <div className="mx-auto w-16 h-16 bg-blue-900 rounded-full flex items-center justify-center mb-4">
-              <FcLock className="w-8 h-8" />
-            </div>
-            <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
-            <p className="text-sm text-gray-600">
-              Enter your credentials to access your account
-            </p>
-          </CardHeader>
-          <CardContent>
-            <p
-              ref={errRef}
-              className={`text-center text-sm text-red-600 mb-4 ${
-                errMsg ? "block" : "hidden"
-              }`}
-              aria-live="assertive"
-            >
-              {errMsg}
-            </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Role Selector */}
-              <div className="space-y-2">
-                <Label htmlFor="role">Account Type</Label>
-                <Select value={role} onValueChange={(value) => setRole(value as UserRole)}>
-                  <SelectTrigger id="role">
-                    <SelectValue placeholder="Select account type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="student">
-                      <div className="flex items-center gap-2">
-                        <FaUserGraduate className="w-4 h-4" />
-                        <span>Student</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="tutor">
-                      <div className="flex items-center gap-2">
-                        <FaChalkboardTeacher className="w-4 h-4" />
-                        <span>Tutor</span>
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+    <AuthShell altText="Don't have an account?" altLabel="Sign up" altHref="/signup">
+      <div className="mx-auto max-w-md">
+        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+          Welcome back <span className="align-middle">👋</span>
+        </h1>
+        <p className="mt-1.5 text-sm text-slate-500">
+          Sign in to continue your learning journey.
+        </p>
 
-              {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                    <FcAddressBook className="w-5 h-5" />
-                  </div>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    ref={emailRef}
-                    autoComplete="off"
-                    required
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                    <FcLock className="w-5 h-5" />
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              <div className="text-right">
-                <Link
-                  href="#"
-                  className="text-sm text-blue-600 hover:text-blue-800"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-blue-900 hover:bg-blue-800"
-                disabled={loading}
-              >
-                {loading ? (
-                  <SyncLoader size={8} color="#ffffff" />
-                ) : (
-                  `Sign in as ${role === "student" ? "Student" : "Tutor"}`
-                )}
-              </Button>
-            </form>
-
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="bg-white px-2 text-gray-500">or</span>
-              </div>
-            </div>
-
-            <Button
+        {/* Role toggle */}
+        <div className="mt-6 grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
+          {roles.map(({ value, label, icon: Icon }) => (
+            <button
+              key={value}
               type="button"
-              variant="outline"
-              className="w-full"
-              onClick={handleGoogleSignin}
-              disabled={loading}
+              onClick={() => setRole(value)}
+              className={`flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${
+                role === value
+                  ? "bg-white text-indigo-600 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
             >
-              <FcGoogle className="w-5 h-5 mr-2" />
-              Continue with Google as {role === "student" ? "Student" : "Tutor"}
-            </Button>
+              <Icon className="h-4 w-4" />
+              {label}
+            </button>
+          ))}
+        </div>
 
-            <div className="mt-4 text-center text-sm">
-              <p className="text-gray-600">
-                Don&apos;t have an account?{" "}
-                <Link href="/signup" className="text-blue-600 hover:text-blue-800 font-medium">
-                  Register
-                </Link>
-              </p>
-              {role === "tutor" && (
-                <Badge variant="outline" className="mt-2 text-xs">
-                  ⓘ Tutor accounts require admin approval
-                </Badge>
-              )}
+        {errMsg && (
+          <p
+            ref={errRef}
+            aria-live="assertive"
+            className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"
+          >
+            {errMsg}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+              Email address
+            </Label>
+            <AuthField
+              id="email"
+              ref={emailRef}
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              icon={<FaEnvelope className="h-4 w-4" />}
+              autoComplete="email"
+              required
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="text-sm font-medium text-slate-700">
+                Password
+              </Label>
+              <Link href="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                Forgot password?
+              </Link>
             </div>
-          </CardContent>
-        </Card>
+            <AuthField
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              icon={<FaLock className="h-4 w-4" />}
+              autoComplete="current-password"
+              required
+              rightSlot={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="text-slate-400 hover:text-slate-600"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+                </button>
+              }
+            />
+          </div>
+
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 accent-indigo-600"
+            />
+            Remember me
+          </label>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex w-full items-center justify-center rounded-lg bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-70"
+          >
+            {loading ? <SyncLoader size={8} color="#ffffff" /> : "Sign In"}
+          </button>
+        </form>
+
+        <div className="my-5 flex items-center gap-3">
+          <span className="h-px flex-1 bg-slate-200" />
+          <span className="text-xs text-slate-400">or continue with</span>
+          <span className="h-px flex-1 bg-slate-200" />
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGoogleSignin}
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+        >
+          <FcGoogle className="h-5 w-5" /> Continue with Google
+        </button>
+
+        <p className="mt-6 text-center text-xs text-slate-400">
+          By signing in, you agree to our{" "}
+          <Link href="/terms" className="text-indigo-600 hover:underline">Terms of Service</Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
+        </p>
       </div>
-    </section>
+    </AuthShell>
   );
 };
 

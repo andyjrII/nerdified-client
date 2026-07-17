@@ -2,32 +2,31 @@
 
 import { useRef, useState, useEffect, startTransition } from "react";
 import Link from "next/link";
-import {
-  faCheck,
-  faTimes,
-  faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  FcLock,
-  FcAddressBook,
-  FcBusinessman,
-  FcHome,
-  FcPhone,
-  FcImageFile,
-} from "react-icons/fc";
-import axios from "@/lib/api/axios";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import axios from "@/lib/api/axios";
 import { useAuth } from "@/hooks/useAuth";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
-import Image from "next/image";
-const DPDefault = "/images/navpages/person_profile.jpg";
 import { SyncLoader } from "react-spinners";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaHome,
+  FaPhone,
+  FaImage,
+  FaCheckCircle,
+  FaRegCircle,
+  FaArrowLeft,
+} from "react-icons/fa";
+import { AuthShell } from "@/components/auth/AuthShell";
+import { AuthField } from "@/components/auth/AuthField";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+
+const DPDefault = "/images/navpages/person_profile.jpg";
 
 const NAME_REGEX = /[A-z-]{3,20}$/;
 const PHONE_REGEX = /[0-9]{11}$/;
@@ -37,31 +36,14 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
 const Signup = () => {
   const router = useRouter();
   const { setAuth } = useAuth();
-  const errRef = useRef<HTMLParagraphElement>(null);
 
   const [name, setName] = useState("");
-  const [validName, setValidName] = useState(false);
-  const [nameFocus, setNameFocus] = useState(false);
-
   const [phone, setPhone] = useState("");
-  const [validPhone, setValidPhone] = useState(false);
-  const [phoneFocus, setPhoneFocus] = useState(false);
-
   const [email, setEmail] = useState("");
-  const [validEmail, setValidEmail] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
-
   const [password, setPassword] = useState("");
-  const [validPassword, setValidPassword] = useState(false);
-  const [passwordFocus, setPasswordFocus] = useState(false);
-
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [validConfirm, setValidConfirm] = useState(false);
-  const [confirmFocus, setConfirmFocus] = useState(false);
-
   const [address, setAddress] = useState("");
-  const [validAddress, setValidAddress] = useState(false);
-  const [addressFocus, setAddressFocus] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [image, setImage] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState("");
@@ -70,26 +52,19 @@ const Signup = () => {
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setValidName(NAME_REGEX.test(name));
-  }, [name]);
+  const validName = NAME_REGEX.test(name);
+  const validPhone = PHONE_REGEX.test(phone);
+  const validEmail = EMAIL_REGEX.test(email);
+  const validPassword = PASSWORD_REGEX.test(password);
+  const validConfirm = password === confirmPassword && confirmPassword !== "";
+  const validAddress = NAME_REGEX.test(address);
 
-  useEffect(() => {
-    setValidPhone(PHONE_REGEX.test(phone));
-  }, [phone]);
-
-  useEffect(() => {
-    setValidEmail(EMAIL_REGEX.test(email));
-  }, [email]);
-
-  useEffect(() => {
-    setValidPassword(PASSWORD_REGEX.test(password));
-    setValidConfirm(password === confirmPassword && confirmPassword !== "");
-  }, [password, confirmPassword]);
-
-  useEffect(() => {
-    setValidAddress(NAME_REGEX.test(address));
-  }, [address]);
+  const pwChecks = [
+    { label: "At least 8 characters", ok: password.length >= 8 },
+    { label: "Upper & lowercase letters", ok: /[a-z]/.test(password) && /[A-Z]/.test(password) },
+    { label: "One number", ok: /[0-9]/.test(password) },
+    { label: "One special character (!@#$%)", ok: /[!@#$%]/.test(password) },
+  ];
 
   useEffect(() => {
     setErrMsg("");
@@ -100,11 +75,8 @@ const Signup = () => {
     if (file) {
       setImage(file);
       setImageFile(file.name);
-
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
+      reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
@@ -113,39 +85,23 @@ const Signup = () => {
     setLoading(true);
     e.preventDefault();
 
-    const v1 = EMAIL_REGEX.test(email);
-    const v2 = PASSWORD_REGEX.test(password);
-    const v3 = NAME_REGEX.test(name);
-    const v4 = PHONE_REGEX.test(phone);
-    const v5 = NAME_REGEX.test(address);
-
-    if (!v1 || !v2 || !v3 || !v4 || !v5) {
-      setErrMsg("Invalid Entry");
-      errRef.current?.focus();
+    if (!validEmail || !validPassword || !validName || !validPhone || !validAddress) {
+      setErrMsg("Please fill every field correctly before continuing.");
       setLoading(false);
       return;
     }
-
-    // Validate image is provided
+    if (!validConfirm) {
+      setErrMsg("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
     if (!image) {
-      setErrMsg("Profile image is required");
-      Swal.fire({
-        icon: "error",
-        title: "Validation Error",
-        text: "Profile image is required",
-        confirmButtonText: "OK",
-        showConfirmButton: true,
-        confirmButtonColor: "#ef4444",
-      });
+      setErrMsg("A profile image is required.");
       setLoading(false);
       return;
     }
 
     try {
-      console.log("Attempting signup for:", email);
-      console.log("API Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
-      console.log("Image file:", image?.name, image?.size);
-      
       const formData = new FormData();
       formData.append("name", name);
       formData.append("phoneNumber", phone);
@@ -159,374 +115,216 @@ const Signup = () => {
         withCredentials: true,
       });
 
-      console.log("Signup response:", response);
-
       const data = response?.data;
       if (!data?.email || data?.role !== "STUDENT") {
-        console.error("Invalid signup response:", response?.data);
         throw new Error("Invalid response from server");
       }
 
       setAuth({ email: data.email, role: data.role });
-
-      // Set frontend-domain cookie so middleware allows access when API is on another origin (e.g. Render)
       setAuthSessionCookie(data.role);
 
       Swal.fire({
         icon: "success",
-        title: "Signup Success",
-        text: "You have successfully signed up!",
+        title: "Welcome to Nerdified!",
+        text: "Your account has been created.",
         confirmButtonText: "OK",
       });
 
       startTransition(() => router.push("/student"));
     } catch (err: any) {
-      console.error("Signup error:", err);
       let errorMessage = "Registration Failed";
-      
       if (!err?.response) {
-        errorMessage = "No Server Response - Check your connection and backend server";
+        errorMessage = "No Server Response - check your connection.";
       } else if (err.response?.status === 400) {
-        errorMessage = err.response?.data?.message || "Invalid request - " + (err.response?.data?.message || "Check all fields are filled correctly");
+        errorMessage = err.response?.data?.message || "Check all fields are filled correctly.";
       } else if (err.response?.status === 409) {
-        errorMessage = "Email Already Exists";
-      } else if (err.response?.status === 500) {
-        errorMessage = "Server Error - " + (err.response?.data?.message || "Please try again later");
+        errorMessage = "An account with this email already exists.";
       } else {
-        errorMessage = err.response?.data?.message || "Registration Failed";
+        errorMessage = err.response?.data?.message || "Registration failed. Please try again.";
       }
-
       setErrMsg(errorMessage);
-      Swal.fire({
-        icon: "error",
-        title: "Registration Failed",
-        text: errorMessage,
-        confirmButtonText: "OK",
-      });
-      errRef.current?.focus();
     }
     setLoading(false);
   };
 
+  const canSubmit =
+    validName && validPhone && validEmail && validPassword && validConfirm && validAddress && !!image;
+
   return (
-    <section className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="container mx-auto max-w-4xl">
-        <Card className="shadow-lg">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-blue-900 rounded-full flex items-center justify-center mb-4">
-              <FcBusinessman className="w-8 h-8" />
+    <AuthShell altText="Already have an account?" altLabel="Sign in" altHref="/signin" wide>
+      <div>
+        <Link href="/signup" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700">
+          <FaArrowLeft className="h-3 w-3" /> Change account type
+        </Link>
+        <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+          Create your student account
+        </h1>
+        <p className="mt-1.5 text-sm text-slate-500">
+          Learn new skills and advance your career with live, expert-led classes.
+        </p>
+
+        {errMsg && (
+          <p aria-live="assertive" className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            {errMsg}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-6 grid gap-6 md:grid-cols-2">
+          {/* Left: fields */}
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-sm font-medium text-slate-700">Full name</Label>
+              <AuthField
+                id="name"
+                placeholder="Enter your full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                icon={<FaUser className="h-4 w-4" />}
+                autoComplete="name"
+                required
+              />
             </div>
-            <CardTitle className="text-2xl font-bold">
-              Student Registration
-            </CardTitle>
-            <p
-              ref={errRef}
-              className={`text-center text-sm text-red-600 mt-2 ${
-                errMsg ? "block" : "hidden"
-              }`}
-              aria-live="assertive"
+
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email address</Label>
+              <AuthField
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                icon={<FaEnvelope className="h-4 w-4" />}
+                autoComplete="email"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
+              <AuthField
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Create a password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={<FaLock className="h-4 w-4" />}
+                autoComplete="new-password"
+                required
+                rightSlot={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="text-slate-400 hover:text-slate-600"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+                  </button>
+                }
+              />
+              <div className="grid grid-cols-2 gap-x-3 gap-y-1 pt-1">
+                {pwChecks.map(({ label, ok }) => (
+                  <span
+                    key={label}
+                    className={`flex items-center gap-1.5 text-[11px] ${ok ? "text-emerald-600" : "text-slate-400"}`}
+                  >
+                    {ok ? <FaCheckCircle className="h-3 w-3" /> : <FaRegCircle className="h-3 w-3" />}
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="confirm" className="text-sm font-medium text-slate-700">Confirm password</Label>
+              <AuthField
+                id="confirm"
+                type={showPassword ? "text" : "password"}
+                placeholder="Re-enter your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                icon={<FaLock className="h-4 w-4" />}
+                autoComplete="new-password"
+                required
+                className={confirmPassword && !validConfirm ? "border-red-400 focus-visible:ring-red-400" : ""}
+              />
+              {confirmPassword && !validConfirm && (
+                <p className="text-[11px] text-red-500">Passwords don&apos;t match.</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="address" className="text-sm font-medium text-slate-700">Address</Label>
+              <AuthField
+                id="address"
+                placeholder="City, State & Country"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                icon={<FaHome className="h-4 w-4" />}
+                autoComplete="street-address"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="phone" className="text-sm font-medium text-slate-700">Phone number</Label>
+              <AuthField
+                id="phone"
+                type="tel"
+                placeholder="11-digit phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                icon={<FaPhone className="h-4 w-4" />}
+                autoComplete="tel"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Right: image + submit */}
+          <div className="flex flex-col">
+            <Label className="text-sm font-medium text-slate-700">Profile image</Label>
+            <div className="relative mt-1.5 h-56 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+              <Image
+                src={imagePreview || DPDefault}
+                alt="Profile preview"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+            <input
+              type="file"
+              id="file-input"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <label
+              htmlFor="file-input"
+              className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 p-3 text-sm text-slate-600 transition-colors hover:bg-slate-50"
             >
-              {errMsg}
-            </p>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column - Form Fields */}
-                <div className="space-y-4">
-                  {/* Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcBusinessman className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Names"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        onFocus={() => setNameFocus(true)}
-                        onBlur={() => setNameFocus(false)}
-                        autoComplete="off"
-                        required
-                        className={`pl-10 ${
-                          name && (validName ? "border-green-500" : "border-red-500")
-                        }`}
-                      />
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        {validName ? (
-                          <FontAwesomeIcon icon={faCheck} className="text-green-500" />
-                        ) : name ? (
-                          <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                        ) : null}
-                      </div>
-                    </div>
-                    {nameFocus && name && !validName && (
-                      <p className="text-xs text-gray-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        Last Name followed by Other Names e.g. Andy James
-                      </p>
-                    )}
-                  </div>
+              <FaImage className="h-4 w-4 text-indigo-500" />
+              <span className="truncate">{imageFile || "Choose a profile image"}</span>
+            </label>
 
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcAddressBook className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onFocus={() => setEmailFocus(true)}
-                        onBlur={() => setEmailFocus(false)}
-                        autoComplete="off"
-                        required
-                        className={`pl-10 ${
-                          email && (validEmail ? "border-green-500" : "border-red-500")
-                        }`}
-                      />
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        {validEmail ? (
-                          <FontAwesomeIcon icon={faCheck} className="text-green-500" />
-                        ) : email ? (
-                          <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                        ) : null}
-                      </div>
-                    </div>
-                    {emailFocus && email && !validEmail && (
-                      <p className="text-xs text-gray-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        Enter a valid Email address e.g. andyjames@gmail.com
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Password */}
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcLock className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onFocus={() => setPasswordFocus(true)}
-                        onBlur={() => setPasswordFocus(false)}
-                        required
-                        className={`pl-10 ${
-                          password &&
-                          (validPassword ? "border-green-500" : "border-red-500")
-                        }`}
-                      />
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        {validPassword ? (
-                          <FontAwesomeIcon icon={faCheck} className="text-green-500" />
-                        ) : password ? (
-                          <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                        ) : null}
-                      </div>
-                    </div>
-                    {passwordFocus && !validPassword && password && (
-                      <p className="text-xs text-gray-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        8 to 24 characters. Must include uppercase, lowercase, number and special
-                        character (!@#$%)
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Confirm Password */}
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcLock className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm Password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        onFocus={() => setConfirmFocus(true)}
-                        onBlur={() => setConfirmFocus(false)}
-                        required
-                        className={`pl-10 ${
-                          confirmPassword &&
-                          (validConfirm ? "border-green-500" : "border-red-500")
-                        }`}
-                      />
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        {validConfirm && confirmPassword ? (
-                          <FontAwesomeIcon icon={faCheck} className="text-green-500" />
-                        ) : confirmPassword ? (
-                          <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                        ) : null}
-                      </div>
-                    </div>
-                    {confirmFocus && !validConfirm && confirmPassword && (
-                      <p className="text-xs text-gray-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        Must match the first password input field.
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Address */}
-                  <div className="space-y-2">
-                    <Label htmlFor="address">Address</Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcHome className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="address"
-                        type="text"
-                        placeholder="Address"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        onFocus={() => setAddressFocus(true)}
-                        onBlur={() => setAddressFocus(false)}
-                        autoComplete="off"
-                        required
-                        className={`pl-10 ${
-                          address &&
-                          (validAddress ? "border-green-500" : "border-red-500")
-                        }`}
-                      />
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        {validAddress ? (
-                          <FontAwesomeIcon icon={faCheck} className="text-green-500" />
-                        ) : address ? (
-                          <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                        ) : null}
-                      </div>
-                    </div>
-                    {addressFocus && address && !validAddress && (
-                      <p className="text-xs text-gray-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        Enter a valid Address - City, State & Country.
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Phone */}
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcPhone className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="Phone Number"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        onFocus={() => setPhoneFocus(true)}
-                        onBlur={() => setPhoneFocus(false)}
-                        autoComplete="off"
-                        required
-                        className={`pl-10 ${
-                          phone && (validPhone ? "border-green-500" : "border-red-500")
-                        }`}
-                      />
-                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                        {validPhone ? (
-                          <FontAwesomeIcon icon={faCheck} className="text-green-500" />
-                        ) : phone ? (
-                          <FontAwesomeIcon icon={faTimes} className="text-red-500" />
-                        ) : null}
-                      </div>
-                    </div>
-                    {phoneFocus && phone && !validPhone && (
-                      <p className="text-xs text-gray-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        Enter a valid Phone Number.
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Right Column - Image Upload */}
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Profile Image</Label>
-                    <div className="relative w-full h-64 rounded-lg overflow-hidden border-2 border-dashed border-gray-300">
-                      <Image
-                        src={imagePreview || DPDefault}
-                        alt="Profile Preview"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="relative">
-                      <Input
-                        type="file"
-                        id="file-input"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        required
-                        className="hidden"
-                      />
-                      <Label
-                        htmlFor="file-input"
-                        className="cursor-pointer flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50"
-                      >
-                        <FcImageFile className="w-5 h-5" />
-                        <span>{imageFile || "Choose an image"}</span>
-                      </Label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 text-center">
-                <Button
-                  type="submit"
-                  className="w-full md:w-1/2 bg-blue-900 hover:bg-blue-800"
-                  disabled={
-                    !validName ||
-                    !validPhone ||
-                    !validEmail ||
-                    !validPassword ||
-                    !validConfirm ||
-                    !validAddress ||
-                    loading
-                  }
-                >
-                  {loading ? (
-                    <SyncLoader size={8} color="#ffffff" />
-                  ) : (
-                    "Submit"
-                  )}
-                </Button>
-              </div>
-            </form>
-
-            <div className="mt-4 text-center text-sm">
-              <p className="text-gray-600">
-                Already have an account?{" "}
-                <Link href="/signin" className="text-blue-600 hover:text-blue-800 font-medium">
-                  Sign In
-                </Link>
+            <div className="mt-auto pt-6">
+              <button
+                type="submit"
+                disabled={!canSubmit || loading}
+                className="flex w-full items-center justify-center rounded-lg bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading ? <SyncLoader size={8} color="#ffffff" /> : "Create Account"}
+              </button>
+              <p className="mt-4 text-center text-xs text-slate-400">
+                By creating an account, you agree to our{" "}
+                <Link href="/terms" className="text-indigo-600 hover:underline">Terms</Link> and{" "}
+                <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </form>
       </div>
-    </section>
+    </AuthShell>
   );
 };
 

@@ -1,35 +1,33 @@
 "use client";
 
-import { useRef, useState, useEffect, startTransition } from "react";
+import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
-import {
-  faCheck,
-  faTimes,
-  faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  FcLock,
-  FcAddressBook,
-  FcBusinessman,
-  FcPhone,
-  FcImageFile,
-  FcDocument,
-} from "react-icons/fc";
-import axios from "@/lib/api/axios";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import axios from "@/lib/api/axios";
 import { useTutorAuth } from "@/hooks/useTutorAuth";
 import { setAuthSessionCookie } from "@/utils/authCookie";
 import Swal from "sweetalert2";
-import Image from "next/image";
-const DPDefault = "/images/navpages/person_profile.jpg";
 import { SyncLoader } from "react-spinners";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaPhone,
+  FaImage,
+  FaCheckCircle,
+  FaRegCircle,
+  FaArrowLeft,
+  FaInfoCircle,
+} from "react-icons/fa";
+import { AuthShell } from "@/components/auth/AuthShell";
+import { AuthField } from "@/components/auth/AuthField";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+
+const DPDefault = "/images/navpages/person_profile.jpg";
 
 const NAME_REGEX = /[A-z-]{3,20}$/;
 const PHONE_REGEX = /[0-9]{11}$/;
@@ -39,30 +37,15 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/
 const TutorSignup = () => {
   const router = useRouter();
   const { setAuth } = useTutorAuth();
-  const errRef = useRef<HTMLParagraphElement>(null);
 
   const [name, setName] = useState("");
-  const [validName, setValidName] = useState(false);
-  const [nameFocus, setNameFocus] = useState(false);
-
   const [phone, setPhone] = useState("");
-  const [validPhone, setValidPhone] = useState(false);
-  const [phoneFocus, setPhoneFocus] = useState(false);
-
   const [email, setEmail] = useState("");
-  const [validEmail, setValidEmail] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
-
   const [password, setPassword] = useState("");
-  const [validPassword, setValidPassword] = useState(false);
-  const [passwordFocus, setPasswordFocus] = useState(false);
-
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [validConfirm, setValidConfirm] = useState(false);
-  const [confirmFocus, setConfirmFocus] = useState(false);
-
   const [bio, setBio] = useState("");
   const [qualifications, setQualifications] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [image, setImage] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState("");
@@ -71,22 +54,18 @@ const TutorSignup = () => {
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setValidName(NAME_REGEX.test(name));
-  }, [name]);
+  const validName = NAME_REGEX.test(name);
+  const validPhone = !phone || PHONE_REGEX.test(phone); // optional for tutors
+  const validEmail = EMAIL_REGEX.test(email);
+  const validPassword = PASSWORD_REGEX.test(password);
+  const validConfirm = password === confirmPassword && confirmPassword !== "";
 
-  useEffect(() => {
-    setValidPhone(phone ? PHONE_REGEX.test(phone) : true); // Optional for tutors
-  }, [phone]);
-
-  useEffect(() => {
-    setValidEmail(EMAIL_REGEX.test(email));
-  }, [email]);
-
-  useEffect(() => {
-    setValidPassword(PASSWORD_REGEX.test(password));
-    setValidConfirm(password === confirmPassword && confirmPassword !== "");
-  }, [password, confirmPassword]);
+  const pwChecks = [
+    { label: "At least 8 characters", ok: password.length >= 8 },
+    { label: "Upper & lowercase letters", ok: /[a-z]/.test(password) && /[A-Z]/.test(password) },
+    { label: "One number", ok: /[0-9]/.test(password) },
+    { label: "One special character (!@#$%)", ok: /[!@#$%]/.test(password) },
+  ];
 
   useEffect(() => {
     setErrMsg("");
@@ -97,11 +76,8 @@ const TutorSignup = () => {
     if (file) {
       setImage(file);
       setImageFile(file.name);
-
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
+      reader.onloadend = () => setImagePreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
@@ -110,426 +86,265 @@ const TutorSignup = () => {
     setLoading(true);
     e.preventDefault();
 
-    const v1 = EMAIL_REGEX.test(email);
-    const v2 = PASSWORD_REGEX.test(password);
-    const v3 = NAME_REGEX.test(name);
-    const v4 = !phone || PHONE_REGEX.test(phone); // Phone is optional
-
-    if (!v1 || !v2 || !v3 || !v4) {
-      setErrMsg("Invalid Entry");
-      errRef.current?.focus();
+    if (!validEmail || !validPassword || !validName || !validPhone) {
+      setErrMsg("Please fill every required field correctly.");
       setLoading(false);
       return;
     }
-
-    if (password !== confirmPassword) {
-      setErrMsg("Passwords do not match");
-      errRef.current?.focus();
+    if (!validConfirm) {
+      setErrMsg("Passwords do not match.");
       setLoading(false);
       return;
     }
 
     try {
-      console.log("Attempting tutor signup for:", email);
-      console.log("API Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
-
       const formData = new FormData();
       formData.append("name", name);
       formData.append("email", email);
       formData.append("password", password);
-      if (phone) {
-        formData.append("phoneNumber", phone);
-      }
-      if (bio) {
-        formData.append("bio", bio);
-      }
-      if (qualifications) {
-        formData.append("qualifications", qualifications);
-      }
-      if (image) {
-        formData.append("image", image);
-      }
+      if (phone) formData.append("phoneNumber", phone);
+      if (bio) formData.append("bio", bio);
+      if (qualifications) formData.append("qualifications", qualifications);
+      if (image) formData.append("image", image);
 
       const response = await axios.post("auth/tutor/signup", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
 
-      console.log("Tutor signup response:", response);
-
       const data = response?.data;
       if (!data?.email || data?.role !== "TUTOR") {
-        console.error("Invalid tutor signup response:", response?.data);
         throw new Error("Invalid response from server");
       }
 
-      const isApproved = false;
       setAuth({ email: data.email, role: data.role });
 
-      Swal.fire({
+      await Swal.fire({
         icon: "success",
         title: "Registration Successful!",
-        text: isApproved
-          ? "Your tutor account has been created and approved!"
-          : "Your tutor account has been created and is pending admin approval. You'll be notified once approved.",
+        text: "Your tutor account has been created and is pending admin approval. You'll be notified once approved.",
         confirmButtonText: "OK",
-        showConfirmButton: true,
-        confirmButtonColor: "#a855f7",
+        confirmButtonColor: "#7c3aed",
       });
 
-      if (isApproved) setAuthSessionCookie("TUTOR");
-
-      startTransition(() => {
-        if (isApproved) {
-          router.push("/tutor");
-        } else {
-          router.push("/signin"); // Redirect to signin if pending approval
-        }
-      });
+      // Tutors start pending approval — send them to sign in.
+      startTransition(() => router.push("/signin"));
     } catch (err: any) {
-      console.error("Tutor signup error:", err);
       let errorMessage = "Registration Failed";
-
       if (!err?.response) {
-        errorMessage = "No Server Response - Check your connection and backend server";
+        errorMessage = "No Server Response - check your connection.";
       } else if (err.response?.status === 400) {
-        errorMessage =
-          err.response?.data?.message ||
-          "Invalid request - Check all fields are filled correctly";
+        errorMessage = err.response?.data?.message || "Check all fields are filled correctly.";
       } else if (err.response?.status === 409) {
-        errorMessage = "Email Already Exists";
-      } else if (err.response?.status === 500) {
-        errorMessage =
-          "Server Error - " +
-          (err.response?.data?.message || "Please try again later");
+        errorMessage = "An account with this email already exists.";
       } else {
-        errorMessage = err.response?.data?.message || "Registration Failed";
+        errorMessage = err.response?.data?.message || "Registration failed. Please try again.";
       }
-
       setErrMsg(errorMessage);
-      Swal.fire({
-        icon: "error",
-        title: "Registration Failed",
-        text: errorMessage,
-        confirmButtonText: "OK",
-      });
-      errRef.current?.focus();
     }
     setLoading(false);
   };
 
+  const canSubmit = validName && validEmail && validPassword && validConfirm && validPhone;
+
   return (
-    <section className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="container mx-auto max-w-4xl">
-        <Card className="shadow-lg">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-4">
-              <FcBusinessman className="w-8 h-8" />
-            </div>
-            <CardTitle className="text-2xl font-bold">Tutor Registration</CardTitle>
-            <p className="text-gray-600 mt-2">
-              Create your tutor account to start teaching
-            </p>
-            <Badge variant="outline" className="mt-2 mx-auto w-fit">
-              ⓘ Account requires admin approval
-            </Badge>
-          </CardHeader>
-          <CardContent>
-            <p
-              ref={errRef}
-              className={`text-center text-sm text-red-600 mb-4 ${
-                errMsg ? "block" : "hidden"
-              }`}
-              aria-live="assertive"
-            >
-              {errMsg}
-            </p>
+    <AuthShell altText="Already have an account?" altLabel="Sign in" altHref="/signin" wide>
+      <div>
+        <Link href="/signup" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700">
+          <FaArrowLeft className="h-3 w-3" /> Change account type
+        </Link>
+        <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+          Create your tutor account
+        </h1>
+        <p className="mt-1.5 text-sm text-slate-500">
+          Teach, inspire, and grow your impact with live, expert-led classes.
+        </p>
+        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+          <FaInfoCircle className="h-3 w-3" /> Tutor accounts require admin approval
+        </p>
 
-            <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Column - Form Fields */}
-                <div className="space-y-4">
-                  {/* Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">
-                      Full Name <span className="text-red-500">*</span>
-                      {validName && name && (
-                        <span className="text-green-600 ml-2">
-                          <FontAwesomeIcon icon={faCheck} />
-                        </span>
-                      )}
-                      {(name && !validName) && (
-                        <span className="text-red-600 ml-2">
-                          <FontAwesomeIcon icon={faTimes} />
-                        </span>
-                      )}
-                    </Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcBusinessman className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Enter your full name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        onFocus={() => setNameFocus(true)}
-                        onBlur={() => setNameFocus(false)}
-                        required
-                        className="pl-10"
-                      />
-                    </div>
-                    {nameFocus && name && !validName && (
-                      <p className="text-xs text-red-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        3-20 characters, letters and hyphens only
-                      </p>
-                    )}
-                  </div>
+        {errMsg && (
+          <p aria-live="assertive" className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+            {errMsg}
+          </p>
+        )}
 
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <Label htmlFor="email">
-                      Email <span className="text-red-500">*</span>
-                      {validEmail && email && (
-                        <span className="text-green-600 ml-2">
-                          <FontAwesomeIcon icon={faCheck} />
-                        </span>
-                      )}
-                      {email && !validEmail && (
-                        <span className="text-red-600 ml-2">
-                          <FontAwesomeIcon icon={faTimes} />
-                        </span>
-                      )}
-                    </Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcAddressBook className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        onFocus={() => setEmailFocus(true)}
-                        onBlur={() => setEmailFocus(false)}
-                        required
-                        className="pl-10"
-                      />
-                    </div>
-                    {emailFocus && email && !validEmail && (
-                      <p className="text-xs text-red-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        Must be a valid email address
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Phone */}
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number (Optional)</Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcPhone className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="Enter your phone number (11 digits)"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        onFocus={() => setPhoneFocus(true)}
-                        onBlur={() => setPhoneFocus(false)}
-                        className="pl-10"
-                      />
-                    </div>
-                    {phoneFocus && phone && !validPhone && (
-                      <p className="text-xs text-red-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        11 digits required if provided
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Password */}
-                  <div className="space-y-2">
-                    <Label htmlFor="password">
-                      Password <span className="text-red-500">*</span>
-                      {validPassword && password && (
-                        <span className="text-green-600 ml-2">
-                          <FontAwesomeIcon icon={faCheck} />
-                        </span>
-                      )}
-                      {password && !validPassword && (
-                        <span className="text-red-600 ml-2">
-                          <FontAwesomeIcon icon={faTimes} />
-                        </span>
-                      )}
-                    </Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcLock className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onFocus={() => setPasswordFocus(true)}
-                        onBlur={() => setPasswordFocus(false)}
-                        required
-                        className="pl-10"
-                      />
-                    </div>
-                    {passwordFocus && password && !validPassword && (
-                      <p className="text-xs text-red-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        8-24 characters, must include uppercase, lowercase, number, and special
-                        character
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Confirm Password */}
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">
-                      Confirm Password <span className="text-red-500">*</span>
-                      {validConfirm && confirmPassword && (
-                        <span className="text-green-600 ml-2">
-                          <FontAwesomeIcon icon={faCheck} />
-                        </span>
-                      )}
-                      {confirmPassword && !validConfirm && (
-                        <span className="text-red-600 ml-2">
-                          <FontAwesomeIcon icon={faTimes} />
-                        </span>
-                      )}
-                    </Label>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FcLock className="w-5 h-5" />
-                      </div>
-                      <Input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm your password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        onFocus={() => setConfirmFocus(true)}
-                        onBlur={() => setConfirmFocus(false)}
-                        required
-                        className="pl-10"
-                      />
-                    </div>
-                    {confirmFocus && confirmPassword && !validConfirm && (
-                      <p className="text-xs text-red-600 flex items-center gap-1">
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                        Must match password
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Right Column - Form Fields */}
-                <div className="space-y-4">
-                  {/* Image */}
-                  <div className="space-y-2">
-                    <Label htmlFor="image">Profile Picture (Optional)</Label>
-                    <div className="relative">
-                      <div className="relative w-full h-64 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 mb-4">
-                        <Image
-                          src={imagePreview || DPDefault}
-                          alt="Profile preview"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <Input
-                        id="image"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                      <Label
-                        htmlFor="image"
-                        className="cursor-pointer flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50"
-                      >
-                        <FcImageFile className="w-5 h-5" />
-                        <span>{imageFile || "Choose an image"}</span>
-                      </Label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bio - Spans Both Columns */}
-              <div className="mt-6 space-y-2 md:col-span-2">
-                <Label htmlFor="bio">Bio (Optional)</Label>
-                <Textarea
-                  id="bio"
-                  placeholder="Tell us about yourself and your teaching experience..."
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  rows={4}
-                  className="resize-none w-full"
+        <form onSubmit={handleSubmit} className="mt-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Left: fields */}
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="name" className="text-sm font-medium text-slate-700">Full name</Label>
+                <AuthField
+                  id="name"
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  icon={<FaUser className="h-4 w-4" />}
+                  autoComplete="name"
+                  required
                 />
               </div>
 
-              {/* Qualifications - Spans Both Columns */}
-              <div className="mt-6 space-y-2 md:col-span-2">
-                <Label htmlFor="qualifications">Qualifications (Optional)</Label>
-                <div className="relative">
-                  <div className="absolute left-3 top-3">
-                    <FcDocument className="w-5 h-5" />
-                  </div>
-                  <Textarea
-                    id="qualifications"
-                    placeholder="List your qualifications, certifications, degrees..."
-                    value={qualifications}
-                    onChange={(e) => setQualifications(e.target.value)}
-                    rows={3}
-                    className="resize-none pl-10 w-full"
-                  />
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email address</Label>
+                <AuthField
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  icon={<FaEnvelope className="h-4 w-4" />}
+                  autoComplete="email"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
+                  Phone number <span className="font-normal text-slate-400">(optional)</span>
+                </Label>
+                <AuthField
+                  id="phone"
+                  type="tel"
+                  placeholder="11-digit phone number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  icon={<FaPhone className="h-4 w-4" />}
+                  autoComplete="tel"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
+                <AuthField
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  icon={<FaLock className="h-4 w-4" />}
+                  autoComplete="new-password"
+                  required
+                  rightSlot={
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="text-slate-400 hover:text-slate-600"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+                    </button>
+                  }
+                />
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1 pt-1">
+                  {pwChecks.map(({ label, ok }) => (
+                    <span
+                      key={label}
+                      className={`flex items-center gap-1.5 text-[11px] ${ok ? "text-emerald-600" : "text-slate-400"}`}
+                    >
+                      {ok ? <FaCheckCircle className="h-3 w-3" /> : <FaRegCircle className="h-3 w-3" />}
+                      {label}
+                    </span>
+                  ))}
                 </div>
               </div>
 
-              <div className="mt-6 text-center">
-                <Button
-                  type="submit"
-                  className="w-full md:w-1/2 bg-purple-600 hover:bg-purple-700 text-white"
-                  disabled={loading || !validName || !validEmail || !validPassword || !validConfirm}
-                >
-                  {loading ? (
-                    <SyncLoader size={8} color="#ffffff" />
-                  ) : (
-                    "Register as Tutor"
-                  )}
-                </Button>
+              <div className="space-y-1.5">
+                <Label htmlFor="confirm" className="text-sm font-medium text-slate-700">Confirm password</Label>
+                <AuthField
+                  id="confirm"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Re-enter your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  icon={<FaLock className="h-4 w-4" />}
+                  autoComplete="new-password"
+                  required
+                  className={confirmPassword && !validConfirm ? "border-red-400 focus-visible:ring-red-400" : ""}
+                />
+                {confirmPassword && !validConfirm && (
+                  <p className="text-[11px] text-red-500">Passwords don&apos;t match.</p>
+                )}
               </div>
-            </form>
-
-            <div className="mt-6 text-center text-sm">
-              <p className="text-gray-600">
-                Already have an account?{" "}
-                <Link href="/signin" className="text-purple-600 hover:text-purple-800 font-medium">
-                  Sign In
-                </Link>
-              </p>
-              <p className="text-gray-600 mt-2">
-                Want to learn instead?{" "}
-                <Link href="/signup/student" className="text-blue-600 hover:text-blue-800 font-medium">
-                  Sign up as Student
-                </Link>
-              </p>
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Right: image */}
+            <div>
+              <Label className="text-sm font-medium text-slate-700">
+                Profile picture <span className="font-normal text-slate-400">(optional)</span>
+              </Label>
+              <div className="relative mt-1.5 h-56 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                <Image
+                  src={imagePreview || DPDefault}
+                  alt="Profile preview"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+              <input
+                type="file"
+                id="tutor-file-input"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              <label
+                htmlFor="tutor-file-input"
+                className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 p-3 text-sm text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                <FaImage className="h-4 w-4 text-violet-500" />
+                <span className="truncate">{imageFile || "Choose a profile picture"}</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Bio + qualifications, full width */}
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="bio" className="text-sm font-medium text-slate-700">
+                Bio <span className="font-normal text-slate-400">(optional)</span>
+              </Label>
+              <Textarea
+                id="bio"
+                placeholder="Tell learners about yourself and your teaching experience…"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                rows={3}
+                className="resize-none rounded-lg border-slate-200 text-sm"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="qualifications" className="text-sm font-medium text-slate-700">
+                Qualifications <span className="font-normal text-slate-400">(optional)</span>
+              </Label>
+              <Textarea
+                id="qualifications"
+                placeholder="Certifications, degrees, and relevant experience…"
+                value={qualifications}
+                onChange={(e) => setQualifications(e.target.value)}
+                rows={3}
+                className="resize-none rounded-lg border-slate-200 text-sm"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!canSubmit || loading}
+            className="mt-6 flex w-full items-center justify-center rounded-lg bg-violet-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? <SyncLoader size={8} color="#ffffff" /> : "Create Tutor Account"}
+          </button>
+          <p className="mt-4 text-center text-xs text-slate-400">
+            By creating an account, you agree to our{" "}
+            <Link href="/terms" className="text-indigo-600 hover:underline">Terms</Link> and{" "}
+            <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
+          </p>
+        </form>
       </div>
-    </section>
+    </AuthShell>
   );
 };
 
