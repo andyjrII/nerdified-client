@@ -20,7 +20,7 @@ export const AuthField = forwardRef<HTMLInputElement, AuthFieldProps>(
       <Input
         ref={ref}
         className={cn(
-          "h-11 rounded-lg border-slate-200 bg-white pl-10 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:ring-indigo-500",
+          "h-10 rounded-lg border-slate-200 bg-white pl-10 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:ring-indigo-500",
           rightSlot && "pr-10",
           className,
         )}

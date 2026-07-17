@@ -163,15 +163,15 @@ const Signin = () => {
   return (
     <AuthShell altText="Don't have an account?" altLabel="Sign up" altHref="/signup">
       <div className="mx-auto max-w-md">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
           Welcome back <span className="align-middle">👋</span>
         </h1>
-        <p className="mt-1.5 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500">
           Sign in to continue your learning journey.
         </p>
 
         {/* Role toggle */}
-        <div className="mt-6 grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
+        <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
           {roles.map(({ value, label, icon: Icon }) => (
             <button
               key={value}
@@ -199,7 +199,7 @@ const Signin = () => {
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-3">
           <div className="space-y-1.5">
             <Label htmlFor="email" className="text-sm font-medium text-slate-700">
               Email address
@@ -267,7 +267,7 @@ const Signin = () => {
           </button>
         </form>
 
-        <div className="my-5 flex items-center gap-3">
+        <div className="my-4 flex items-center gap-3">
           <span className="h-px flex-1 bg-slate-200" />
           <span className="text-xs text-slate-400">or continue with</span>
           <span className="h-px flex-1 bg-slate-200" />
@@ -282,7 +282,7 @@ const Signin = () => {
           <FcGoogle className="h-5 w-5" /> Continue with Google
         </button>
 
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className="mt-4 text-center text-xs text-slate-400">
           By signing in, you agree to our{" "}
           <Link href="/terms" className="text-indigo-600 hover:underline">Terms of Service</Link>{" "}
           and{" "}

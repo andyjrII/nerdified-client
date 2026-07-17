@@ -153,27 +153,27 @@ const TutorSignup = () => {
         <Link href="/signup" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700">
           <FaArrowLeft className="h-3 w-3" /> Change account type
         </Link>
-        <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="mt-2 text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
           Create your tutor account
         </h1>
-        <p className="mt-1.5 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500">
           Teach, inspire, and grow your impact with live, expert-led classes.
         </p>
-        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+        <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
           <FaInfoCircle className="h-3 w-3" /> Tutor accounts require admin approval
         </p>
 
         {errMsg && (
-          <p aria-live="assertive" className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+          <p aria-live="assertive" className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
             {errMsg}
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-6">
-          <div className="grid gap-6 md:grid-cols-2">
+        <form onSubmit={handleSubmit} className="mt-4">
+          <div className="grid gap-5 md:grid-cols-2">
             {/* Left: fields */}
-            <div className="space-y-4">
-              <div className="space-y-1.5">
+            <div className="space-y-2.5">
+              <div className="space-y-1">
                 <Label htmlFor="name" className="text-sm font-medium text-slate-700">Full name</Label>
                 <AuthField
                   id="name"
@@ -186,7 +186,7 @@ const TutorSignup = () => {
                 />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email address</Label>
                 <AuthField
                   id="email"
@@ -200,7 +200,7 @@ const TutorSignup = () => {
                 />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
                   Phone number <span className="font-normal text-slate-400">(optional)</span>
                 </Label>
@@ -215,7 +215,7 @@ const TutorSignup = () => {
                 />
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
                 <AuthField
                   id="password"
@@ -250,7 +250,7 @@ const TutorSignup = () => {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <Label htmlFor="confirm" className="text-sm font-medium text-slate-700">Confirm password</Label>
                 <AuthField
                   id="confirm"
@@ -274,7 +274,7 @@ const TutorSignup = () => {
               <Label className="text-sm font-medium text-slate-700">
                 Profile picture <span className="font-normal text-slate-400">(optional)</span>
               </Label>
-              <div className="relative mt-1.5 h-56 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+              <div className="relative mt-1 h-36 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
                 <Image
                   src={imagePreview || DPDefault}
                   alt="Profile preview"
@@ -292,7 +292,7 @@ const TutorSignup = () => {
               />
               <label
                 htmlFor="tutor-file-input"
-                className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 p-3 text-sm text-slate-600 transition-colors hover:bg-slate-50"
+                className="mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-slate-300 p-2.5 text-sm text-slate-600 transition-colors hover:bg-slate-50"
               >
                 <FaImage className="h-4 w-4 text-violet-500" />
                 <span className="truncate">{imageFile || "Choose a profile picture"}</span>
@@ -301,8 +301,8 @@ const TutorSignup = () => {
           </div>
 
           {/* Bio + qualifications, full width */}
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="space-y-1.5">
+          <div className="mt-3 grid gap-4 md:grid-cols-2">
+            <div className="space-y-1">
               <Label htmlFor="bio" className="text-sm font-medium text-slate-700">
                 Bio <span className="font-normal text-slate-400">(optional)</span>
               </Label>
@@ -311,11 +311,11 @@ const TutorSignup = () => {
                 placeholder="Tell learners about yourself and your teaching experience…"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                rows={3}
+                rows={2}
                 className="resize-none rounded-lg border-slate-200 text-sm"
               />
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Label htmlFor="qualifications" className="text-sm font-medium text-slate-700">
                 Qualifications <span className="font-normal text-slate-400">(optional)</span>
               </Label>
@@ -324,7 +324,7 @@ const TutorSignup = () => {
                 placeholder="Certifications, degrees, and relevant experience…"
                 value={qualifications}
                 onChange={(e) => setQualifications(e.target.value)}
-                rows={3}
+                rows={2}
                 className="resize-none rounded-lg border-slate-200 text-sm"
               />
             </div>
@@ -333,11 +333,11 @@ const TutorSignup = () => {
           <button
             type="submit"
             disabled={!canSubmit || loading}
-            className="mt-6 flex w-full items-center justify-center rounded-lg bg-violet-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 flex w-full items-center justify-center rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? <SyncLoader size={8} color="#ffffff" /> : "Create Tutor Account"}
           </button>
-          <p className="mt-4 text-center text-xs text-slate-400">
+          <p className="mt-3 text-center text-xs text-slate-400">
             By creating an account, you agree to our{" "}
             <Link href="/terms" className="text-indigo-600 hover:underline">Terms</Link> and{" "}
             <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
