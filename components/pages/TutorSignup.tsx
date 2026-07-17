@@ -46,6 +46,7 @@ const TutorSignup = () => {
   const [bio, setBio] = useState("");
   const [qualifications, setQualifications] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showExtra, setShowExtra] = useState(false);
 
   const [image, setImage] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState("");
@@ -61,10 +62,10 @@ const TutorSignup = () => {
   const validConfirm = password === confirmPassword && confirmPassword !== "";
 
   const pwChecks = [
-    { label: "At least 8 characters", ok: password.length >= 8 },
-    { label: "Upper & lowercase letters", ok: /[a-z]/.test(password) && /[A-Z]/.test(password) },
-    { label: "One number", ok: /[0-9]/.test(password) },
-    { label: "One special character (!@#$%)", ok: /[!@#$%]/.test(password) },
+    { label: "8+ chars", ok: password.length >= 8 },
+    { label: "Mixed case", ok: /[a-z]/.test(password) && /[A-Z]/.test(password) },
+    { label: "Number", ok: /[0-9]/.test(password) },
+    { label: "Symbol", ok: /[!@#$%]/.test(password) },
   ];
 
   useEffect(() => {
@@ -148,19 +149,19 @@ const TutorSignup = () => {
   const canSubmit = validName && validEmail && validPassword && validConfirm && validPhone;
 
   return (
-    <AuthShell altText="Already have an account?" altLabel="Sign in" altHref="/signin" wide>
+    <AuthShell altText="Already have an account?" altLabel="Sign in" altHref="/signin" wide fitViewport>
       <div>
         <Link href="/signup" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700">
           <FaArrowLeft className="h-3 w-3" /> Change account type
         </Link>
-        <h1 className="mt-2 text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
+        <h1 className="mt-1.5 text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
           Create your tutor account
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Teach, inspire, and grow your impact with live, expert-led classes.
-        </p>
-        <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
-          <FaInfoCircle className="h-3 w-3" /> Tutor accounts require admin approval
+        <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-slate-500">
+          Teach live, expert-led classes.
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700">
+            <FaInfoCircle className="h-3 w-3" /> Requires admin approval
+          </span>
         </p>
 
         {errMsg && (
@@ -169,11 +170,11 @@ const TutorSignup = () => {
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-4">
+        <form onSubmit={handleSubmit} className="mt-2">
           <div className="grid gap-5 md:grid-cols-2">
             {/* Left: fields */}
-            <div className="space-y-2.5">
-              <div className="space-y-1">
+            <div className="space-y-1">
+              <div className="space-y-0.5">
                 <Label htmlFor="name" className="text-sm font-medium text-slate-700">Full name</Label>
                 <AuthField
                   id="name"
@@ -186,7 +187,7 @@ const TutorSignup = () => {
                 />
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email address</Label>
                 <AuthField
                   id="email"
@@ -200,7 +201,7 @@ const TutorSignup = () => {
                 />
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
                 <AuthField
                   id="password"
@@ -222,11 +223,11 @@ const TutorSignup = () => {
                     </button>
                   }
                 />
-                <div className="grid grid-cols-2 gap-x-3 gap-y-1 pt-1">
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 pt-1">
                   {pwChecks.map(({ label, ok }) => (
                     <span
                       key={label}
-                      className={`flex items-center gap-1.5 text-[11px] ${ok ? "text-emerald-600" : "text-slate-400"}`}
+                      className={`flex items-center gap-1 text-[11px] ${ok ? "text-emerald-600" : "text-slate-400"}`}
                     >
                       {ok ? <FaCheckCircle className="h-3 w-3" /> : <FaRegCircle className="h-3 w-3" />}
                       {label}
@@ -235,7 +236,7 @@ const TutorSignup = () => {
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <Label htmlFor="confirm" className="text-sm font-medium text-slate-700">Confirm password</Label>
                 <AuthField
                   id="confirm"
@@ -259,7 +260,7 @@ const TutorSignup = () => {
               <Label className="text-sm font-medium text-slate-700">
                 Profile picture <span className="font-normal text-slate-400">(optional)</span>
               </Label>
-              <div className="relative mt-1 h-36 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+              <div className="relative mt-1 h-28 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
                 <Image
                   src={imagePreview || DPDefault}
                   alt="Profile preview"
@@ -283,7 +284,7 @@ const TutorSignup = () => {
                 <span className="truncate">{imageFile || "Choose a profile picture"}</span>
               </label>
 
-              <div className="mt-3 space-y-1">
+              <div className="mt-2 space-y-1">
                 <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
                   Phone number <span className="font-normal text-slate-400">(optional)</span>
                 </Label>
@@ -300,9 +301,19 @@ const TutorSignup = () => {
             </div>
           </div>
 
-          {/* Bio + qualifications, full width */}
-          <div className="mt-3 grid gap-4 md:grid-cols-2">
-            <div className="space-y-1">
+          {/* Bio + qualifications, optional — collapsed by default to keep the form compact */}
+          {!showExtra && (
+            <button
+              type="button"
+              onClick={() => setShowExtra(true)}
+              className="mt-2 text-sm font-semibold text-violet-600 hover:text-violet-700"
+            >
+              + Add bio &amp; qualifications <span className="font-normal text-slate-400">(optional)</span>
+            </button>
+          )}
+          {showExtra && (
+          <div className="mt-2 grid gap-3 md:grid-cols-2">
+            <div className="space-y-0.5">
               <Label htmlFor="bio" className="text-sm font-medium text-slate-700">
                 Bio <span className="font-normal text-slate-400">(optional)</span>
               </Label>
@@ -315,7 +326,7 @@ const TutorSignup = () => {
                 className="resize-none rounded-lg border-slate-200 text-sm"
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <Label htmlFor="qualifications" className="text-sm font-medium text-slate-700">
                 Qualifications <span className="font-normal text-slate-400">(optional)</span>
               </Label>
@@ -329,15 +340,16 @@ const TutorSignup = () => {
               />
             </div>
           </div>
+          )}
 
           <button
             type="submit"
             disabled={!canSubmit || loading}
-            className="mt-4 flex w-full items-center justify-center rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-2 flex w-full items-center justify-center rounded-lg bg-violet-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? <SyncLoader size={8} color="#ffffff" /> : "Create Tutor Account"}
           </button>
-          <p className="mt-3 text-center text-xs text-slate-400">
+          <p className="mt-2 text-center text-xs text-slate-400">
             By creating an account, you agree to our{" "}
             <Link href="/terms" className="text-indigo-600 hover:underline">Terms</Link> and{" "}
             <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.

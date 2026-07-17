@@ -20,9 +20,10 @@ interface AuthShellProps {
   /** Widen the form column for multi-field signup forms. */
   wide?: boolean;
   /**
-   * Lock the page to exactly one viewport height (100dvh) with no scroll.
-   * Use for short forms (sign in); leave off for tall forms that may need to
-   * scroll on very short screens.
+   * Compact mode: tighter padding so the (already-compacted) form fits within
+   * one viewport height on a standard laptop. Uses min-height + vertical
+   * centering, so larger screens show it centered with no scroll, and smaller
+   * screens simply scroll (nothing is clipped).
    */
   fitViewport?: boolean;
 }
@@ -30,10 +31,9 @@ interface AuthShellProps {
 export function AuthShell({ children, altText, altLabel, altHref, wide, fitViewport }: AuthShellProps) {
   return (
     <div
-      className={`flex flex-col justify-center bg-gradient-to-br from-indigo-50 via-white to-violet-100 px-4 sm:px-6 ${
-        fitViewport ? "h-screen overflow-hidden py-2" : "min-h-screen py-4 sm:py-6"
+      className={`flex min-h-screen flex-col justify-center bg-gradient-to-br from-indigo-50 via-white to-violet-100 px-4 sm:px-6 ${
+        fitViewport ? "py-2" : "py-4 sm:py-6"
       }`}
-      style={fitViewport ? { height: "100dvh" } : undefined}
     >
       <div className={wide ? "mx-auto w-full max-w-6xl" : "mx-auto w-full max-w-5xl"}>
         <div className="grid overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-slate-100 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
@@ -78,7 +78,7 @@ export function AuthShell({ children, altText, altLabel, altHref, wide, fitViewp
 
           {/* Form column */}
           <div className="p-4 sm:p-5">
-            <p className="mb-3 text-right text-sm text-slate-500">
+            <p className="mb-2 text-right text-sm text-slate-500">
               {altText}{" "}
               <Link href={altHref} className="font-semibold text-indigo-600 hover:text-indigo-700">
                 {altLabel}
@@ -89,13 +89,13 @@ export function AuthShell({ children, altText, altLabel, altHref, wide, fitViewp
         </div>
 
         {/* Features strip */}
-        <div className="mt-3 grid grid-cols-2 gap-2 rounded-2xl border border-slate-100 bg-white/70 px-4 py-1.5 backdrop-blur sm:grid-cols-4">
+        <div className="mt-2 grid grid-cols-2 gap-x-2 gap-y-1 rounded-2xl border border-slate-100 bg-white/70 px-4 py-1.5 backdrop-blur sm:grid-cols-4">
           {features.map(({ icon: Icon, tint, title }) => (
             <div key={title} className="flex items-center gap-2">
-              <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${tint}`}>
-                <Icon className="h-3 w-3" />
+              <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${tint}`}>
+                <Icon className="h-2.5 w-2.5" />
               </div>
-              <p className="text-xs font-semibold text-slate-700">{title}</p>
+              <p className="text-[11px] font-semibold text-slate-700">{title}</p>
             </div>
           ))}
         </div>
