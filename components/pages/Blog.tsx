@@ -6,10 +6,15 @@ import axios from "@/lib/api/axios";
 import Image from "next/image";
 import Moment from "react-moment";
 import ReactPaginate from "react-paginate";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { motion, Variants } from "framer-motion";
+import {
+  FaSearch,
+  FaRegNewspaper,
+  FaArrowRight,
+  FaRegCalendarAlt,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 
 interface BlogPost {
   id: number;
@@ -19,6 +24,15 @@ interface BlogPost {
   imagePath?: string;
 }
 
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, delay: i * 0.06, ease: "easeOut" },
+  }),
+};
+
 const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [totalPosts, setTotalPosts] = useState<number>(0);
@@ -27,11 +41,13 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const postsPerPage = 20;
 
   useEffect(() => {
     const fetchPosts = async () => {
+      setLoading(true);
       try {
         const response = await axios.get(`blog/${currentPage}`, {
           params: {
@@ -47,6 +63,8 @@ const Blog = () => {
         await fetchImages(currentPage, searchQuery, startDate, endDate);
       } catch (error) {
         console.error("Error getting posts:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPosts();
@@ -88,6 +106,9 @@ const Blog = () => {
 
   const changePage = ({ selected }: { selected: number }) => {
     setCurrentPage(selected + 1);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,128 +117,236 @@ const Blog = () => {
   };
 
   return (
-    <main>
-      <header className="py-6 border-b bg-gradient-to-r from-blue-900 to-blue-800">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <h1 className="inline-block bg-red-600 text-white px-6 py-2 rounded-full text-2xl font-bold">
-              Blog
-            </h1>
-          </div>
-        </div>
-      </header>
+    <div className="bg-white text-slate-900">
+      {/* ===================== HERO ===================== */}
+      <section className="relative overflow-hidden border-b border-slate-100 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-28 -left-20 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-4 py-12 text-center sm:px-6 lg:px-8 lg:py-16">
+          <motion.span
+            className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600 ring-1 ring-blue-100"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            The Nerdified Blog
+          </motion.span>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Blog entries */}
+          <motion.h1
+            className="mx-auto mt-4 max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-4xl lg:text-5xl"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.05, ease: "easeOut" }}
+          >
+            Insights to help you{" "}
+            <span className="relative inline-block text-blue-600">
+              grow
+              <svg className="absolute -bottom-1.5 left-0 w-full" height="12" viewBox="0 0 200 12" fill="none" preserveAspectRatio="none" aria-hidden>
+                <motion.path
+                  d="M2 8C40 3 160 3 198 8"
+                  stroke="#2563eb"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ delay: 0.5, duration: 0.9, ease: "easeInOut" }}
+                />
+              </svg>
+            </span>
+          </motion.h1>
+
+          <motion.p
+            className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.15, ease: "easeOut" }}
+          >
+            Tips, stories, and lessons on learning, teaching, and building
+            skills that matter.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ===================== CONTENT ===================== */}
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+          {/* Posts */}
           <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {posts.map((post, index) => (
-                <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  {imagePaths[index] && (
-                    <Link href={post.postUrl}>
-                      <div className="relative w-full h-48">
-                        <Image
-                          src={imagePaths[index]}
-                          alt={post.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    </Link>
-                  )}
-                  <CardContent className="p-4">
-                    <div className="text-sm text-muted-foreground mb-2">
-                      <Moment format="MMMM D, YYYY">{post.datePosted}</Moment>
+            {/* Loading skeletons */}
+            {loading && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+                    <div className="h-44 animate-pulse bg-slate-100" />
+                    <div className="space-y-3 p-5">
+                      <div className="h-3 w-24 animate-pulse rounded bg-slate-100" />
+                      <div className="h-4 w-3/4 animate-pulse rounded bg-slate-100" />
+                      <div className="h-9 w-full animate-pulse rounded-lg bg-slate-100" />
                     </div>
-                    <h2 className="text-xl font-bold mb-4 line-clamp-2">
-                      {post.title}
-                    </h2>
-                    <Button asChild variant="outline" className="w-full">
-                      <Link href={`https://${post.postUrl}`} target="_blank">
-                        Read more →
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!loading && posts.length === 0 && (
+              <motion.div
+                className="rounded-3xl border border-slate-100 bg-slate-50 px-6 py-16 text-center"
+                variants={fadeUp}
+                initial="hidden"
+                animate="show"
+              >
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+                  <FaRegNewspaper className="h-6 w-6" />
+                </div>
+                <h3 className="mt-4 text-lg font-bold text-slate-900">
+                  No posts found
+                </h3>
+                <p className="mt-2 text-sm text-slate-500">
+                  {searchQuery || startDate || endDate
+                    ? "No posts match your filters. Try adjusting your search or date range."
+                    : "No blog posts have been published yet. Check back soon!"}
+                </p>
+              </motion.div>
+            )}
+
+            {/* Posts grid */}
+            {!loading && posts.length > 0 && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                {posts.map((post, index) => (
+                  <motion.div
+                    key={post.id}
+                    variants={fadeUp}
+                    custom={index}
+                    initial="hidden"
+                    animate="show"
+                  >
+                    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-md">
+                      <Link
+                        href={`https://${post.postUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative block h-44 w-full overflow-hidden bg-slate-100"
+                      >
+                        {imagePaths[index] ? (
+                          <Image
+                            src={imagePaths[index]}
+                            alt={post.title}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        ) : (
+                          <span className="flex h-full items-center justify-center text-slate-300">
+                            <FaRegNewspaper className="h-10 w-10" />
+                          </span>
+                        )}
                       </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <div className="flex flex-1 flex-col p-5">
+                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                          <FaRegCalendarAlt className="h-3 w-3" />
+                          <Moment format="MMMM D, YYYY">{post.datePosted}</Moment>
+                        </div>
+                        <h2 className="mt-2 line-clamp-2 text-base font-bold leading-snug text-slate-900">
+                          {post.title}
+                        </h2>
+                        <Link
+                          href={`https://${post.postUrl}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700"
+                        >
+                          Read more
+                          <FaArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
 
             {/* Pagination */}
-            {pageCount > 1 && (
-              <div className="mt-8">
+            {!loading && pageCount > 1 && (
+              <div className="mt-10">
                 <ReactPaginate
-                  previousLabel={"Previous"}
-                  nextLabel={"Next"}
+                  previousLabel={<FaChevronLeft className="h-3 w-3" />}
+                  nextLabel={<FaChevronRight className="h-3 w-3" />}
                   pageCount={pageCount}
+                  forcePage={currentPage - 1}
                   onPageChange={changePage}
-                  containerClassName={"flex justify-center space-x-2"}
-                  previousLinkClassName={"px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-800"}
-                  nextLinkClassName={"px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-800"}
-                  disabledClassName={"opacity-50 cursor-not-allowed"}
-                  activeClassName={"bg-blue-900 text-white"}
-                  pageLinkClassName={"px-4 py-2 border rounded hover:bg-gray-100"}
-                  breakLabel={"..."}
+                  breakLabel="…"
+                  containerClassName="flex flex-wrap items-center justify-center gap-2"
+                  pageLinkClassName="flex h-10 min-w-10 items-center justify-center rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+                  activeLinkClassName="!border-blue-600 !bg-blue-600 !text-white hover:!bg-blue-700"
+                  previousLinkClassName="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50"
+                  nextLinkClassName="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50"
+                  breakLinkClassName="flex h-10 min-w-10 items-center justify-center px-2 text-slate-400"
+                  disabledLinkClassName="cursor-not-allowed opacity-40 hover:bg-transparent"
                 />
               </div>
             )}
           </div>
 
-          {/* Side widgets */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Search</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Input
-                  type="text"
-                  placeholder="Enter search term..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-              </CardContent>
-            </Card>
+          {/* Sidebar */}
+          <aside className="lg:col-span-1">
+            <div className="space-y-6 lg:sticky lg:top-24">
+              {/* Search */}
+              <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900">Search</h3>
+                <div className="relative mt-3">
+                  <FaSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search posts…"
+                    onChange={handleSearchChange}
+                    className="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10"
+                  />
+                </div>
+              </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Time Frame</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="start-date">Start Date</Label>
-                  <Input
-                    id="start-date"
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    max={new Date().toISOString().split("T")[0]}
-                    className="mt-1"
-                  />
+              {/* Time frame */}
+              <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900">Time frame</h3>
+                <div className="mt-3 space-y-3">
+                  <div className="space-y-1.5">
+                    <label htmlFor="start-date" className="text-xs font-medium text-slate-500">
+                      Start date
+                    </label>
+                    <input
+                      id="start-date"
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => {
+                        setStartDate(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      max={new Date().toISOString().split("T")[0]}
+                      className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 transition-colors focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label htmlFor="end-date" className="text-xs font-medium text-slate-500">
+                      End date
+                    </label>
+                    <input
+                      id="end-date"
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => {
+                        setEndDate(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                      min={startDate}
+                      className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 transition-colors focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="end-date">End Date</Label>
-                  <Input
-                    id="end-date"
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    min={startDate}
-                    className="mt-1"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </div>
+          </aside>
         </div>
-      </div>
-    </main>
+      </section>
+    </div>
   );
 };
 
