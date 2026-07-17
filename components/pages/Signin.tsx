@@ -161,7 +161,7 @@ const Signin = () => {
   };
 
   return (
-    <AuthShell altText="Don't have an account?" altLabel="Sign up" altHref="/signup">
+    <AuthShell altText="Don't have an account?" altLabel="Sign up" altHref="/signup" fitViewport>
       <div className="mx-auto max-w-md">
         <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
           Welcome back <span className="align-middle">👋</span>
