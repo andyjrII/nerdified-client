@@ -32,7 +32,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FaClock, FaPhone } from "react-icons/fa";
-import { IoLocation } from "react-icons/io5";
 import Moment from "react-moment";
 
 const StudentSidebar = () => {
@@ -206,19 +205,13 @@ const StudentSidebar = () => {
                   <span>{student.phoneNumber}</span>
                 </div>
               )}
-              {student?.address && (
-                <div className="flex items-center gap-2 text-sm">
-                  <IoLocation className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                  <span className="break-words">{student.address}</span>
-                </div>
-              )}
               {student?.createdAt && (
                 <div className="flex items-center gap-2 text-sm">
                   <FaClock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                   <span>Member since <Moment format="MMM YYYY">{student.createdAt}</Moment></span>
                 </div>
               )}
-              {!student?.phoneNumber && !student?.address && !student?.createdAt && (
+              {!student?.phoneNumber && !student?.createdAt && (
                 <p className="text-xs text-muted-foreground">No extra details yet.</p>
               )}
             </div>

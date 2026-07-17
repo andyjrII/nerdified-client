@@ -15,9 +15,6 @@ import {
   FaLock,
   FaEye,
   FaEyeSlash,
-  FaMapMarkerAlt,
-  FaChevronDown,
-  FaCity,
   FaPhone,
   FaImage,
   FaCheckCircle,
@@ -27,7 +24,6 @@ import {
 import { AuthShell } from "@/components/auth/AuthShell";
 import { AuthField } from "@/components/auth/AuthField";
 import { Label } from "@/components/ui/label";
-import { NIGERIAN_STATES } from "@/lib/nigerianStates";
 
 const DPDefault = "/images/navpages/person_profile.jpg";
 
@@ -45,8 +41,6 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [state, setState] = useState(""); // Nigerian state
-  const [city, setCity] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [image, setImage] = useState<File | null>(null);
@@ -61,7 +55,6 @@ const Signup = () => {
   const validEmail = EMAIL_REGEX.test(email);
   const validPassword = PASSWORD_REGEX.test(password);
   const validConfirm = password === confirmPassword && confirmPassword !== "";
-  const validAddress = state !== "" && city.trim().length >= 2;
 
   const pwChecks = [
     { label: "At least 8 characters", ok: password.length >= 8 },
@@ -72,7 +65,7 @@ const Signup = () => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [name, phone, email, password, confirmPassword, state, city]);
+  }, [name, phone, email, password, confirmPassword]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -89,7 +82,7 @@ const Signup = () => {
     setLoading(true);
     e.preventDefault();
 
-    if (!validEmail || !validPassword || !validName || !validPhone || !validAddress) {
+    if (!validEmail || !validPassword || !validName || !validPhone) {
       setErrMsg("Please fill every field correctly before continuing.");
       setLoading(false);
       return;
@@ -111,7 +104,6 @@ const Signup = () => {
       formData.append("phoneNumber", phone);
       formData.append("email", email);
       formData.append("password", password);
-      formData.append("address", `${city.trim()}, ${state}, Nigeria`);
       formData.append("image", image);
 
       const response = await axios.post("auth/signup", formData, {
@@ -152,7 +144,7 @@ const Signup = () => {
   };
 
   const canSubmit =
-    validName && validPhone && validEmail && validPassword && validConfirm && validAddress && !!image;
+    validName && validPhone && validEmail && validPassword && validConfirm && !!image;
 
   return (
     <AuthShell altText="Already have an account?" altLabel="Sign in" altHref="/signin" wide>
@@ -286,61 +278,18 @@ const Signup = () => {
               <span className="truncate">{imageFile || "Choose a profile image"}</span>
             </label>
 
-            <div className="mt-3 space-y-2.5">
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="space-y-1">
-                  <Label htmlFor="state" className="text-sm font-medium text-slate-700">State</Label>
-                  <div className="relative">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                      <FaMapMarkerAlt className="h-4 w-4" />
-                    </span>
-                    <select
-                      id="state"
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      required
-                      className={`h-10 w-full appearance-none rounded-lg border border-slate-200 bg-white pl-9 pr-7 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                        state ? "text-slate-900" : "text-slate-400"
-                      }`}
-                    >
-                      <option value="" disabled>Select state</option>
-                      {NIGERIAN_STATES.map((s) => (
-                        <option key={s} value={s} className="text-slate-900">{s}</option>
-                      ))}
-                    </select>
-                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
-                      <FaChevronDown className="h-3 w-3" />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="city" className="text-sm font-medium text-slate-700">City</Label>
-                  <AuthField
-                    id="city"
-                    placeholder="Your city"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    icon={<FaCity className="h-4 w-4" />}
-                    autoComplete="address-level2"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="phone" className="text-sm font-medium text-slate-700">Phone number</Label>
-                <AuthField
-                  id="phone"
-                  type="tel"
-                  placeholder="11-digit phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  icon={<FaPhone className="h-4 w-4" />}
-                  autoComplete="tel"
-                  required
-                />
-              </div>
+            <div className="mt-3 space-y-1">
+              <Label htmlFor="phone" className="text-sm font-medium text-slate-700">Phone number</Label>
+              <AuthField
+                id="phone"
+                type="tel"
+                placeholder="11-digit phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                icon={<FaPhone className="h-4 w-4" />}
+                autoComplete="tel"
+                required
+              />
             </div>
           </div>
           </div>

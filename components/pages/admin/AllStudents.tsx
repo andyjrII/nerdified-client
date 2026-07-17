@@ -23,7 +23,6 @@ interface Student {
   name: string;
   email: string;
   phoneNumber: string;
-  address: string;
   createdAt: string;
 }
 
@@ -126,7 +125,6 @@ const AllStudents = () => {
                 <TableHead className="text-white">Name</TableHead>
                 <TableHead className="text-white">Email</TableHead>
                 <TableHead className="text-white">Phone Number</TableHead>
-                <TableHead className="text-white">Address</TableHead>
                 <TableHead className="text-white">Joined Date</TableHead>
                 <TableHead className="text-white">Actions</TableHead>
               </TableRow>
@@ -140,7 +138,6 @@ const AllStudents = () => {
                   <TableCell>{student.name}</TableCell>
                   <TableCell>{student.email}</TableCell>
                   <TableCell>{student.phoneNumber}</TableCell>
-                  <TableCell>{student.address}</TableCell>
                   <TableCell>
                     <Moment format="DD/MM/YYYY">{student.createdAt}</Moment>
                   </TableCell>

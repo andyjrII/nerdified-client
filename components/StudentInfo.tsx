@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useAxiosPrivate } from "@/hooks/useAxiosPrivate";
 import Moment from "react-moment";
 import { FaClock, FaEnvelope, FaPhone, FaUserGraduate } from "react-icons/fa";
-import { IoLocation } from "react-icons/io5";
 import { useAuth } from "@/hooks/useAuth";
 import { getStudentProfile, setStudentProfile } from "@/utils/authStorage";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +13,6 @@ import Image from "next/image";
 interface Student {
   email?: string;
   phoneNumber?: string;
-  address?: string;
   createdAt?: string;
   name?: string;
   imagePath?: string;
@@ -76,12 +74,6 @@ const StudentInfo = () => {
             <Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
               <FaPhone className="h-3 w-3" />
               {student.phoneNumber}
-            </Badge>
-          )}
-          {student.address && (
-            <Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
-              <IoLocation className="h-3 w-3" />
-              {student.address}
             </Badge>
           )}
           {student.createdAt && (
