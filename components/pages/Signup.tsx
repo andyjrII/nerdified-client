@@ -17,6 +17,7 @@ import {
   FaEyeSlash,
   FaMapMarkerAlt,
   FaChevronDown,
+  FaCity,
   FaPhone,
   FaImage,
   FaCheckCircle,
@@ -44,7 +45,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [state, setState] = useState(""); // Nigerian state (stored as the address)
+  const [state, setState] = useState(""); // Nigerian state
+  const [city, setCity] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [image, setImage] = useState<File | null>(null);
@@ -59,7 +61,7 @@ const Signup = () => {
   const validEmail = EMAIL_REGEX.test(email);
   const validPassword = PASSWORD_REGEX.test(password);
   const validConfirm = password === confirmPassword && confirmPassword !== "";
-  const validAddress = state !== "";
+  const validAddress = state !== "" && city.trim().length >= 2;
 
   const pwChecks = [
     { label: "At least 8 characters", ok: password.length >= 8 },
@@ -70,7 +72,7 @@ const Signup = () => {
 
   useEffect(() => {
     setErrMsg("");
-  }, [name, phone, email, password, confirmPassword, state]);
+  }, [name, phone, email, password, confirmPassword, state, city]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -109,7 +111,7 @@ const Signup = () => {
       formData.append("phoneNumber", phone);
       formData.append("email", email);
       formData.append("password", password);
-      formData.append("address", `${state}, Nigeria`);
+      formData.append("address", `${city.trim()}, ${state}, Nigeria`);
       formData.append("image", image);
 
       const response = await axios.post("auth/signup", formData, {
@@ -171,7 +173,8 @@ const Signup = () => {
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-4 grid gap-5 md:grid-cols-2">
+        <form onSubmit={handleSubmit} className="mt-4">
+          <div className="grid gap-5 md:grid-cols-2">
           {/* Left: fields */}
           <div className="space-y-2.5">
             <div className="space-y-1">
@@ -284,29 +287,44 @@ const Signup = () => {
             </label>
 
             <div className="mt-3 space-y-2.5">
-              <div className="space-y-1">
-                <Label htmlFor="state" className="text-sm font-medium text-slate-700">State</Label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    <FaMapMarkerAlt className="h-4 w-4" />
-                  </span>
-                  <select
-                    id="state"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="space-y-1">
+                  <Label htmlFor="state" className="text-sm font-medium text-slate-700">State</Label>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                      <FaMapMarkerAlt className="h-4 w-4" />
+                    </span>
+                    <select
+                      id="state"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                      required
+                      className={`h-10 w-full appearance-none rounded-lg border border-slate-200 bg-white pl-9 pr-7 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                        state ? "text-slate-900" : "text-slate-400"
+                      }`}
+                    >
+                      <option value="" disabled>Select state</option>
+                      {NIGERIAN_STATES.map((s) => (
+                        <option key={s} value={s} className="text-slate-900">{s}</option>
+                      ))}
+                    </select>
+                    <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
+                      <FaChevronDown className="h-3 w-3" />
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label htmlFor="city" className="text-sm font-medium text-slate-700">City</Label>
+                  <AuthField
+                    id="city"
+                    placeholder="Your city"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    icon={<FaCity className="h-4 w-4" />}
+                    autoComplete="address-level2"
                     required
-                    className={`h-10 w-full appearance-none rounded-lg border border-slate-200 bg-white pl-10 pr-8 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                      state ? "text-slate-900" : "text-slate-400"
-                    }`}
-                  >
-                    <option value="" disabled>Select your state</option>
-                    {NIGERIAN_STATES.map((s) => (
-                      <option key={s} value={s} className="text-slate-900">{s}</option>
-                    ))}
-                  </select>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    <FaChevronDown className="h-3 w-3" />
-                  </span>
+                  />
                 </div>
               </div>
 
@@ -324,21 +342,23 @@ const Signup = () => {
                 />
               </div>
             </div>
+          </div>
+          </div>
 
-            <div className="mt-auto pt-4">
-              <button
-                type="submit"
-                disabled={!canSubmit || loading}
-                className="flex w-full items-center justify-center rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {loading ? <SyncLoader size={8} color="#ffffff" /> : "Create Account"}
-              </button>
-              <p className="mt-3 text-center text-xs text-slate-400">
-                By creating an account, you agree to our{" "}
-                <Link href="/terms" className="text-indigo-600 hover:underline">Terms</Link> and{" "}
-                <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
-              </p>
-            </div>
+          {/* Full-width submit spanning both columns */}
+          <div className="mt-5">
+            <button
+              type="submit"
+              disabled={!canSubmit || loading}
+              className="flex w-full items-center justify-center rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? <SyncLoader size={8} color="#ffffff" /> : "Create Account"}
+            </button>
+            <p className="mt-3 text-center text-xs text-slate-400">
+              By creating an account, you agree to our{" "}
+              <Link href="/terms" className="text-indigo-600 hover:underline">Terms</Link> and{" "}
+              <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
+            </p>
           </div>
         </form>
       </div>

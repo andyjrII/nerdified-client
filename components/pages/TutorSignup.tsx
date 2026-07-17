@@ -201,21 +201,6 @@ const TutorSignup = () => {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
-                  Phone number <span className="font-normal text-slate-400">(optional)</span>
-                </Label>
-                <AuthField
-                  id="phone"
-                  type="tel"
-                  placeholder="11-digit phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  icon={<FaPhone className="h-4 w-4" />}
-                  autoComplete="tel"
-                />
-              </div>
-
-              <div className="space-y-1">
                 <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
                 <AuthField
                   id="password"
@@ -297,6 +282,21 @@ const TutorSignup = () => {
                 <FaImage className="h-4 w-4 text-violet-500" />
                 <span className="truncate">{imageFile || "Choose a profile picture"}</span>
               </label>
+
+              <div className="mt-3 space-y-1">
+                <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
+                  Phone number <span className="font-normal text-slate-400">(optional)</span>
+                </Label>
+                <AuthField
+                  id="phone"
+                  type="tel"
+                  placeholder="11-digit phone number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  icon={<FaPhone className="h-4 w-4" />}
+                  autoComplete="tel"
+                />
+              </div>
             </div>
           </div>
 
