@@ -5,7 +5,7 @@ import { motion, Variants } from "framer-motion";
 import {
   FaEnvelope,
   FaPhoneAlt,
-  FaMapMarkerAlt,
+  FaRegClock,
   FaPaperPlane,
   FaUser,
   FaTag,
@@ -44,10 +44,10 @@ const contactCards = [
     href: "tel:+2349063368647",
   },
   {
-    icon: FaMapMarkerAlt,
+    icon: FaRegClock,
     tint: "bg-violet-100 text-violet-600",
-    title: "Visit us",
-    value: "Efab Estate, Lokogoma — Abuja, Nigeria",
+    title: "Support hours",
+    value: "Mon–Fri, 9am–6pm (WAT)",
     href: null,
   },
 ];
@@ -163,15 +163,13 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* ===================== FORM + MAP ===================== */}
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Form */}
-          <motion.div
-            className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8"
-            variants={fadeUp}
-            {...inView}
-          >
+      {/* ===================== FORM ===================== */}
+      <section className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <motion.div
+          className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8"
+          variants={fadeUp}
+          {...inView}
+        >
             <h2 className="text-xl font-extrabold tracking-tight text-slate-900">
               Send us a message
             </h2>
@@ -287,24 +285,7 @@ const Contact = () => {
                 <FaPaperPlane className="h-3.5 w-3.5" /> Send Message
               </button>
             </form>
-          </motion.div>
-
-          {/* Map */}
-          <motion.div
-            className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm"
-            variants={fadeUp}
-            custom={1}
-            {...inView}
-          >
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31527.424278968356!2d7.420422434806822!3d8.978769751982583!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x104e0d743d4a46ad%3A0x5b3e93efbcfdbf4e!2sEfab%20Estate%2C%20Lokogoma!5e0!3m2!1sen!2sng!4v1726504313406!5m2!1sen!2sng"
-              className="h-full min-h-[420px] w-full"
-              title="Nerdified Africa Address"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </motion.div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
