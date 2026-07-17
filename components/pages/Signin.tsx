@@ -163,7 +163,7 @@ const Signin = () => {
   return (
     <AuthShell altText="Don't have an account?" altLabel="Sign up" altHref="/signup" fitViewport>
       <div className="mx-auto max-w-md">
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
           Welcome back <span className="align-middle">👋</span>
         </h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -171,13 +171,13 @@ const Signin = () => {
         </p>
 
         {/* Role toggle */}
-        <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
+        <div className="mt-3 grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
           {roles.map(({ value, label, icon: Icon }) => (
             <button
               key={value}
               type="button"
               onClick={() => setRole(value)}
-              className={`flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold transition-colors ${
+              className={`flex items-center justify-center gap-2 rounded-lg py-1.5 text-sm font-semibold transition-colors ${
                 role === value
                   ? "bg-white text-indigo-600 shadow-sm"
                   : "text-slate-500 hover:text-slate-700"
@@ -199,7 +199,7 @@ const Signin = () => {
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+        <form onSubmit={handleSubmit} className="mt-3 space-y-2">
           <div className="space-y-1.5">
             <Label htmlFor="email" className="text-sm font-medium text-slate-700">
               Email address
@@ -261,13 +261,13 @@ const Signin = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center rounded-lg bg-indigo-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-70"
+            className="flex w-full items-center justify-center rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-70"
           >
             {loading ? <SyncLoader size={8} color="#ffffff" /> : "Sign In"}
           </button>
         </form>
 
-        <div className="my-4 flex items-center gap-3">
+        <div className="my-2.5 flex items-center gap-3">
           <span className="h-px flex-1 bg-slate-200" />
           <span className="text-xs text-slate-400">or continue with</span>
           <span className="h-px flex-1 bg-slate-200" />
@@ -277,12 +277,12 @@ const Signin = () => {
           type="button"
           onClick={handleGoogleSignin}
           disabled={loading}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
         >
           <FcGoogle className="h-5 w-5" /> Continue with Google
         </button>
 
-        <p className="mt-4 text-center text-xs text-slate-400">
+        <p className="mt-3 text-center text-xs text-slate-400">
           By signing in, you agree to our{" "}
           <Link href="/terms" className="text-indigo-600 hover:underline">Terms of Service</Link>{" "}
           and{" "}

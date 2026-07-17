@@ -30,8 +30,8 @@ interface AuthShellProps {
 export function AuthShell({ children, altText, altLabel, altHref, wide, fitViewport }: AuthShellProps) {
   return (
     <div
-      className={`flex flex-col justify-center bg-gradient-to-br from-indigo-50 via-white to-violet-100 px-4 py-4 sm:px-6 sm:py-6 ${
-        fitViewport ? "h-screen overflow-hidden" : "min-h-screen"
+      className={`flex flex-col justify-center bg-gradient-to-br from-indigo-50 via-white to-violet-100 px-4 sm:px-6 ${
+        fitViewport ? "h-screen overflow-hidden py-2" : "min-h-screen py-4 sm:py-6"
       }`}
       style={fitViewport ? { height: "100dvh" } : undefined}
     >
@@ -77,8 +77,8 @@ export function AuthShell({ children, altText, altLabel, altHref, wide, fitViewp
           </div>
 
           {/* Form column */}
-          <div className="p-5 sm:p-8">
-            <p className="mb-4 text-right text-sm text-slate-500">
+          <div className="p-4 sm:p-5">
+            <p className="mb-3 text-right text-sm text-slate-500">
               {altText}{" "}
               <Link href={altHref} className="font-semibold text-indigo-600 hover:text-indigo-700">
                 {altLabel}
@@ -89,18 +89,18 @@ export function AuthShell({ children, altText, altLabel, altHref, wide, fitViewp
         </div>
 
         {/* Features strip */}
-        <div className="mt-4 grid grid-cols-2 gap-3 rounded-2xl border border-slate-100 bg-white/70 px-4 py-3 backdrop-blur sm:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-2 rounded-2xl border border-slate-100 bg-white/70 px-4 py-1.5 backdrop-blur sm:grid-cols-4">
           {features.map(({ icon: Icon, tint, title }) => (
-            <div key={title} className="flex items-center gap-2.5">
-              <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${tint}`}>
-                <Icon className="h-3.5 w-3.5" />
+            <div key={title} className="flex items-center gap-2">
+              <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${tint}`}>
+                <Icon className="h-3 w-3" />
               </div>
               <p className="text-xs font-semibold text-slate-700">{title}</p>
             </div>
           ))}
         </div>
 
-        <p className="mt-3 text-center text-xs text-slate-400">
+        <p className="mt-2 text-center text-xs text-slate-400">
           © 2026 Nerdified. All rights reserved.
         </p>
       </div>
